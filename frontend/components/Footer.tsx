@@ -19,7 +19,7 @@ export default function Footer() {
                 alt="Axar Creative Management Solutions"
                 width={400}
                 height={150}
-                className="object-contain h-20 md:h-28 w-auto scale-110 origin-left"
+                className="object-contain h-16 md:h-24 w-auto"
               />
             </Link>
             <p className="font-serif italic text-xl text-text-secondary">
