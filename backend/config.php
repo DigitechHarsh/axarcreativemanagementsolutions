@@ -3,12 +3,12 @@
 
 // Database Credentials
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'axar_web');
-define('DB_USER', 'root'); // Change to dedicated low-privilege user in prod
-define('DB_PASS', '');
+define('DB_NAME', 'acms');
+define('DB_USER', 'ACMSBharuchGP'); // Change to dedicated low-privilege user in prod
+define('DB_PASS', 'ACMSBharuchGP51');
 
 // Allowed Origin for CORS (Change to actual domain in prod, e.g., 'https://axarcreative.com')
-define('ALLOWED_ORIGIN', 'http://localhost:3000');
+define('ALLOWED_ORIGIN', 'https://axarcreativemanagementsolutions-rho.vercel.app');
 
 // Email Settings
 define('ADMIN_EMAIL', 'info@axarcreative.com');
