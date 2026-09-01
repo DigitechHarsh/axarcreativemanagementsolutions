@@ -3,8 +3,8 @@
 
 // Database Credentials
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'acms');
-define('DB_USER', 'ACMSBharuchGP'); // Change to dedicated low-privilege user in prod
+define('DB_NAME', 'u315909654_acms');
+define('DB_USER', 'u315909654_acmsgp'); // Change to dedicated low-privilege user in prod
 define('DB_PASS', 'ACMSBharuchGP51');
 
 // Allowed Origin for CORS (Change to actual domain in prod, e.g., 'https://axarcreative.com')
