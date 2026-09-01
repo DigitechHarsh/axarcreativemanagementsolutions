@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #ffffff;
+  --color-surface: #f8f9fa;
+  --color-surface-alt: #f1f5f9;
+  --color-primary: #B3282D;
+  --color-primary-dark: #7A1B1F;
+  --color-accent: #D9A94E;
+  --color-accent-light: #F0C97A;
+  --color-text-primary: #111827;
+  --color-text-secondary: #4b5563;
+  --color-border: #e5e7eb;
+
+  --font-heading: var(--font-space-grotesk), sans-serif;
+  --font-body: var(--font-inter), sans-serif;
+  --font-serif: var(--font-playfair-display), serif;
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utilities for common gradients and layout needs */
+@layer utilities {
+  .bg-gradient-glow {
+    background: radial-gradient(circle at center, rgba(179, 40, 45, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+  }
+}
