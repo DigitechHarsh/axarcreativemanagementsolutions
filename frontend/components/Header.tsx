@@ -31,13 +31,7 @@ export default function Header() {
   const closeMenu = () => setIsMobileMenuOpen(false);
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${
-        isScrolled
-          ? "bg-background/95 backdrop-blur-md border-border"
-          : "bg-transparent border-transparent"
-      }`}
-    >
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border transition-all duration-300">
       <div className="container mx-auto px-6 h-24 md:h-32 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="relative z-50 flex items-center">
