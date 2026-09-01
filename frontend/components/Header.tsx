@@ -38,15 +38,15 @@ export default function Header() {
           : "bg-transparent border-transparent"
       }`}
     >
-      <div className="container mx-auto px-6 h-24 flex items-center justify-between">
+      <div className="container mx-auto px-6 h-24 md:h-32 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="relative z-50 flex items-center">
           <Image
             src="/logo.png"
             alt="Axar Creative Management Solutions"
-            width={300}
-            height={100}
-            className="object-contain h-12 md:h-16 w-auto"
+            width={400}
+            height={150}
+            className="object-contain h-16 md:h-24 w-auto scale-110 origin-left"
             priority
           />
         </Link>

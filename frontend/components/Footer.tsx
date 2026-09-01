@@ -17,9 +17,9 @@ export default function Footer() {
               <Image
                 src="/logo.png"
                 alt="Axar Creative Management Solutions"
-                width={300}
-                height={100}
-                className="object-contain h-16 md:h-20 w-auto"
+                width={400}
+                height={150}
+                className="object-contain h-20 md:h-28 w-auto scale-110 origin-left"
               />
             </Link>
             <p className="font-serif italic text-xl text-text-secondary">
