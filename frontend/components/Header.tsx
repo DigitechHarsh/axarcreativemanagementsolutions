@@ -34,13 +34,21 @@ export default function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border transition-all duration-300">
       <div className="container mx-auto px-6 h-24 md:h-32 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="relative z-50 flex items-center">
+        <Link href="/" className="relative z-50 flex items-center gap-3">
           <Image
             src="/logo.png"
-            alt="Axar Creative Management Solutions"
-            width={400}
-            height={150}
-            className="object-contain h-16 md:h-20 w-auto"
+            alt="Axar Logo"
+            width={100}
+            height={100}
+            className="object-contain h-12 md:h-16 w-auto"
+            priority
+          />
+          <Image
+            src="/logotext.png"
+            alt="Axar Creative Management Solutions Text"
+            width={300}
+            height={100}
+            className="object-contain h-6 md:h-10 w-auto pt-1"
             priority
           />
         </Link>
