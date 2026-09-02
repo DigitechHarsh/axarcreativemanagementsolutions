@@ -38,14 +38,13 @@ export default function Home() {
         <motion.div
           className="flex whitespace-nowrap space-x-16 px-4"
           animate={{ x: ["0%", "-50%"] }}
-          transition={{ ease: "linear", duration: 20, repeat: Infinity }}
+          transition={{ ease: "linear", duration: 12, repeat: Infinity }}
         >
           {/* Repeat content to create seamless loop */}
           {[...Array(2)].map((_, i) => (
             <div key={i} className="flex space-x-16 items-center">
               <span className="text-text-secondary font-heading font-semibold tracking-wider text-sm flex items-center"><CheckCircle className="w-4 h-4 mr-2 text-accent" /> ISO Management Systems</span>
               <span className="text-text-secondary font-heading font-semibold tracking-wider text-sm flex items-center"><CheckCircle className="w-4 h-4 mr-2 text-accent" /> Six Sigma</span>
-              <span className="text-text-secondary font-heading font-semibold tracking-wider text-sm flex items-center"><CheckCircle className="w-4 h-4 mr-2 text-accent" /> Cybersecurity</span>
               <span className="text-text-secondary font-heading font-semibold tracking-wider text-sm flex items-center"><CheckCircle className="w-4 h-4 mr-2 text-accent" /> AI Video Ads</span>
               <span className="text-text-secondary font-heading font-semibold tracking-wider text-sm flex items-center"><CheckCircle className="w-4 h-4 mr-2 text-accent" /> Full-Stack Development</span>
               <span className="text-text-secondary font-heading font-semibold tracking-wider text-sm flex items-center"><CheckCircle className="w-4 h-4 mr-2 text-accent" /> Business Advisory</span>
