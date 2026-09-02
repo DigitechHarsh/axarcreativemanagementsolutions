@@ -13,20 +13,20 @@ export default function Footer() {
           
           {/* Brand Column */}
           <div className="space-y-6">
-            <Link href="/" className="inline-flex items-center gap-1">
+            <Link href="/" className="inline-flex items-center scale-[1.15] md:scale-[1.35] origin-left">
               <Image
                 src="/logo.png"
                 alt="Axar Logo"
                 width={150}
                 height={150}
-                className="object-contain h-16 md:h-20 w-auto"
+                className="object-contain h-10 md:h-12 w-auto"
               />
               <Image
                 src="/logotext.png"
                 alt="Axar Creative Management Solutions Text"
                 width={300}
                 height={100}
-                className="object-contain h-8 md:h-12 w-auto pt-1"
+                className="object-contain h-5 md:h-7 w-auto -ml-2"
               />
             </Link>
             <p className="font-serif italic text-xl text-text-secondary">
