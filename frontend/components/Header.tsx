@@ -32,7 +32,7 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border transition-all duration-300">
-      <div className="container mx-auto px-6 h-24 md:h-32 flex items-center justify-between">
+      <div className="container mx-auto px-6 h-16 md:h-24 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="relative z-50 flex items-center gap-3">
           <Image
@@ -40,7 +40,7 @@ export default function Header() {
             alt="Axar Logo"
             width={100}
             height={100}
-            className="object-contain h-12 md:h-16 w-auto"
+            className="object-contain h-10 md:h-14 w-auto"
             priority
           />
           <Image
@@ -48,7 +48,7 @@ export default function Header() {
             alt="Axar Creative Management Solutions Text"
             width={300}
             height={100}
-            className="object-contain h-6 md:h-10 w-auto pt-1"
+            className="object-contain h-5 md:h-8 w-auto"
             priority
           />
         </Link>
