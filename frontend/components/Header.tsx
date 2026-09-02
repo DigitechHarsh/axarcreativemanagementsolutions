@@ -48,7 +48,7 @@ export default function Header() {
             alt="Axar Creative Management Solutions Text"
             width={300}
             height={100}
-            className="object-contain h-5 md:h-7 w-auto -ml-2"
+            className="object-contain h-6 md:h-8 w-auto -ml-2"
             priority
           />
         </Link>
