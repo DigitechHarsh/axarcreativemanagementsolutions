@@ -34,7 +34,7 @@ export default function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border transition-all duration-300">
       <div className="container mx-auto px-6 h-16 md:h-24 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="relative z-50 flex items-center scale-[1.15] md:scale-[1.35] origin-left">
+        <Link href="/" className="relative z-50 flex items-center scale-[1.25] md:scale-[1.50] origin-left">
           <Image
             src="/logo.png"
             alt="Axar Logo"
