@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import LayoutWrapper from "@/components/LayoutWrapper";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -23,9 +24,6 @@ export const metadata: Metadata = {
   description: "Engineering Business Excellence — From Strategy to Screen. Axar provides consulting, AI video ads, and website development services.",
 };
 
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -38,11 +36,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-body" suppressHydrationWarning>
-        <Header />
-        <main className="flex-grow pt-20">
-          {children}
-        </main>
-        <Footer />
+        <LayoutWrapper>{children}</LayoutWrapper>
       </body>
     </html>
   );

@@ -372,7 +372,10 @@ export default function AdminDashboardPage() {
   // -------------------------------------------------------------
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="min-h-screen bg-[#0a0d14] flex items-center justify-center p-4 relative overflow-hidden">
+        {/* Background decorative glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+
         {/* Toast */}
         {toast && (
           <div className={`fixed top-6 right-6 z-50 flex items-center px-4 py-3 rounded-lg shadow-xl text-sm font-medium ${toast.type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}>
@@ -381,13 +384,31 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        <div className="bg-gray-900 border border-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md relative z-10">
-          <div className="text-center mb-8">
-            <span className="inline-block px-3 py-1 bg-red-950 text-red-400 font-bold text-xs rounded-full uppercase tracking-wider mb-3 border border-red-800/50">
+        <div className="bg-[#111622] border border-gray-800 p-8 sm:p-10 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.8)] w-full max-w-md relative z-10">
+          {/* Logo Section */}
+          <div className="flex flex-col items-center text-center mb-8">
+            <div className="flex items-center justify-center mb-4 bg-white/95 px-5 py-3 rounded-2xl shadow-md">
+              <Image
+                src="/logo.png"
+                alt="Axar Logo"
+                width={48}
+                height={48}
+                className="object-contain h-10 w-auto"
+                priority
+              />
+              <Image
+                src="/logotext.png"
+                alt="Axar Creative Management Solutions"
+                width={160}
+                height={40}
+                className="object-contain h-7 w-auto -ml-1"
+                priority
+              />
+            </div>
+            <div className="inline-block px-3 py-1 bg-red-950/80 text-red-400 font-bold text-xs rounded-full uppercase tracking-wider mb-2 border border-red-800/40">
               Admin Portal
-            </span>
-            <h1 className="text-2xl font-heading font-bold text-white tracking-wide">Axar Management</h1>
-            <p className="text-gray-400 text-sm mt-1">Sign in to manage services, portfolio & leads</p>
+            </div>
+            <p className="text-gray-400 text-xs mt-1">Sign in to manage services, portfolio & leads</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-5">
@@ -399,7 +420,7 @@ export default function AdminDashboardPage() {
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="admin"
                 required
-                className="w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm transition-all"
+                className="w-full bg-[#182030] border border-gray-700/80 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm transition-all"
               />
             </div>
 
@@ -411,14 +432,14 @@ export default function AdminDashboardPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="w-full bg-gray-800/80 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm transition-all"
+                className="w-full bg-[#182030] border border-gray-700/80 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm transition-all"
               />
             </div>
 
             <button
               type="submit"
               disabled={loginLoading}
-              className="w-full bg-primary hover:bg-red-700 text-white font-heading font-bold py-3.5 px-4 rounded-lg shadow-lg shadow-primary/30 transition-all flex items-center justify-center text-sm disabled:opacity-60"
+              className="w-full bg-primary hover:bg-red-700 text-white font-heading font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-primary/30 transition-all flex items-center justify-center text-sm disabled:opacity-60 cursor-pointer"
             >
               {loginLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign In to Dashboard"}
             </button>
