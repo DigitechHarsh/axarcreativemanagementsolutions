@@ -40,15 +40,16 @@ if (!in_array($mime, $allowed_types)) {
 // Check Cloudinary configuration
 if (defined('CLOUDINARY_CLOUD_NAME') && CLOUDINARY_CLOUD_NAME !== 'YOUR_CLOUD_NAME' && !empty(CLOUDINARY_CLOUD_NAME)) {
     $timestamp = time();
-    $params_to_sign = "timestamp=" . $timestamp;
+    $folder = 'axar_creative';
+    $params_to_sign = "folder=" . $folder . "&timestamp=" . $timestamp;
     $signature = sha1($params_to_sign . CLOUDINARY_API_SECRET);
 
     $post_fields = [
         'file' => new CURLFile($file['tmp_name'], $mime, $file['name']),
+        'folder' => $folder,
         'timestamp' => $timestamp,
         'api_key' => CLOUDINARY_API_KEY,
-        'signature' => $signature,
-        'folder' => 'axar_creative'
+        'signature' => $signature
     ];
 
     $ch = curl_init("https://api.cloudinary.com/v1_1/" . CLOUDINARY_CLOUD_NAME . "/image/upload");
