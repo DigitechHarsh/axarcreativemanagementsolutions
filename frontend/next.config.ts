@@ -18,15 +18,6 @@ const nextConfig: NextConfig = {
     ],
     dangerouslyAllowSVG: true,
   },
-  async redirects() {
-    return [
-      {
-        source: "/admin",
-        destination: "https://acms.harshaicreations.com/admin",
-        permanent: false,
-      },
-    ];
-  },
 };
 
 export default nextConfig;
