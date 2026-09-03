@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
 
     if ($username === ADMIN_USER && $password === ADMIN_PASS) {
         $_SESSION['admin_logged_in'] = true;
-        header('Location: admin.php');
+        header('Location: admin');
         exit;
     } else {
         $login_error = "Invalid username or password.";
@@ -76,7 +76,7 @@ if ($is_logged_in) {
                 $_SESSION['flash_success'] = "Lead status updated successfully.";
             }
         }
-        header('Location: admin.php?tab=leads');
+        header('Location: admin?tab=leads');
         exit;
     }
 
@@ -87,7 +87,7 @@ if ($is_logged_in) {
             $stmt->execute([$id]);
             $_SESSION['flash_success'] = "Lead deleted successfully.";
         }
-        header('Location: admin.php?tab=leads');
+        header('Location: admin?tab=leads');
         exit;
     }
 
@@ -120,7 +120,7 @@ if ($is_logged_in) {
                 $_SESSION['flash_error'] = "Service title and short description are required.";
             }
         }
-        header('Location: admin.php?tab=services');
+        header('Location: admin?tab=services');
         exit;
     }
 
@@ -131,7 +131,7 @@ if ($is_logged_in) {
             $stmt->execute([$id]);
             $_SESSION['flash_success'] = "Service removed successfully.";
         }
-        header('Location: admin.php?tab=services');
+        header('Location: admin?tab=services');
         exit;
     }
 
@@ -174,7 +174,7 @@ if ($is_logged_in) {
                 $_SESSION['flash_error'] = "Project title and description are required.";
             }
         }
-        header('Location: admin.php?tab=projects');
+        header('Location: admin?tab=projects');
         exit;
     }
 
@@ -185,7 +185,7 @@ if ($is_logged_in) {
             $stmt->execute([$id]);
             $_SESSION['flash_success'] = "Project deleted successfully.";
         }
-        header('Location: admin.php?tab=projects');
+        header('Location: admin?tab=projects');
         exit;
     }
 
@@ -246,7 +246,7 @@ if ($is_logged_in) {
                 </div>
             <?php endif; ?>
 
-            <form method="POST" action="admin.php">
+            <form method="POST" action="admin">
                 <input type="hidden" name="login" value="1">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
                 
@@ -276,13 +276,13 @@ if ($is_logged_in) {
 
                 <!-- Navigation Tabs -->
                 <nav class="flex space-x-1 sm:space-x-2">
-                    <a href="admin.php?tab=leads" class="px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors <?php echo $active_tab === 'leads' ? 'bg-primary text-white shadow' : 'text-gray-300 hover:bg-gray-800 hover:text-white'; ?>">
+                    <a href="admin?tab=leads" class="px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors <?php echo $active_tab === 'leads' ? 'bg-primary text-white shadow' : 'text-gray-300 hover:bg-gray-800 hover:text-white'; ?>">
                         Leads (<?php echo count($submissions); ?>)
                     </a>
-                    <a href="admin.php?tab=services" class="px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors <?php echo $active_tab === 'services' ? 'bg-primary text-white shadow' : 'text-gray-300 hover:bg-gray-800 hover:text-white'; ?>">
+                    <a href="admin?tab=services" class="px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors <?php echo $active_tab === 'services' ? 'bg-primary text-white shadow' : 'text-gray-300 hover:bg-gray-800 hover:text-white'; ?>">
                         Manage Services (<?php echo count($all_services); ?>)
                     </a>
-                    <a href="admin.php?tab=projects" class="px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors <?php echo $active_tab === 'projects' ? 'bg-primary text-white shadow' : 'text-gray-300 hover:bg-gray-800 hover:text-white'; ?>">
+                    <a href="admin?tab=projects" class="px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors <?php echo $active_tab === 'projects' ? 'bg-primary text-white shadow' : 'text-gray-300 hover:bg-gray-800 hover:text-white'; ?>">
                         Manage Projects (<?php echo count($projects); ?>)
                     </a>
                 </nav>
@@ -292,7 +292,7 @@ if ($is_logged_in) {
                 <a href="https://acms.harshaicreations.com" target="_blank" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-1.5 rounded-lg transition-colors hidden sm:inline-block">
                     View Website ↗
                 </a>
-                <a href="logout.php" class="text-xs bg-red-950/80 text-red-200 hover:bg-red-900 border border-red-800/50 px-3 py-1.5 rounded-lg transition-colors">
+                <a href="logout" class="text-xs bg-red-950/80 text-red-200 hover:bg-red-900 border border-red-800/50 px-3 py-1.5 rounded-lg transition-colors">
                     Logout
                 </a>
             </div>
@@ -376,7 +376,7 @@ if ($is_logged_in) {
                                             <p class="text-gray-700 whitespace-pre-wrap break-words leading-relaxed"><?php echo htmlspecialchars($sub['message']); ?></p>
                                         </td>
                                         <td class="p-4 align-top">
-                                            <form method="POST" action="admin.php">
+                                            <form method="POST" action="admin">
                                                 <input type="hidden" name="update_lead_status" value="1">
                                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
                                                 <input type="hidden" name="id" value="<?php echo $sub['id']; ?>">
@@ -483,7 +483,7 @@ if ($is_logged_in) {
                                             >
                                                 <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                             </button>
-                                            <form method="POST" action="admin.php?tab=services" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this service? Linked projects will be unlinked.');">
+                                            <form method="POST" action="admin?tab=services" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this service? Linked projects will be unlinked.');">
                                                 <input type="hidden" name="delete_service" value="1">
                                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
                                                 <input type="hidden" name="service_id" value="<?php echo $srv['id']; ?>">
@@ -588,7 +588,7 @@ if ($is_logged_in) {
                                             >
                                                 <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                             </button>
-                                            <form method="POST" action="admin.php?tab=projects" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this project?');">
+                                            <form method="POST" action="admin?tab=projects" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this project?');">
                                                 <input type="hidden" name="delete_project" value="1">
                                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
                                                 <input type="hidden" name="project_id" value="<?php echo $proj['id']; ?>">
@@ -616,7 +616,7 @@ if ($is_logged_in) {
                 <h3 id="serviceModalTitle" class="text-lg font-bold">Add New Service</h3>
                 <button onclick="closeServiceModal()" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button>
             </div>
-            <form method="POST" action="admin.php?tab=services" class="p-6 space-y-4">
+            <form method="POST" action="admin?tab=services" class="p-6 space-y-4">
                 <input type="hidden" name="save_service" value="1">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
                 <input type="hidden" id="service_id" name="service_id" value="">
@@ -684,7 +684,7 @@ if ($is_logged_in) {
                 <h3 id="projectModalTitle" class="text-lg font-bold">Add New Project / Portfolio</h3>
                 <button onclick="closeProjectModal()" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button>
             </div>
-            <form method="POST" action="admin.php?tab=projects" class="p-6 space-y-4">
+            <form method="POST" action="admin?tab=projects" class="p-6 space-y-4">
                 <input type="hidden" name="save_project" value="1">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
                 <input type="hidden" id="project_id" name="project_id" value="">
