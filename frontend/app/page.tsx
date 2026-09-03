@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useSpring, useScroll } from "framer-motion";
@@ -13,7 +14,70 @@ const revealVariants = {
 
 import HeroCarousel from "../components/HeroCarousel";
 
+interface Project {
+  id?: number;
+  title: string;
+  category_name: string;
+  description: string;
+  image_url: string;
+  project_url: string;
+  tag_style: string;
+  featured: boolean | number;
+}
+
+const DEFAULT_FEATURED: Project[] = [
+  { 
+    title: "E-Commerce Digital Transformation", 
+    category_name: "Web Development", 
+    description: "Next-generation storefront built with modern responsive architecture.",
+    image_url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
+    project_url: "",
+    tag_style: "bg-accent/20 text-accent border border-accent/30",
+    featured: true
+  },
+  { 
+    title: "AI Video Ad Campaign Launch", 
+    category_name: "AI Video Production", 
+    description: "High-conversion cinematic UGC & product showcase video series.",
+    image_url: "https://images.unsplash.com/photo-1536240478700-b869070f9279?auto=format&fit=crop&w=800&q=80",
+    project_url: "",
+    tag_style: "bg-primary/20 text-primary border border-primary/30",
+    featured: true
+  },
+  { 
+    title: "Supply Chain & ISO Quality Overhaul", 
+    category_name: "Management Consulting", 
+    description: "Complete process re-engineering and ISO compliance certification.",
+    image_url: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80",
+    project_url: "",
+    tag_style: "bg-primary/20 text-primary border border-primary/30",
+    featured: true
+  }
+];
+
 export default function Home() {
+  const [featuredProjects, setFeaturedProjects] = useState<Project[]>(DEFAULT_FEATURED);
+
+  useEffect(() => {
+    async function fetchFeaturedProjects() {
+      try {
+        const res = await fetch("https://acms.harshaicreations.com/projects.php");
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          const featured = data.data.filter((p: Project) => Boolean(p.featured));
+          if (featured.length > 0) {
+            setFeaturedProjects(featured.slice(0, 6));
+          } else {
+            setFeaturedProjects(data.data.slice(0, 3));
+          }
+        }
+      } catch (err) {
+        console.log("Using default featured projects fallback");
+      }
+    }
+    fetchFeaturedProjects();
+  }, []);
   // Scroll Progress Bar
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -176,30 +240,48 @@ export default function Home() {
 
           {/* Horizontal scroll on mobile, grid on desktop */}
           <div className="flex overflow-x-auto pb-8 md:grid md:grid-cols-3 gap-6 snap-x snap-mandatory hide-scrollbar">
-            {[
-              { category: "Web Development", title: "E-Commerce Transformation", tag: "bg-accent/20 text-accent border border-accent/30" },
-              { category: "AI Video Ad", title: "Cinematic Product Launch", tag: "bg-primary/20 text-primary border border-primary/30" },
-              { category: "Consulting", title: "Global Supply Chain Overhaul", tag: "bg-primary/20 text-primary border border-primary/30" },
-            ].map((item, i) => (
+            {featuredProjects.map((item, i) => (
               <motion.div
-                key={i}
+                key={item.id || i}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.3 }}
                 variants={revealVariants}
                 whileHover={{ scale: 1.03 }}
-                className="min-w-[85vw] md:min-w-0 snap-center bg-surface border border-border rounded-2xl overflow-hidden group cursor-pointer"
+                className="min-w-[85vw] md:min-w-0 snap-center bg-surface border border-border rounded-2xl overflow-hidden group cursor-pointer flex flex-col"
               >
                 <div className="aspect-video bg-surface-alt relative overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center text-text-secondary opacity-50 group-hover:scale-110 transition-transform duration-500">
-                    <Image src={`https://placehold.co/600x400/1C1C1C/A0A0A0?text=${item.title.replace(/ /g, '+')}`} alt={item.title} fill className="object-cover" />
-                  </div>
+                  {item.image_url ? (
+                    <Image
+                      src={item.image_url}
+                      alt={item.title}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center text-text-secondary opacity-50">
+                      <Briefcase className="w-12 h-12 text-primary" />
+                    </div>
+                  )}
                 </div>
-                <div className="p-6">
-                  <span className={`inline-block px-3 py-1 text-xs font-semibold rounded-full mb-3 ${item.tag}`}>
-                    {item.category}
-                  </span>
-                  <h4 className="text-xl font-heading font-bold">{item.title}</h4>
+                <div className="p-6 flex-1 flex flex-col justify-between">
+                  <div>
+                    <span className={`inline-block px-3 py-1 text-xs font-semibold rounded-full mb-3 ${item.tag_style || "bg-accent/20 text-accent border border-accent/30"}`}>
+                      {item.category_name}
+                    </span>
+                    <h4 className="text-xl font-heading font-bold mb-2 text-white">{item.title}</h4>
+                    <p className="text-text-secondary text-sm line-clamp-2">{item.description}</p>
+                  </div>
+                  {item.project_url && (
+                    <a
+                      href={item.project_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center text-xs font-bold text-accent hover:underline mt-4"
+                    >
+                      View Live Project <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
+                    </a>
+                  )}
                 </div>
               </motion.div>
             ))}
