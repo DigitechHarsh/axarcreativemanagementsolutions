@@ -55,7 +55,7 @@ interface Project {
   display_order: number;
 }
 
-const API_BASE = "https://acms.harshaicreations.com/api";
+const API_BASE = "https://acms.harshaicreations.com/api.php";
 
 export default function AdminDashboardPage() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
