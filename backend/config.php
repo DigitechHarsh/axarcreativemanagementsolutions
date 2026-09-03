@@ -14,7 +14,7 @@ define('ALLOWED_ORIGIN', 'https://axarcreativemanagementsolutions-rho.vercel.app
 define('ADMIN_EMAIL', 'info@axarcreative.com');
 define('SITE_NAME', 'Axar Creative Management Solutions');
 
-// Cloudinary Credentials (Fill with your credentials)
-define('CLOUDINARY_CLOUD_NAME', 'YOUR_CLOUD_NAME');
-define('CLOUDINARY_API_KEY', 'YOUR_API_KEY');
-define('CLOUDINARY_API_SECRET', 'YOUR_API_SECRET');
+// Cloudinary Credentials
+define('CLOUDINARY_CLOUD_NAME', 'mfoebmr1');
+define('CLOUDINARY_API_KEY', '515744639224261');
+define('CLOUDINARY_API_SECRET', 'vaqXSnHCIUjv81Wm7LBceZ8ixdY');
