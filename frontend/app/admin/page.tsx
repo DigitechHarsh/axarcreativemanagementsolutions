@@ -18,14 +18,10 @@ import {
   AlertCircle, 
   Loader2,
   X,
-  Mail,
-  Clock,
-  TrendingUp,
-  ShieldCheck,
+  Menu,
   Globe,
   RefreshCw,
-  FolderKanban,
-  Check
+  ShieldCheck
 } from "lucide-react";
 
 interface Lead {
@@ -69,6 +65,9 @@ const API_BASE = "https://acms.harshaicreations.com/api.php";
 export default function AdminDashboardPage() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [checkingAuth, setCheckingAuth] = useState<boolean>(true);
+
+  // Mobile Menu Drawer State
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   // Login Form
   const [username, setUsername] = useState<string>("");
@@ -199,6 +198,7 @@ export default function AdminDashboardPage() {
     setIsLoggedIn(false);
     setUsername("");
     setPassword("");
+    setIsMobileMenuOpen(false);
   };
 
   // -------------------------------------------------------------
@@ -368,6 +368,12 @@ export default function AdminDashboardPage() {
     }
   };
 
+  // Switch tab & auto-close mobile drawer
+  const switchTab = (tab: "dashboard" | "leads" | "services" | "projects") => {
+    setActiveTab(tab);
+    setIsMobileMenuOpen(false);
+  };
+
   // Stats Breakdown for Dashboard
   const newLeadsCount = leads.filter(l => l.status === "new").length;
   const contactedLeadsCount = leads.filter(l => l.status === "contacted").length;
@@ -461,7 +467,7 @@ export default function AdminDashboardPage() {
   }
 
   // -------------------------------------------------------------
-  // RENDER: MAIN ADMIN DASHBOARD (White Theme with Left Vertical Sidebar)
+  // RENDER: MAIN ADMIN DASHBOARD (Mobile + Tablet Responsive White Theme)
   // -------------------------------------------------------------
   return (
     <div className="min-h-screen bg-[#f8fafc] text-gray-800 font-sans flex flex-col md:flex-row">
@@ -474,9 +480,52 @@ export default function AdminDashboardPage() {
       )}
 
       {/* ----------------------------------------------------------- */}
-      {/* LEFT VERTICAL SIDEBAR */}
+      {/* MOBILE / TABLET TOP HEADER BAR (< md) */}
       {/* ----------------------------------------------------------- */}
-      <aside className="w-full md:w-64 lg:w-72 bg-white border-r border-gray-200 flex flex-col shrink-0 md:sticky md:top-0 md:h-screen z-30 shadow-sm">
+      <div className="md:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-40 shadow-sm">
+        <div className="flex items-center">
+          <Image
+            src="/logo.png"
+            alt="Axar Mark"
+            width={34}
+            height={34}
+            className="object-contain h-8 w-auto"
+            priority
+          />
+          <Image
+            src="/logotext.png"
+            alt="Axar Creative Solutions"
+            width={120}
+            height={28}
+            className="object-contain h-5 w-auto -ml-1"
+            priority
+          />
+        </div>
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="p-2 text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
+          aria-label="Toggle menu"
+        >
+          {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+      </div>
+
+      {/* Mobile Backdrop Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          onClick={() => setIsMobileMenuOpen(false)} 
+          className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 md:hidden"
+        />
+      )}
+
+      {/* ----------------------------------------------------------- */}
+      {/* VERTICAL SIDEBAR (Desktop Fixed / Mobile Slide-Over Drawer) */}
+      {/* ----------------------------------------------------------- */}
+      <aside className={`
+        fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-200 flex flex-col transition-transform duration-300 ease-in-out shadow-xl md:shadow-sm
+        md:static md:translate-x-0 md:w-64 lg:w-72 md:sticky md:top-0 md:h-screen md:shrink-0
+        ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+      `}>
         {/* Brand Header */}
         <div className="p-6 border-b border-gray-100 flex items-center justify-between">
           <div className="flex items-center">
@@ -497,6 +546,12 @@ export default function AdminDashboardPage() {
               priority
             />
           </div>
+          <button
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="md:hidden text-gray-400 hover:text-gray-700 p-1"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
         {/* Sidebar Nav Items */}
@@ -507,8 +562,8 @@ export default function AdminDashboardPage() {
 
           {/* 1. Dashboard Tab */}
           <button
-            onClick={() => setActiveTab("dashboard")}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+            onClick={() => switchTab("dashboard")}
+            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
               activeTab === "dashboard"
                 ? "bg-primary text-white shadow-md shadow-primary/25"
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
@@ -522,8 +577,8 @@ export default function AdminDashboardPage() {
 
           {/* 2. Leads Tab */}
           <button
-            onClick={() => setActiveTab("leads")}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+            onClick={() => switchTab("leads")}
+            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
               activeTab === "leads"
                 ? "bg-primary text-white shadow-md shadow-primary/25"
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
@@ -544,8 +599,8 @@ export default function AdminDashboardPage() {
 
           {/* 3. Manage Services Tab */}
           <button
-            onClick={() => setActiveTab("services")}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+            onClick={() => switchTab("services")}
+            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
               activeTab === "services"
                 ? "bg-primary text-white shadow-md shadow-primary/25"
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
@@ -564,8 +619,8 @@ export default function AdminDashboardPage() {
 
           {/* 4. Manage Projects Tab */}
           <button
-            onClick={() => setActiveTab("projects")}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+            onClick={() => switchTab("projects")}
+            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
               activeTab === "projects"
                 ? "bg-primary text-white shadow-md shadow-primary/25"
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
@@ -595,7 +650,7 @@ export default function AdminDashboardPage() {
 
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center px-4 py-2.5 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 transition-colors"
+            className="w-full flex items-center justify-center px-4 py-2.5 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5 mr-2" /> Logout
           </button>
@@ -606,8 +661,8 @@ export default function AdminDashboardPage() {
       {/* MAIN CONTENT AREA */}
       {/* ----------------------------------------------------------- */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Top Navbar */}
-        <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-20 shadow-sm">
+        {/* Desktop Header */}
+        <header className="hidden md:flex bg-white border-b border-gray-200 px-6 py-4 items-center justify-between sticky top-0 z-20 shadow-xs">
           <div>
             <h1 className="text-xl font-heading font-bold text-gray-900 capitalize">
               {activeTab === "dashboard" && "Dashboard Overview"}
@@ -622,7 +677,7 @@ export default function AdminDashboardPage() {
             <button
               onClick={fetchAllData}
               disabled={dataLoading}
-              className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
               title="Refresh Data"
             >
               <RefreshCw className={`w-4 h-4 ${dataLoading ? "animate-spin text-primary" : ""}`} />
@@ -635,7 +690,7 @@ export default function AdminDashboardPage() {
         </header>
 
         {/* Content Body */}
-        <main className="p-6 md:p-8 flex-1 overflow-y-auto">
+        <main className="p-4 sm:p-6 md:p-8 flex-1 overflow-y-auto">
           {dataLoading && leads.length === 0 && (
             <div className="flex items-center justify-center py-20">
               <Loader2 className="w-8 h-8 animate-spin text-primary mr-3" />
@@ -647,13 +702,13 @@ export default function AdminDashboardPage() {
           {/* TAB 1: DASHBOARD OVERVIEW */}
           {/* ========================================================= */}
           {activeTab === "dashboard" && (
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
               {/* Stat Metric Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
                 {/* 1. Total Leads */}
                 <div 
-                  onClick={() => setActiveTab("leads")}
-                  className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-primary/40 hover:shadow-md transition-all cursor-pointer group"
+                  onClick={() => switchTab("leads")}
+                  className="bg-white p-5 sm:p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-primary/40 hover:shadow-md transition-all cursor-pointer group"
                 >
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Leads</span>
@@ -672,8 +727,8 @@ export default function AdminDashboardPage() {
 
                 {/* 2. Total Services */}
                 <div 
-                  onClick={() => setActiveTab("services")}
-                  className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-primary/40 hover:shadow-md transition-all cursor-pointer group"
+                  onClick={() => switchTab("services")}
+                  className="bg-white p-5 sm:p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-primary/40 hover:shadow-md transition-all cursor-pointer group"
                 >
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Active Services</span>
@@ -687,8 +742,8 @@ export default function AdminDashboardPage() {
 
                 {/* 3. Portfolio Projects */}
                 <div 
-                  onClick={() => setActiveTab("projects")}
-                  className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-primary/40 hover:shadow-md transition-all cursor-pointer group"
+                  onClick={() => switchTab("projects")}
+                  className="bg-white p-5 sm:p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-primary/40 hover:shadow-md transition-all cursor-pointer group"
                 >
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Portfolio Items</span>
@@ -703,7 +758,7 @@ export default function AdminDashboardPage() {
                 </div>
 
                 {/* 4. Closed Deals */}
-                <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                <div className="bg-white p-5 sm:p-6 rounded-2xl border border-gray-200 shadow-sm">
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Resolved Leads</span>
                     <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600">
@@ -716,12 +771,12 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Quick Actions Bar */}
-              <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white p-6 rounded-2xl shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white p-5 sm:p-6 rounded-2xl shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                   <h3 className="text-lg font-heading font-bold mb-1">Quick Content Actions</h3>
                   <p className="text-gray-300 text-xs">Create new services or portfolio showcases directly from here.</p>
                 </div>
-                <div className="flex items-center space-x-3 w-full md:w-auto">
+                <div className="flex items-center space-x-3 w-full sm:w-auto">
                   <button
                     onClick={() => {
                       setServiceForm({
@@ -734,9 +789,9 @@ export default function AdminDashboardPage() {
                       });
                       setIsServiceModalOpen(true);
                     }}
-                    className="flex-1 md:flex-initial bg-primary hover:bg-red-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition-all flex items-center justify-center"
+                    className="flex-1 sm:flex-initial bg-primary hover:bg-red-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition-all flex items-center justify-center cursor-pointer"
                   >
-                    <Plus className="w-4 h-4 mr-1.5" /> + Add Service
+                    <Plus className="w-4 h-4 mr-1.5" /> Add Service
                   </button>
                   <button
                     onClick={() => {
@@ -753,30 +808,30 @@ export default function AdminDashboardPage() {
                       });
                       setIsProjectModalOpen(true);
                     }}
-                    className="flex-1 md:flex-initial bg-white hover:bg-gray-100 text-gray-900 text-xs font-bold px-4 py-2.5 rounded-xl shadow transition-all flex items-center justify-center"
+                    className="flex-1 sm:flex-initial bg-white hover:bg-gray-100 text-gray-900 text-xs font-bold px-4 py-2.5 rounded-xl shadow transition-all flex items-center justify-center cursor-pointer"
                   >
-                    <Plus className="w-4 h-4 mr-1.5" /> + Add Project
+                    <Plus className="w-4 h-4 mr-1.5" /> Add Project
                   </button>
                 </div>
               </div>
 
               {/* Recent Inquiries Preview */}
               <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+                <div className="p-5 sm:p-6 border-b border-gray-100 flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-heading font-bold text-gray-900">Recent Inquiries</h3>
                     <p className="text-xs text-gray-500 mt-0.5">Latest leads submitted from website contact forms.</p>
                   </div>
                   <button
-                    onClick={() => setActiveTab("leads")}
-                    className="text-xs font-bold text-primary hover:text-red-700"
+                    onClick={() => switchTab("leads")}
+                    className="text-xs font-bold text-primary hover:text-red-700 cursor-pointer"
                   >
                     View All Leads &rarr;
                   </button>
                 </div>
 
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse text-sm">
+                  <table className="w-full text-left border-collapse text-sm min-w-[500px]">
                     <thead>
                       <tr className="bg-gray-50 border-b border-gray-100 text-gray-500 text-xs uppercase tracking-wider">
                         <th className="p-4 font-semibold">Date</th>
@@ -851,7 +906,7 @@ export default function AdminDashboardPage() {
 
               <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse text-sm">
+                  <table className="w-full text-left border-collapse text-sm min-w-[650px]">
                     <thead>
                       <tr className="bg-gray-50 border-b border-gray-200 text-gray-600 text-xs uppercase tracking-wider">
                         <th className="p-4 font-semibold">Date</th>
@@ -912,7 +967,7 @@ export default function AdminDashboardPage() {
                             <td className="p-4 align-top text-right whitespace-nowrap">
                               <button
                                 onClick={() => handleDeleteLead(sub.id)}
-                                className="text-gray-400 hover:text-red-600 transition-colors p-1.5 rounded hover:bg-red-50"
+                                className="text-gray-400 hover:text-red-600 transition-colors p-1.5 rounded hover:bg-red-50 cursor-pointer"
                                 title="Delete Lead"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -950,15 +1005,15 @@ export default function AdminDashboardPage() {
                     });
                     setIsServiceModalOpen(true);
                   }}
-                  className="bg-primary hover:bg-red-800 text-white font-heading font-bold px-4 py-2.5 rounded-xl shadow-md shadow-primary/20 flex items-center text-xs transition-all"
+                  className="bg-primary hover:bg-red-800 text-white font-heading font-bold px-4 py-2.5 rounded-xl shadow-md shadow-primary/20 flex items-center text-xs transition-all cursor-pointer"
                 >
-                  <Plus className="w-4 h-4 mr-1.5" /> + Add New Service
+                  <Plus className="w-4 h-4 mr-1.5" /> Add New Service
                 </button>
               </div>
 
               <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse text-sm">
+                  <table className="w-full text-left border-collapse text-sm min-w-[700px]">
                     <thead>
                       <tr className="bg-gray-50 border-b border-gray-200 text-gray-600 text-xs uppercase tracking-wider">
                         <th className="p-4 font-semibold">Order</th>
@@ -972,7 +1027,7 @@ export default function AdminDashboardPage() {
                     <tbody className="divide-y divide-gray-100">
                       {services.length === 0 ? (
                         <tr>
-                          <td colSpan={6} className="p-12 text-center text-gray-400">No services found. Click &quot;+ Add New Service&quot; to create one.</td>
+                          <td colSpan={6} className="p-12 text-center text-gray-400">No services found. Click &quot;Add New Service&quot; to create one.</td>
                         </tr>
                       ) : (
                         services.map((srv) => (
@@ -1013,14 +1068,14 @@ export default function AdminDashboardPage() {
                                   setServiceForm(srv);
                                   setIsServiceModalOpen(true);
                                 }}
-                                className="text-blue-600 hover:text-blue-800 p-1.5 mr-1 transition-colors inline-block rounded hover:bg-blue-50"
+                                className="text-blue-600 hover:text-blue-800 p-1.5 mr-1 transition-colors inline-block rounded hover:bg-blue-50 cursor-pointer"
                                 title="Edit Service"
                               >
                                 <Edit className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => srv.id && handleDeleteService(srv.id)}
-                                className="text-gray-400 hover:text-red-600 p-1.5 transition-colors inline-block rounded hover:bg-red-50"
+                                className="text-gray-400 hover:text-red-600 p-1.5 transition-colors inline-block rounded hover:bg-red-50 cursor-pointer"
                                 title="Delete Service"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -1061,15 +1116,15 @@ export default function AdminDashboardPage() {
                     });
                     setIsProjectModalOpen(true);
                   }}
-                  className="bg-primary hover:bg-red-800 text-white font-heading font-bold px-4 py-2.5 rounded-xl shadow-md shadow-primary/20 flex items-center text-xs transition-all"
+                  className="bg-primary hover:bg-red-800 text-white font-heading font-bold px-4 py-2.5 rounded-xl shadow-md shadow-primary/20 flex items-center text-xs transition-all cursor-pointer"
                 >
-                  <Plus className="w-4 h-4 mr-1.5" /> + Add New Project
+                  <Plus className="w-4 h-4 mr-1.5" /> Add New Project
                 </button>
               </div>
 
               <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse text-sm">
+                  <table className="w-full text-left border-collapse text-sm min-w-[750px]">
                     <thead>
                       <tr className="bg-gray-50 border-b border-gray-200 text-gray-600 text-xs uppercase tracking-wider">
                         <th className="p-4 font-semibold">Order</th>
@@ -1085,7 +1140,7 @@ export default function AdminDashboardPage() {
                     <tbody className="divide-y divide-gray-100">
                       {projects.length === 0 ? (
                         <tr>
-                          <td colSpan={8} className="p-12 text-center text-gray-400">No projects found. Click &quot;+ Add New Project&quot; to create one.</td>
+                          <td colSpan={8} className="p-12 text-center text-gray-400">No projects found. Click &quot;Add New Project&quot; to create one.</td>
                         </tr>
                       ) : (
                         projects.map((proj) => (
@@ -1140,14 +1195,14 @@ export default function AdminDashboardPage() {
                                   setProjectForm(proj);
                                   setIsProjectModalOpen(true);
                                 }}
-                                className="text-blue-600 hover:text-blue-800 p-1.5 mr-1 transition-colors inline-block rounded hover:bg-blue-50"
+                                className="text-blue-600 hover:text-blue-800 p-1.5 mr-1 transition-colors inline-block rounded hover:bg-blue-50 cursor-pointer"
                                 title="Edit Project"
                               >
                                 <Edit className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => proj.id && handleDeleteProject(proj.id)}
-                                className="text-gray-400 hover:text-red-600 p-1.5 transition-colors inline-block rounded hover:bg-red-50"
+                                className="text-gray-400 hover:text-red-600 p-1.5 transition-colors inline-block rounded hover:bg-red-50 cursor-pointer"
                                 title="Delete Project"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -1169,18 +1224,18 @@ export default function AdminDashboardPage() {
       {/* MODAL: ADD / EDIT SERVICE */}
       {/* ----------------------------------------------------------- */}
       {isServiceModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-gray-200 rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden">
-            <div className="bg-gray-50 px-6 py-4 flex justify-between items-center border-b border-gray-200">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white border border-gray-200 rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden max-h-[90vh] flex flex-col my-auto">
+            <div className="bg-gray-50 px-6 py-4 flex justify-between items-center border-b border-gray-200 shrink-0">
               <h3 className="text-lg font-heading font-bold text-gray-900">
                 {serviceForm.id ? "Edit Service" : "Add New Service"}
               </h3>
-              <button onClick={() => setIsServiceModalOpen(false)} className="text-gray-400 hover:text-gray-700">
+              <button onClick={() => setIsServiceModalOpen(false)} className="text-gray-400 hover:text-gray-700 cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveService} className="p-6 space-y-4">
+            <form onSubmit={handleSaveService} className="p-6 space-y-4 overflow-y-auto flex-1">
               <div>
                 <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Service Title *</label>
                 <input
@@ -1193,7 +1248,7 @@ export default function AdminDashboardPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Category *</label>
                   <select
@@ -1278,14 +1333,14 @@ export default function AdminDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setIsServiceModalOpen(false)}
-                  className="px-4 py-2.5 text-sm text-gray-600 hover:text-gray-900 rounded-xl font-medium"
+                  className="px-4 py-2.5 text-sm text-gray-600 hover:text-gray-900 rounded-xl font-medium cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={serviceSaving || serviceUploading}
-                  className="px-5 py-2.5 text-sm bg-primary hover:bg-red-800 text-white rounded-xl font-bold shadow-md shadow-primary/25 flex items-center disabled:opacity-50"
+                  className="px-5 py-2.5 text-sm bg-primary hover:bg-red-800 text-white rounded-xl font-bold shadow-md shadow-primary/25 flex items-center disabled:opacity-50 cursor-pointer"
                 >
                   {serviceSaving ? <Loader2 className="w-4 h-4 animate-spin mr-1.5" /> : null}
                   Save Service
@@ -1300,18 +1355,18 @@ export default function AdminDashboardPage() {
       {/* MODAL: ADD / EDIT PROJECT (With Service Dropdown) */}
       {/* ----------------------------------------------------------- */}
       {isProjectModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-gray-200 rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden">
-            <div className="bg-gray-50 px-6 py-4 flex justify-between items-center border-b border-gray-200">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white border border-gray-200 rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden max-h-[90vh] flex flex-col my-auto">
+            <div className="bg-gray-50 px-6 py-4 flex justify-between items-center border-b border-gray-200 shrink-0">
               <h3 className="text-lg font-heading font-bold text-gray-900">
                 {projectForm.id ? "Edit Project" : "Add New Project"}
               </h3>
-              <button onClick={() => setIsProjectModalOpen(false)} className="text-gray-400 hover:text-gray-700">
+              <button onClick={() => setIsProjectModalOpen(false)} className="text-gray-400 hover:text-gray-700 cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveProject} className="p-6 space-y-4">
+            <form onSubmit={handleSaveProject} className="p-6 space-y-4 overflow-y-auto flex-1">
               {/* Service Dropdown */}
               <div>
                 <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
@@ -1343,7 +1398,7 @@ export default function AdminDashboardPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Category Filter Tag *</label>
                   <input
@@ -1441,14 +1496,14 @@ export default function AdminDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setIsProjectModalOpen(false)}
-                  className="px-4 py-2.5 text-sm text-gray-600 hover:text-gray-900 rounded-xl font-medium"
+                  className="px-4 py-2.5 text-sm text-gray-600 hover:text-gray-900 rounded-xl font-medium cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={projectSaving || projectUploading}
-                  className="px-5 py-2.5 text-sm bg-primary hover:bg-red-800 text-white rounded-xl font-bold shadow-md shadow-primary/25 flex items-center disabled:opacity-50"
+                  className="px-5 py-2.5 text-sm bg-primary hover:bg-red-800 text-white rounded-xl font-bold shadow-md shadow-primary/25 flex items-center disabled:opacity-50 cursor-pointer"
                 >
                   {projectSaving ? <Loader2 className="w-4 h-4 animate-spin mr-1.5" /> : null}
                   Save Project
