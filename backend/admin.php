@@ -192,15 +192,12 @@ if ($is_logged_in) {
     // -------------------------------------------------------------
     // FETCH DATA FOR ACTIVE VIEWS
     // -------------------------------------------------------------
-    // Fetch all services for dropdowns and listing
     $services_stmt = $pdo->query("SELECT * FROM services ORDER BY display_order ASC, id ASC");
     $all_services = $services_stmt->fetchAll();
 
-    // Fetch submissions
     $submissions_stmt = $pdo->query("SELECT * FROM contact_submissions ORDER BY submitted_at DESC");
     $submissions = $submissions_stmt->fetchAll();
 
-    // Fetch projects with service join
     $projects_stmt = $pdo->query("
         SELECT p.*, s.title AS service_title, s.category AS service_category 
         FROM projects p 
@@ -473,9 +470,7 @@ if ($is_logged_in) {
                                         </td>
                                         <td class="p-4 align-top whitespace-nowrap">
                                             <?php if (!empty($srv['image_url'])): ?>
-                                                <div class="text-xs text-gray-400 font-mono truncate max-w-[120px]" title="<?php echo htmlspecialchars($srv['image_url']); ?>">
-                                                    <?php echo htmlspecialchars(basename($srv['image_url'])); ?>
-                                                </div>
+                                                <img src="<?php echo htmlspecialchars($srv['image_url']); ?>" alt="Service thumbnail" class="w-12 h-12 object-cover rounded border border-gray-200 shadow-sm" onerror="this.style.display='none'">
                                             <?php else: ?>
                                                 <span class="text-xs text-gray-400">Default</span>
                                             <?php endif; ?>
@@ -530,6 +525,7 @@ if ($is_logged_in) {
                                 <th class="p-4 font-semibold">Linked Service</th>
                                 <th class="p-4 font-semibold">Category Tag</th>
                                 <th class="p-4 font-semibold">Description</th>
+                                <th class="p-4 font-semibold">Image</th>
                                 <th class="p-4 font-semibold">Featured</th>
                                 <th class="p-4 font-semibold text-right">Actions</th>
                             </tr>
@@ -537,7 +533,7 @@ if ($is_logged_in) {
                         <tbody class="divide-y divide-gray-200 text-sm">
                             <?php if (empty($projects)): ?>
                                 <tr>
-                                    <td colspan="7" class="p-12 text-center text-gray-500">No projects found. Click "+ Add New Project" to create one.</td>
+                                    <td colspan="8" class="p-12 text-center text-gray-500">No projects found. Click "+ Add New Project" to create one.</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($projects as $proj): ?>
@@ -569,6 +565,13 @@ if ($is_logged_in) {
                                         </td>
                                         <td class="p-4 align-top max-w-sm text-gray-600">
                                             <?php echo htmlspecialchars($proj['description']); ?>
+                                        </td>
+                                        <td class="p-4 align-top whitespace-nowrap">
+                                            <?php if (!empty($proj['image_url'])): ?>
+                                                <img src="<?php echo htmlspecialchars($proj['image_url']); ?>" alt="Project thumbnail" class="w-12 h-12 object-cover rounded border border-gray-200 shadow-sm" onerror="this.style.display='none'">
+                                            <?php else: ?>
+                                                <span class="text-xs text-gray-400">Default</span>
+                                            <?php endif; ?>
                                         </td>
                                         <td class="p-4 align-top whitespace-nowrap">
                                             <?php if ($proj['featured']): ?>
@@ -642,9 +645,21 @@ if ($is_logged_in) {
                     <textarea id="service_short_desc" name="short_desc" rows="2" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" placeholder="Brief summary of the service..."></textarea>
                 </div>
 
+                <!-- Image Upload / URL Section -->
                 <div>
-                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Image URL / Path</label>
-                    <input type="text" id="service_image_url" name="image_url" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" placeholder="/images/carousel_business_consulting_1788288885191.jpg">
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Service Image</label>
+                    <div class="flex items-center space-x-3 mb-2">
+                        <label class="cursor-pointer inline-flex items-center px-3 py-1.5 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-lg text-xs font-semibold text-gray-700 transition-colors">
+                            <svg class="w-4 h-4 mr-1 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                            Upload File (Cloudinary)
+                            <input type="file" accept="image/*" class="hidden" onchange="uploadImageHandler(this, 'service_image_url', 'service_img_preview', 'service_upload_status')">
+                        </label>
+                        <span id="service_upload_status" class="text-xs text-gray-500"></span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <input type="text" id="service_image_url" name="image_url" class="flex-1 border border-gray-300 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" placeholder="Or enter image URL directly...">
+                        <img id="service_img_preview" src="" alt="Preview" class="w-10 h-10 object-cover rounded border border-gray-200 hidden">
+                    </div>
                 </div>
 
                 <div>
@@ -707,15 +722,26 @@ if ($is_logged_in) {
                     <textarea id="project_description" name="description" rows="3" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" placeholder="Outcome and impact of this project..."></textarea>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Image URL / Placehold</label>
-                        <input type="text" id="project_image_url" name="image_url" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" placeholder="Optional image URL">
+                <!-- Image Upload / URL Section -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Project Image</label>
+                    <div class="flex items-center space-x-3 mb-2">
+                        <label class="cursor-pointer inline-flex items-center px-3 py-1.5 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-lg text-xs font-semibold text-gray-700 transition-colors">
+                            <svg class="w-4 h-4 mr-1 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                            Upload File (Cloudinary)
+                            <input type="file" accept="image/*" class="hidden" onchange="uploadImageHandler(this, 'project_image_url', 'project_img_preview', 'project_upload_status')">
+                        </label>
+                        <span id="project_upload_status" class="text-xs text-gray-500"></span>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Project Live URL</label>
-                        <input type="text" id="project_project_url" name="project_url" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" placeholder="https://example.com">
+                    <div class="flex items-center space-x-3">
+                        <input type="text" id="project_image_url" name="image_url" class="flex-1 border border-gray-300 rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" placeholder="Or enter image URL directly...">
+                        <img id="project_img_preview" src="" alt="Preview" class="w-10 h-10 object-cover rounded border border-gray-200 hidden">
                     </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Project Live URL</label>
+                    <input type="text" id="project_project_url" name="project_url" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none" placeholder="https://example.com">
                 </div>
 
                 <div class="flex items-center space-x-2 pt-2">
@@ -732,6 +758,43 @@ if ($is_logged_in) {
     </div>
 
     <script>
+        // Upload Image Helper using Fetch API
+        async function uploadImageHandler(inputEl, inputTargetId, previewImgId, statusTextId) {
+            if (!inputEl.files || inputEl.files.length === 0) return;
+            const file = inputEl.files[0];
+            const statusEl = document.getElementById(statusTextId);
+            const targetInput = document.getElementById(inputTargetId);
+            const previewImg = document.getElementById(previewImgId);
+
+            statusEl.innerText = "Uploading to Cloudinary...";
+            statusEl.className = "text-xs text-blue-600 font-semibold";
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                const response = await fetch('upload.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (data.success && data.url) {
+                    targetInput.value = data.url;
+                    previewImg.src = data.url;
+                    previewImg.classList.remove('hidden');
+                    statusEl.innerText = "✓ Uploaded successfully!";
+                    statusEl.className = "text-xs text-green-600 font-semibold";
+                } else {
+                    statusEl.innerText = "Upload failed: " + (data.error || 'Unknown error');
+                    statusEl.className = "text-xs text-red-600 font-semibold";
+                }
+            } catch (err) {
+                statusEl.innerText = "Network upload error";
+                statusEl.className = "text-xs text-red-600 font-semibold";
+            }
+        }
+
         // Service Modal Operations
         function openServiceModal() {
             document.getElementById('serviceModalTitle').innerText = 'Add New Service';
@@ -742,6 +805,8 @@ if ($is_logged_in) {
             document.getElementById('service_image_url').value = '';
             document.getElementById('service_details').value = '';
             document.getElementById('service_display_order').value = '0';
+            document.getElementById('service_upload_status').innerText = '';
+            document.getElementById('service_img_preview').classList.add('hidden');
             document.getElementById('serviceModal').classList.remove('hidden');
         }
 
@@ -754,6 +819,15 @@ if ($is_logged_in) {
             document.getElementById('service_image_url').value = data.image_url || '';
             document.getElementById('service_details').value = data.details || '';
             document.getElementById('service_display_order').value = data.display_order || '0';
+            document.getElementById('service_upload_status').innerText = '';
+            
+            const preview = document.getElementById('service_img_preview');
+            if (data.image_url) {
+                preview.src = data.image_url;
+                preview.classList.remove('hidden');
+            } else {
+                preview.classList.add('hidden');
+            }
             document.getElementById('serviceModal').classList.remove('hidden');
         }
 
@@ -773,6 +847,8 @@ if ($is_logged_in) {
             document.getElementById('project_project_url').value = '';
             document.getElementById('project_featured').checked = false;
             document.getElementById('project_display_order').value = '0';
+            document.getElementById('project_upload_status').innerText = '';
+            document.getElementById('project_img_preview').classList.add('hidden');
             document.getElementById('projectModal').classList.remove('hidden');
         }
 
@@ -787,6 +863,15 @@ if ($is_logged_in) {
             document.getElementById('project_project_url').value = data.project_url || '';
             document.getElementById('project_featured').checked = (data.featured == 1);
             document.getElementById('project_display_order').value = data.display_order || '0';
+            document.getElementById('project_upload_status').innerText = '';
+
+            const preview = document.getElementById('project_img_preview');
+            if (data.image_url) {
+                preview.src = data.image_url;
+                preview.classList.remove('hidden');
+            } else {
+                preview.classList.add('hidden');
+            }
             document.getElementById('projectModal').classList.remove('hidden');
         }
 
