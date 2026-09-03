@@ -1,23 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Filter } from "lucide-react";
 import TypewriterText from "../../components/TypewriterText";
 
-type Category = "All" | "Consulting Case Studies" | "AI Video Ads" | "Websites";
+interface ProjectItem {
+  id: number;
+  service_id?: number | null;
+  service_title?: string | null;
+  title: string;
+  category: string;
+  desc: string;
+  image_url?: string;
+  project_url?: string;
+  tagStyle: string;
+}
 
-const categories: Category[] = [
-  "All",
-  "Consulting Case Studies",
-  "AI Video Ads",
-  "Websites"
-];
-
-const portfolioItems = [
+const defaultPortfolioItems: ProjectItem[] = [
   {
     id: 1,
+    service_id: 3,
+    service_title: "Supply Chain",
     title: "Global Supply Chain Overhaul",
     category: "Consulting Case Studies",
     desc: "Streamlined logistics for a multinational FMCG, saving 15% in operational costs.",
@@ -25,6 +30,8 @@ const portfolioItems = [
   },
   {
     id: 2,
+    service_id: 5,
+    service_title: "AI Video Ads & Creative",
     title: "Cinematic Product Launch",
     category: "AI Video Ads",
     desc: "A fully CGI/AI-generated commercial that drove 300% ROAS on social platforms.",
@@ -32,21 +39,26 @@ const portfolioItems = [
   },
   {
     id: 3,
+    service_id: 6,
+    service_title: "Website Development",
     title: "E-Commerce Transformation",
     category: "Websites",
     desc: "Next.js & React powered headless commerce solution with 99/100 Core Web Vitals.",
     tagStyle: "bg-accent/20 text-accent border border-accent/30",
   },
-
   {
-    id: 5,
+    id: 4,
+    service_id: 1,
+    service_title: "ISO Management Systems",
     title: "ISO 27001 Implementation",
     category: "Consulting Case Studies",
     desc: "Guided a tech startup through information security frameworks to achieve ISO certification in 4 months.",
     tagStyle: "bg-primary/20 text-primary border border-primary/30",
   },
   {
-    id: 6,
+    id: 5,
+    service_id: 5,
+    service_title: "AI Video Ads & Creative",
     title: "UGC Social Campaign",
     category: "AI Video Ads",
     desc: "High-volume AI-generated UGC variations for A/B testing at scale.",
@@ -55,7 +67,51 @@ const portfolioItems = [
 ];
 
 export default function PortfolioPage() {
-  const [activeCategory, setActiveCategory] = useState<Category>("All");
+  const [portfolioItems, setPortfolioItems] = useState<ProjectItem[]>(defaultPortfolioItems);
+  const [categories, setCategories] = useState<string[]>(["All", "Consulting Case Studies", "AI Video Ads", "Websites"]);
+  const [activeCategory, setActiveCategory] = useState<string>("All");
+
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        const res = await fetch("https://acms.harshaicreations.com/projects.php");
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          const apiItems: ProjectItem[] = data.data.map((item: {
+            id: number;
+            service_id?: number;
+            service_title?: string;
+            title: string;
+            category_name: string;
+            description: string;
+            image_url?: string;
+            project_url?: string;
+            tag_style?: string;
+          }) => ({
+            id: item.id,
+            service_id: item.service_id,
+            service_title: item.service_title,
+            title: item.title,
+            category: item.category_name || "General",
+            desc: item.description,
+            image_url: item.image_url,
+            project_url: item.project_url,
+            tagStyle: item.tag_style || "bg-accent/20 text-accent border border-accent/30"
+          }));
+
+          setPortfolioItems(apiItems);
+
+          // Build dynamic unique categories
+          const uniqueCats = Array.from(new Set(apiItems.map(p => p.category)));
+          setCategories(["All", ...uniqueCats]);
+        }
+      } catch (err) {
+        console.warn("Using fallback static portfolio items:", err);
+      }
+    }
+    fetchProjects();
+  }, []);
 
   const filteredItems = portfolioItems.filter(
     item => activeCategory === "All" || item.category === activeCategory
@@ -133,28 +189,54 @@ export default function PortfolioPage() {
                 >
                   <div className="aspect-video bg-surface-alt relative overflow-hidden">
                     <div className="absolute inset-0 flex items-center justify-center text-text-secondary opacity-50 group-hover:scale-110 transition-transform duration-500">
-                      <Image 
-                        src={`https://placehold.co/800x450/1C1C1C/A0A0A0?text=${item.title.replace(/ /g, '+')}`} 
-                        alt={item.title} 
-                        fill 
-                        className="object-cover" 
-                      />
+                      {item.image_url ? (
+                        <Image 
+                          src={item.image_url} 
+                          alt={item.title} 
+                          fill 
+                          className="object-cover" 
+                        />
+                      ) : (
+                        <Image 
+                          src={`https://placehold.co/800x450/1C1C1C/A0A0A0?text=${encodeURIComponent(item.title)}`} 
+                          alt={item.title} 
+                          fill 
+                          className="object-cover" 
+                        />
+                      )}
                     </div>
                   </div>
                   
                   <div className="p-6 flex flex-col flex-grow">
-                    <div className="mb-4">
+                    <div className="mb-4 flex flex-wrap gap-2 items-center">
                       <span className={`inline-block px-3 py-1 text-xs font-bold rounded-full ${item.tagStyle}`}>
                         {item.category}
                       </span>
+                      {item.service_title && (
+                        <span className="inline-block px-2.5 py-0.5 text-xs text-text-secondary bg-surface-alt rounded-md border border-border">
+                          {item.service_title}
+                        </span>
+                      )}
                     </div>
                     <h3 className="text-2xl font-heading font-bold mb-3">{item.title}</h3>
                     <p className="text-text-secondary text-sm mb-6 flex-grow">{item.desc}</p>
                     
-                    <div className="flex items-center text-accent font-semibold text-sm group-hover:text-accent-light transition-colors mt-auto">
-                      View Details
-                      <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                    </div>
+                    {item.project_url ? (
+                      <a 
+                        href={item.project_url} 
+                        target="_blank" 
+                        rel="noreferrer" 
+                        className="flex items-center text-accent font-semibold text-sm hover:text-accent-light transition-colors mt-auto"
+                      >
+                        View Project
+                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                      </a>
+                    ) : (
+                      <div className="flex items-center text-accent font-semibold text-sm group-hover:text-accent-light transition-colors mt-auto">
+                        View Details
+                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               ))}

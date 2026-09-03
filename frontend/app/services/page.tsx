@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import TypewriterText from "../../components/TypewriterText";
@@ -11,7 +11,16 @@ const revealVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
 };
 
-const consultingServices = [
+interface ServiceItem {
+  id?: number;
+  title: string;
+  category?: string;
+  desc: string;
+  image: string;
+  details: React.ReactNode;
+}
+
+const defaultConsultingServices: ServiceItem[] = [
   { 
     title: "ISO Management Systems", 
     desc: "End-to-end implementation and auditing for ISO 9001, 14001, 27001, and more.",
@@ -66,7 +75,7 @@ const consultingServices = [
   },
 ];
 
-const technicalServices = [
+const defaultTechnicalServices: ServiceItem[] = [
   {
     title: "AI Video Ads & Creative",
     desc: "User-Generated Content, CGI, and Cinematic narrative ads powered by AI generation.",
@@ -118,6 +127,54 @@ const technicalServices = [
 
 export default function ServicesPage() {
   const [activeSection, setActiveSection] = useState<"consulting" | "technical">("consulting");
+  const [consultingServices, setConsultingServices] = useState<ServiceItem[]>(defaultConsultingServices);
+  const [technicalServices, setTechnicalServices] = useState<ServiceItem[]>(defaultTechnicalServices);
+
+  useEffect(() => {
+    async function fetchServices() {
+      try {
+        const res = await fetch("https://acms.harshaicreations.com/services.php");
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          const apiConsulting: ServiceItem[] = [];
+          const apiTechnical: ServiceItem[] = [];
+
+          data.data.forEach((item: { id: number; title: string; category: string; short_desc: string; image_url?: string; details?: string }) => {
+            const lines = (item.details || "").split("\n").map(l => l.trim()).filter(Boolean);
+            const formattedItem: ServiceItem = {
+              id: item.id,
+              title: item.title,
+              category: item.category,
+              desc: item.short_desc,
+              image: item.image_url || (item.category === "Technical Expertise" ? "/images/carousel_tech_dev_1788288897978.jpg" : "/images/carousel_business_consulting_1788288885191.jpg"),
+              details: lines.length > 0 ? (
+                <ul className="list-disc pl-5 space-y-2">
+                  {lines.map((point, pIdx) => (
+                    <li key={pIdx}>{point}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-text-secondary">{item.short_desc}</p>
+              )
+            };
+
+            if (item.category === "Technical Expertise") {
+              apiTechnical.push(formattedItem);
+            } else {
+              apiConsulting.push(formattedItem);
+            }
+          });
+
+          if (apiConsulting.length > 0) setConsultingServices(apiConsulting);
+          if (apiTechnical.length > 0) setTechnicalServices(apiTechnical);
+        }
+      } catch (err) {
+        console.warn("Using fallback static services:", err);
+      }
+    }
+    fetchServices();
+  }, []);
 
   return (
     <div className="relative overflow-hidden bg-background">
@@ -177,7 +234,7 @@ export default function ServicesPage() {
             className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
           >
             {consultingServices.map((service, i) => (
-              <motion.div key={i} variants={revealVariants} className="h-full">
+              <motion.div key={service.id || i} variants={revealVariants} className="h-full">
                 <ServiceFlipCard 
                   title={service.title}
                   frontDesc={service.desc}
@@ -207,7 +264,7 @@ export default function ServicesPage() {
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
             {technicalServices.map((service, i) => (
-              <motion.div key={i} variants={revealVariants} className="h-full">
+              <motion.div key={service.id || i} variants={revealVariants} className="h-full">
                 <ServiceFlipCard 
                   title={service.title}
                   frontDesc={service.desc}
