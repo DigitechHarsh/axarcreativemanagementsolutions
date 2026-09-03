@@ -101,7 +101,7 @@ export default function Home() {
               <Code className="w-12 h-12 text-accent mb-6 relative z-10" />
               <h3 className="text-2xl font-heading font-bold mb-4 relative z-10">Technical Expertise</h3>
               <p className="text-text-secondary mb-6 relative z-10 line-clamp-3">
-                Cutting-edge digital solutions including AI Video Ads (UGC, CGI, Cinematic), Static & Dynamic Website Development, and Cybersecurity services.
+                Cutting-edge digital solutions including AI Video Ads (UGC, CGI, Cinematic) and Static & Dynamic Website Development.
               </p>
               <Link href="/services#technical" className="inline-flex items-center text-accent font-semibold group-hover:text-accent-light transition-colors relative z-10">
                 Explore Technical <ArrowRight className="ml-2 w-4 h-4" />

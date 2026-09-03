@@ -79,7 +79,7 @@ export default function PortfolioPage() {
             transition={{ delay: 0.1 }}
             className="text-lg text-text-secondary"
           >
-            A showcase of our consulting success stories, creative production, and cybersecurity excellence.
+            A showcase of our consulting success stories, creative production, and technical excellence.
           </motion.p>
         </div>
       </section>

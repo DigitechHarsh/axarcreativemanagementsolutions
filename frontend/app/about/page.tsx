@@ -28,7 +28,7 @@ export default function AboutPage() {
             transition={{ delay: 0.1 }}
             className="text-lg text-text-secondary"
           >
-            Bridging traditional business consulting with modern creative and cybersecurity technology.
+            Bridging traditional business consulting with modern creative and technical solutions.
           </motion.p>
         </div>
         <div className="container mx-auto px-6">
@@ -72,7 +72,7 @@ export default function AboutPage() {
                   At Axar Creative Management Solutions, we observed a critical gap in the modern business landscape. Traditional consulting firms excelled in process and compliance but struggled with digital agility, while tech agencies lacked the foundational business acumen to align code with core strategic objectives.
                 </p>
                 <p>
-                  We were founded to bridge this divide. We combine the rigorous methodology of ISO standards and Six Sigma with the cutting-edge capabilities of AI-driven creative production, full-stack web development, and uncompromising cybersecurity.
+                  We were founded to bridge this divide. We combine the rigorous methodology of ISO standards and Six Sigma with the cutting-edge capabilities of AI-driven creative production and full-stack web development.
                 </p>
                 <p className="font-serif italic text-xl text-text-primary border-l-4 border-accent pl-6 py-2 mt-8">
                   &quot;We don&apos;t just advise; we build, we secure, and we scale. We are your partner for business excellence.&quot;

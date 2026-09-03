@@ -196,7 +196,7 @@ export default function ServicesPage() {
           <div className="mb-16">
             <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">Technical Expertise Division</h2>
             <div className="w-16 h-1 bg-accent rounded-full" />
-            <p className="mt-4 text-text-secondary max-w-2xl">Specialized founder-led services blending creative production with rigorous cybersecurity.</p>
+            <p className="mt-4 text-text-secondary max-w-2xl">Specialized founder-led services blending creative production with rigorous methodology.</p>
           </div>
 
           <motion.div 
