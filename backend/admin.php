@@ -394,7 +394,7 @@ if ($is_logged_in) {
                                             </form>
                                         </td>
                                         <td class="p-4 align-top text-right">
-                                            <form method="POST" action="admin.php" onsubmit="return confirm('Are you sure you want to delete this lead?');">
+                                            <form method="POST" action="admin" onsubmit="return confirm('Are you sure you want to delete this lead?');">
                                                 <input type="hidden" name="delete_lead" value="1">
                                                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
                                                 <input type="hidden" name="id" value="<?php echo $sub['id']; ?>">
@@ -773,7 +773,7 @@ if ($is_logged_in) {
             formData.append('image', file);
 
             try {
-                const response = await fetch('upload.php', {
+                const response = await fetch('upload', {
                     method: 'POST',
                     body: formData
                 });

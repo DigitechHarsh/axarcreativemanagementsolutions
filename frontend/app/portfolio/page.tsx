@@ -74,7 +74,7 @@ export default function PortfolioPage() {
   useEffect(() => {
     async function fetchProjects() {
       try {
-        const res = await fetch("https://acms.harshaicreations.com/projects.php");
+        const res = await fetch("https://acms.harshaicreations.com/projects");
         if (!res.ok) return;
         const data = await res.json();
         if (data.success && Array.isArray(data.data) && data.data.length > 0) {

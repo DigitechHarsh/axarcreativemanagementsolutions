@@ -57,7 +57,7 @@ export default function ContactPage() {
     setErrorMessage("");
 
     try {
-      const response = await fetch("https://acms.harshaicreations.com/contact.php", {
+      const response = await fetch("https://acms.harshaicreations.com/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

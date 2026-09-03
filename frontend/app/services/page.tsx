@@ -133,7 +133,7 @@ export default function ServicesPage() {
   useEffect(() => {
     async function fetchServices() {
       try {
-        const res = await fetch("https://acms.harshaicreations.com/services.php");
+        const res = await fetch("https://acms.harshaicreations.com/services");
         if (!res.ok) return;
         const data = await res.json();
         if (data.success && Array.isArray(data.data) && data.data.length > 0) {
