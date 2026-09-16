@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Filter } from "lucide-react";
+import { ArrowRight, Filter, ShieldCheck, Sparkles } from "lucide-react";
 import TypewriterText from "../../components/TypewriterText";
 
 interface ProjectItem {
@@ -26,7 +27,7 @@ const defaultPortfolioItems: ProjectItem[] = [
     title: "Multi-Site IMS Certification (ISO 9001, 14001, 45001)",
     category: "ISO & IMS Consultancy",
     desc: "Complete Integrated Management System rollout across 3 manufacturing plants in Gujarat with zero non-conformances on final audit.",
-    tagStyle: "bg-primary/20 text-primary border border-primary/30",
+    tagStyle: "bg-primary/20 text-primary border border-primary/40",
   },
   {
     id: 2,
@@ -35,7 +36,7 @@ const defaultPortfolioItems: ProjectItem[] = [
     title: "NABL Accreditation for Chemical Testing Laboratory",
     category: "Laboratory & NABL",
     desc: "Laboratory layout design, SOP formulation, equipment validation, and NABL accreditation clearance in record 6-month timeframe.",
-    tagStyle: "bg-accent/20 text-accent border border-accent/30",
+    tagStyle: "bg-accent/20 text-accent border border-accent/40",
   },
   {
     id: 3,
@@ -44,7 +45,7 @@ const defaultPortfolioItems: ProjectItem[] = [
     title: "Engineering Plant Risk Audit & Asset Insurance",
     category: "Industrial Insurance",
     desc: "Structured comprehensive risk coverage protecting heavy machinery, fire perils, boilers, and transit cargo for an engineering firm.",
-    tagStyle: "bg-primary/20 text-primary border border-primary/30",
+    tagStyle: "bg-primary/20 text-primary border border-primary/40",
   },
   {
     id: 4,
@@ -53,7 +54,7 @@ const defaultPortfolioItems: ProjectItem[] = [
     title: "Hazard Identification (HIRA) & Safety Culture Overhaul",
     category: "QHSE & Training",
     desc: "Trained 150+ shop-floor supervisors on risk assessment, emergency preparedness, and behavior-based safety protocols.",
-    tagStyle: "bg-accent/20 text-accent border border-accent/30",
+    tagStyle: "bg-accent/20 text-accent border border-accent/40",
   },
   {
     id: 5,
@@ -62,7 +63,7 @@ const defaultPortfolioItems: ProjectItem[] = [
     title: "Lean DMAIC Process Variation Reduction",
     category: "Six Sigma (DMAIC)",
     desc: "Deployed DMAIC tools to reduce production line scrap rate by 34% and improve overall equipment effectiveness (OEE).",
-    tagStyle: "bg-primary/20 text-primary border border-primary/30",
+    tagStyle: "bg-primary/20 text-primary border border-primary/40",
   },
   {
     id: 6,
@@ -71,7 +72,7 @@ const defaultPortfolioItems: ProjectItem[] = [
     title: "International Market Entry & Buyer Identification",
     category: "Export & Global Trade",
     desc: "Facilitated international buyer connections and export documentation for an Indian chemical manufacturer expanding to European markets.",
-    tagStyle: "bg-accent/20 text-accent border border-accent/30",
+    tagStyle: "bg-accent/20 text-accent border border-accent/40",
   }
 ];
 
@@ -91,7 +92,7 @@ export default function PortfolioPage() {
   useEffect(() => {
     async function fetchProjects() {
       try {
-        const res = await fetch("https://acms.harshaicreations.com/projects.php");
+        const res = await fetch("https://acms.harshaicreations.com/api.php?action=get_projects");
         if (!res.ok) return;
         const data = await res.json();
         if (data.success && Array.isArray(data.data) && data.data.length > 0) {
@@ -114,12 +115,11 @@ export default function PortfolioPage() {
             desc: item.description,
             image_url: item.image_url,
             project_url: item.project_url,
-            tagStyle: item.tag_style || "bg-accent/20 text-accent border border-accent/30"
+            tagStyle: item.tag_style || "bg-accent/20 text-accent border border-accent/40"
           }));
 
           setPortfolioItems(apiItems);
 
-          // Build dynamic unique categories
           const uniqueCats = Array.from(new Set(apiItems.map(p => p.category)));
           setCategories(["All", ...uniqueCats]);
         }
@@ -137,52 +137,46 @@ export default function PortfolioPage() {
   return (
     <div className="relative min-h-screen bg-background pb-24">
       {/* Header Section */}
-      <section className="pt-20 pb-4 bg-background">
-        <div className="container mx-auto px-6 text-center max-w-4xl min-h-[80px]">
-          <motion.h1 
+      <section className="pt-20 pb-10 bg-background border-b border-border relative">
+        <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none" />
+        <div className="container mx-auto px-6 text-center max-w-4xl relative z-10">
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl font-heading font-bold mb-4 flex justify-center"
+            className="space-y-3"
           >
-            <TypewriterText text="Featured Work" />
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-lg text-text-secondary"
-          >
-            A showcase of our consulting success stories, creative production, and technical excellence.
-          </motion.p>
+            <span className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-accent/10 border border-accent/30 text-accent">
+              <Sparkles className="w-3.5 h-3.5 mr-1.5" /> Client Engagements & Case Studies
+            </span>
+            <h1 className="text-3xl md:text-5xl font-heading font-extrabold text-white">
+              <TypewriterText text="Projects & Case Studies" />
+            </h1>
+            <p className="text-sm md:text-base text-text-secondary max-w-2xl mx-auto">
+              A showcase of our industrial consulting success stories, NABL testing laboratory accreditations, and regulatory compliance milestones.
+            </p>
+          </motion.div>
         </div>
       </section>
 
       {/* Filter Tabs */}
-      <section className="sticky top-20 z-40 bg-background/95 backdrop-blur-md border-b border-border py-4">
+      <section className="sticky top-16 md:top-20 z-40 bg-[#0d1117]/90 backdrop-blur-xl border-b border-border/80 py-3.5 shadow-md">
         <div className="container mx-auto px-6">
           <div className="flex items-center md:hidden mb-2 text-text-secondary">
-            <Filter className="w-4 h-4 mr-2" />
-            <span className="text-sm font-bold">Filter Categories</span>
+            <Filter className="w-3.5 h-3.5 mr-1.5 text-accent" />
+            <span className="text-xs font-bold uppercase tracking-wider">Filter Projects</span>
           </div>
-          <div className="flex overflow-x-auto hide-scrollbar space-x-2 md:space-x-4 pb-2 md:pb-0">
+          <div className="flex overflow-x-auto hide-scrollbar space-x-2 pb-1">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`relative px-4 py-2 text-sm font-heading font-bold whitespace-nowrap transition-colors rounded-full ${
+                className={`relative px-4 py-2 text-xs font-heading font-bold whitespace-nowrap transition-all rounded-full cursor-pointer ${
                   activeCategory === cat 
-                    ? "text-background" 
-                    : "text-text-secondary hover:text-text-primary bg-surface border border-border"
+                    ? "bg-gradient-to-r from-accent to-accent-light text-background font-extrabold shadow-md shadow-accent/20" 
+                    : "text-text-secondary hover:text-white bg-surface border border-border"
                 }`}
               >
-                {activeCategory === cat && (
-                  <motion.div
-                    layoutId="active-filter"
-                    className="absolute inset-0 bg-text-primary rounded-full"
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  />
-                )}
-                <span className="relative z-10">{cat}</span>
+                <span>{cat}</span>
               </button>
             ))}
           </div>
@@ -191,7 +185,7 @@ export default function PortfolioPage() {
 
       {/* Portfolio Grid */}
       <section className="pt-16">
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto px-6 max-w-7xl">
           <motion.div layout className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <AnimatePresence mode="popLayout">
               {filteredItems.map((item) => (
@@ -202,9 +196,9 @@ export default function PortfolioPage() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.3 }}
-                  className="bg-surface border border-border rounded-2xl overflow-hidden group cursor-pointer flex flex-col"
+                  className="glass-card glass-card-hover rounded-2xl overflow-hidden flex flex-col"
                 >
-                  <div className="aspect-video bg-surface-alt relative overflow-hidden">
+                  <div className="aspect-video bg-surface relative overflow-hidden">
                     <div className="absolute inset-0 flex items-center justify-center text-text-secondary opacity-50 group-hover:scale-110 transition-transform duration-500">
                       {item.image_url ? (
                         <Image 
@@ -214,45 +208,45 @@ export default function PortfolioPage() {
                           className="object-cover" 
                         />
                       ) : (
-                        <Image 
-                          src={`https://placehold.co/800x450/1C1C1C/A0A0A0?text=${encodeURIComponent(item.title)}`} 
-                          alt={item.title} 
-                          fill 
-                          className="object-cover" 
-                        />
+                        <div className="w-full h-full bg-surface-alt flex items-center justify-center">
+                          <ShieldCheck className="w-12 h-12 text-primary/60" />
+                        </div>
                       )}
                     </div>
                   </div>
                   
                   <div className="p-6 flex flex-col flex-grow">
                     <div className="mb-4 flex flex-wrap gap-2 items-center">
-                      <span className={`inline-block px-3 py-1 text-xs font-bold rounded-full ${item.tagStyle}`}>
+                      <span className={`inline-block px-2.5 py-0.5 text-[11px] font-bold rounded-full ${item.tagStyle}`}>
                         {item.category}
                       </span>
                       {item.service_title && (
-                        <span className="inline-block px-2.5 py-0.5 text-xs text-text-secondary bg-surface-alt rounded-md border border-border">
+                        <span className="inline-block px-2 py-0.5 text-[10px] text-text-secondary bg-surface rounded-md border border-border">
                           {item.service_title}
                         </span>
                       )}
                     </div>
-                    <h3 className="text-2xl font-heading font-bold mb-3">{item.title}</h3>
-                    <p className="text-text-secondary text-sm mb-6 flex-grow">{item.desc}</p>
+                    <h3 className="text-lg font-heading font-bold text-white mb-2 group-hover:text-accent transition-colors">{item.title}</h3>
+                    <p className="text-text-secondary text-xs leading-relaxed mb-6 flex-grow">{item.desc}</p>
                     
                     {item.project_url ? (
                       <a 
                         href={item.project_url} 
                         target="_blank" 
                         rel="noreferrer" 
-                        className="flex items-center text-accent font-semibold text-sm hover:text-accent-light transition-colors mt-auto"
+                        className="flex items-center text-accent font-semibold text-xs hover:text-accent-light transition-colors mt-auto"
                       >
-                        View Project
-                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                        View Project Document
+                        <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
                       </a>
                     ) : (
-                      <div className="flex items-center text-accent font-semibold text-sm group-hover:text-accent-light transition-colors mt-auto">
-                        View Details
-                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                      </div>
+                      <Link 
+                        href={`/contact?project=${encodeURIComponent(item.title)}&type=quote`}
+                        className="flex items-center text-accent font-bold text-xs hover:underline transition-colors mt-auto"
+                      >
+                        Request Similar Engagement
+                        <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                      </Link>
                     )}
                   </div>
                 </motion.div>
@@ -265,7 +259,7 @@ export default function PortfolioPage() {
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-center py-20 text-text-secondary"
+              className="text-center py-20 text-text-secondary text-sm"
             >
               No projects found in this category yet.
             </motion.div>

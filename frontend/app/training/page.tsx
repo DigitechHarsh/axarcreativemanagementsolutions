@@ -13,14 +13,10 @@ import {
   BookOpen,
   Users,
   Clock,
-  Briefcase
+  Briefcase,
+  Sparkles
 } from "lucide-react";
 import TypewriterText from "../../components/TypewriterText";
-
-const revealVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
-};
 
 const TRAINING_STREAMS = [
   {
@@ -101,17 +97,18 @@ export default function TrainingPage() {
   return (
     <div className="relative overflow-hidden bg-background">
       {/* Hero Header */}
-      <section className="pt-20 pb-8 bg-background border-b border-border">
-        <div className="container mx-auto px-6 text-center max-w-4xl min-h-[90px]">
+      <section className="pt-20 pb-10 bg-background border-b border-border relative">
+        <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none" />
+        <div className="container mx-auto px-6 text-center max-w-4xl relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-3"
           >
-            <span className="text-xs font-bold font-heading uppercase tracking-widest text-accent bg-accent/10 px-3 py-1 rounded-full border border-accent/20">
-              Workforce Excellence
+            <span className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-accent/10 border border-accent/30 text-accent">
+              <Sparkles className="w-3.5 h-3.5 mr-1.5" /> Workforce Competency & Auditing
             </span>
-            <h1 className="text-3xl md:text-5xl font-heading font-extrabold flex justify-center text-text-primary">
+            <h1 className="text-3xl md:text-5xl font-heading font-extrabold text-white">
               <TypewriterText text="Industrial Training Programs" />
             </h1>
             <p className="text-sm md:text-base text-text-secondary max-w-2xl mx-auto">
@@ -125,25 +122,25 @@ export default function TrainingPage() {
       <section className="py-8 bg-surface border-b border-border">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div className="p-4">
+            <div className="p-4 glass-card rounded-xl">
               <BookOpen className="w-6 h-6 text-primary mx-auto mb-2" />
-              <h4 className="font-heading font-bold text-sm text-text-primary">Practical Focus</h4>
+              <h4 className="font-heading font-bold text-xs md:text-sm text-white">Practical Focus</h4>
               <p className="text-[11px] text-text-secondary">Applied shop-floor case studies</p>
             </div>
-            <div className="p-4">
+            <div className="p-4 glass-card rounded-xl">
               <Users className="w-6 h-6 text-accent mx-auto mb-2" />
-              <h4 className="font-heading font-bold text-sm text-text-primary">On-Site & Customized</h4>
-              <p className="text-[11px] text-text-secondary">Tailored to your plant schedule</p>
+              <h4 className="font-heading font-bold text-xs md:text-sm text-white">On-Site Delivery</h4>
+              <p className="text-[11px] text-text-secondary">Tailored to your plant shifts</p>
             </div>
-            <div className="p-4">
+            <div className="p-4 glass-card rounded-xl">
               <Clock className="w-6 h-6 text-primary mx-auto mb-2" />
-              <h4 className="font-heading font-bold text-sm text-text-primary">Flexible Modules</h4>
+              <h4 className="font-heading font-bold text-xs md:text-sm text-white">Flexible Modules</h4>
               <p className="text-[11px] text-text-secondary">1-day, 3-day & Lead Auditor tracks</p>
             </div>
-            <div className="p-4">
+            <div className="p-4 glass-card rounded-xl">
               <Briefcase className="w-6 h-6 text-accent mx-auto mb-2" />
-              <h4 className="font-heading font-bold text-sm text-text-primary">Certified Competency</h4>
-              <p className="text-[11px] text-text-secondary">Official training certification</p>
+              <h4 className="font-heading font-bold text-xs md:text-sm text-white">Certified Competency</h4>
+              <p className="text-[11px] text-text-secondary">Official auditor certificate</p>
             </div>
           </div>
         </div>
@@ -155,26 +152,26 @@ export default function TrainingPage() {
           {TRAINING_STREAMS.map((stream, idx) => (
             <motion.div
               key={stream.id}
-              initial="hidden"
-              whileInView="visible"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.15 }}
-              variants={revealVariants}
-              className="bg-surface border border-border rounded-3xl p-6 md:p-10 shadow-lg hover:border-accent transition-all"
+              transition={{ duration: 0.4 }}
+              className="glass-card rounded-3xl p-6 md:p-10 shadow-2xl border border-border"
             >
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-border">
                 <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/20 border border-primary/40 flex items-center justify-center text-primary shrink-0">
                     <stream.icon className="w-6 h-6" />
                   </div>
                   <div>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-accent bg-accent/10 px-2.5 py-0.5 rounded-full border border-accent/20 inline-block mb-1">
                       {stream.badge}
                     </span>
-                    <h2 className="text-xl md:text-2xl font-heading font-bold text-text-primary">
+                    <h2 className="text-xl md:text-2xl font-heading font-bold text-white">
                       {stream.title}
                     </h2>
                     <p className="text-xs text-text-secondary mt-1">
-                      <strong>Target Audience:</strong> {stream.target}
+                      <strong className="text-white">Target Audience:</strong> {stream.target}
                     </p>
                   </div>
                 </div>
@@ -182,7 +179,7 @@ export default function TrainingPage() {
                 <div>
                   <Link
                     href={`/contact?training=${encodeURIComponent(stream.title)}&type=quote`}
-                    className="px-5 py-2.5 bg-primary hover:bg-primary-dark text-white font-heading font-bold text-xs rounded-full transition-all inline-flex items-center shadow-md shadow-primary/25"
+                    className="px-5 py-2.5 bg-gradient-to-r from-accent to-accent-light text-background font-heading font-bold text-xs rounded-full transition-all inline-flex items-center shadow-md shadow-accent/20 hover:scale-105"
                   >
                     Schedule Training Batch <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
                   </Link>
@@ -191,22 +188,22 @@ export default function TrainingPage() {
 
               <div className="pt-6 grid lg:grid-cols-12 gap-8">
                 <div className="lg:col-span-5 space-y-3">
-                  <h3 className="font-heading font-bold text-sm text-text-primary">Program Overview</h3>
+                  <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-accent">Program Overview</h3>
                   <p className="text-xs md:text-sm text-text-secondary leading-relaxed">
                     {stream.desc}
                   </p>
-                  <div className="p-4 bg-surface-alt rounded-xl border border-border text-xs text-text-secondary">
-                    Training is delivered directly at your facility or in structured workshop environments with interactive assessments and real-world mock audits.
+                  <div className="p-4 bg-surface rounded-xl border border-border text-xs text-text-secondary">
+                    Delivered directly on-site at your facility or in structured workshop environments with interactive case reviews and mock audits.
                   </div>
                 </div>
 
                 <div className="lg:col-span-7">
-                  <h3 className="font-heading font-bold text-sm text-text-primary mb-3 flex items-center">
-                    <CheckCircle2 className="w-4 h-4 mr-2 text-primary" /> Key Curriculum Modules Covered:
+                  <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-white mb-3 flex items-center">
+                    <CheckCircle2 className="w-4 h-4 mr-2 text-primary" /> Key Curriculum Modules:
                   </h3>
                   <div className="grid sm:grid-cols-2 gap-2.5">
                     {stream.topics.map((topic, tIdx) => (
-                      <div key={tIdx} className="bg-background border border-border p-3 rounded-xl flex items-start space-x-2 text-xs text-text-secondary">
+                      <div key={tIdx} className="bg-surface border border-border p-3 rounded-xl flex items-start space-x-2 text-xs text-text-secondary hover:border-accent transition-colors">
                         <div className="w-1.5 h-1.5 rounded-full bg-accent mt-1.5 shrink-0" />
                         <span>{topic}</span>
                       </div>
@@ -222,16 +219,16 @@ export default function TrainingPage() {
       {/* CTA Footer */}
       <section className="py-20 bg-background text-center border-t border-border">
         <div className="container mx-auto px-6 max-w-3xl space-y-4">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-text-primary">
+          <h2 className="text-2xl md:text-3xl font-heading font-bold text-white">
             Plan an In-House Industrial Training Workshop
           </h2>
-          <p className="text-sm text-text-secondary">
+          <p className="text-xs md:text-sm text-text-secondary">
             Equip your operational supervisors and technical managers with certified auditing and safety competencies.
           </p>
           <div className="pt-3">
             <Link
               href="/contact?type=quote"
-              className="inline-flex items-center px-8 py-3.5 bg-primary text-white font-heading font-bold text-xs rounded-full hover:bg-primary-dark transition-colors shadow-lg shadow-primary/25"
+              className="inline-flex items-center px-8 py-3.5 bg-gradient-to-r from-accent to-accent-light text-background font-heading font-bold text-xs rounded-full shadow-lg shadow-accent/20 hover:scale-105 transition-transform"
             >
               Request Training Proposal <ArrowRight className="ml-2 w-4 h-4" />
             </Link>

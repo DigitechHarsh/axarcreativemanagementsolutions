@@ -14,6 +14,7 @@ import {
   FileText, 
   Globe2, 
   CheckCircle, 
+  CheckCircle2,
   ArrowRight,
   Factory,
   Cpu,
@@ -31,7 +32,10 @@ import {
   FileSpreadsheet,
   Workflow,
   SearchCheck,
-  Zap
+  Zap,
+  Layers,
+  Sparkles,
+  Calculator
 } from "lucide-react";
 
 import HeroCarousel from "../components/HeroCarousel";
@@ -54,21 +58,21 @@ interface Project {
 
 const DEFAULT_FEATURED: Project[] = [
   { 
-    title: "Integrated Management System (IMS) Certification", 
+    title: "Multi-Site IMS Certification (ISO 9001, 14001, 45001)", 
     category_name: "ISO & QMS Consultancy", 
-    description: "Multi-site ISO 9001, 14001, and 45001 implementation with 100% audit clearance on the initial assessment.",
+    description: "Complete Integrated Management System rollout across 3 chemical plants in Gujarat with zero non-conformances on final assessment.",
     image_url: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
     project_url: "",
-    tag_style: "bg-primary/20 text-primary border border-primary/30",
+    tag_style: "bg-primary/20 text-primary border border-primary/40",
     featured: true
   },
   { 
     title: "NABL Testing Laboratory Setup & Accreditation", 
     category_name: "Laboratory & NABL", 
-    description: "Complete laboratory layout, equipment calibration framework, SOP preparation, and NABL readiness for a chemical testing lab.",
+    description: "Laboratory layout design, SOP formulation, equipment validation, and NABL accreditation clearance in record 6 months.",
     image_url: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80",
     project_url: "",
-    tag_style: "bg-accent/20 text-accent border border-accent/30",
+    tag_style: "bg-accent/20 text-accent border border-accent/40",
     featured: true
   },
   { 
@@ -77,7 +81,7 @@ const DEFAULT_FEATURED: Project[] = [
     description: "Risk identification and structured asset coverage covering property, boiler breakdown, and marine transit for an engineering plant.",
     image_url: "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=800&q=80",
     project_url: "",
-    tag_style: "bg-primary/20 text-primary border border-primary/30",
+    tag_style: "bg-primary/20 text-primary border border-primary/40",
     featured: true
   }
 ];
@@ -97,7 +101,7 @@ const CORE_SERVICES = [
     id: "laboratory",
     title: "Laboratory Consultancy & Accreditation",
     desc: "From laboratory feasibility and layout infrastructure to SOP development, Quality Manuals, and complete NABL accreditation preparation.",
-    badge: "NABL & Testing Setup",
+    badge: "NABL & ISO/IEC 17025",
     link: "/services#laboratory",
     highlights: ["Equipment Selection & Calibration", "Quality Manual & SOP Design", "NABL Audit Preparation"]
   },
@@ -149,18 +153,18 @@ const CORE_SERVICES = [
 ];
 
 const INDUSTRIES = [
-  { icon: Factory, name: "Manufacturing", desc: "Process optimization & ISO standards" },
-  { icon: Cpu, name: "Engineering", desc: "Quality assurance & machinery risk" },
-  { icon: Flame, name: "Chemical & Petrochemical", desc: "HIRA, EMS & process safety" },
-  { icon: Pill, name: "Pharmaceutical & Healthcare", desc: "GMP, cleanroom & ISO compliance" },
-  { icon: UtensilsCrossed, name: "Food & Beverage", desc: "HACCP, GMP & food safety culture" },
-  { icon: Microscope, name: "Laboratory & Testing", desc: "NABL accreditation & ISO 17025" },
-  { icon: HardHat, name: "Construction", desc: "Site safety, OHS & risk control" },
-  { icon: Building2, name: "Infrastructure", desc: "Large-scale project compliance" },
+  { icon: Factory, name: "Manufacturing", desc: "Process optimization, lean flow & ISO standards" },
+  { icon: Cpu, name: "Engineering", desc: "QA/QC protocols & machinery breakdown risk" },
+  { icon: Flame, name: "Chemical & Petrochemical", desc: "HIRA, EMS compliance & process safety" },
+  { icon: Pill, name: "Pharmaceutical & Healthcare", desc: "GMP, cleanroom validation & ISO 13485" },
+  { icon: UtensilsCrossed, name: "Food & Beverage", desc: "HACCP, GMP, GHP & food safety culture" },
+  { icon: Microscope, name: "Laboratory & Testing", desc: "NABL accreditation & ISO/IEC 17025" },
+  { icon: HardHat, name: "Construction", desc: "Site safety inspections & risk control" },
+  { icon: Building2, name: "Infrastructure", desc: "Energy systems & large-scale compliance" },
   { icon: Fuel, name: "Oil & Gas", desc: "Stringent safety & emergency frameworks" },
-  { icon: Truck, name: "Logistics & Services", desc: "Supply chain & transit insurance" },
-  { icon: Ship, name: "Export & Trading", desc: "International buyer compliance" },
-  { icon: Sprout, name: "Agriculture & Allied", desc: "Sustainable practices & certification" }
+  { icon: Truck, name: "Logistics & Services", desc: "Supply chain mapping & cargo insurance" },
+  { icon: Ship, name: "Export & Trading", desc: "International buyer compliance & trade" },
+  { icon: Sprout, name: "Agriculture & Allied", desc: "Sustainable agro-practices & certification" }
 ];
 
 const APPROACH_STEPS = [
@@ -199,15 +203,15 @@ const APPROACH_STEPS = [
 const WHY_CHOOSE = [
   {
     title: "Practical Industrial Experience",
-    desc: "Solutions designed around real-world industrial shop-floor and laboratory requirements, not just textbook theory."
+    desc: "Solutions designed around real-world industrial shop-floor and laboratory requirements, not textbook bureaucracy."
   },
   {
-    title: "Integrated Services",
-    desc: "Consultancy, training, laboratory accreditation, insurance, and business development under one unified platform."
+    title: "Integrated Services Under One Roof",
+    desc: "Consultancy, training, laboratory accreditation, insurance, and export development under one unified platform."
   },
   {
     title: "Customized Approach",
-    desc: "Every system and training program is tailored to your organization's specific size, sector, and commercial goals."
+    desc: "Every system and training program is tailored to your organization's specific facility size, sector, and commercial goals."
   },
   {
     title: "Training with Practical Focus",
@@ -221,11 +225,13 @@ const WHY_CHOOSE = [
 
 export default function Home() {
   const [featuredProjects, setFeaturedProjects] = useState<Project[]>(DEFAULT_FEATURED);
+  const [selectedIndustry, setSelectedIndustry] = useState<string>("Manufacturing");
+  const [selectedStandards, setSelectedStandards] = useState<string[]>(["ISO 9001", "ISO 45001"]);
 
   useEffect(() => {
     async function fetchFeaturedProjects() {
       try {
-        const res = await fetch("https://acms.harshaicreations.com/projects.php");
+        const res = await fetch("https://acms.harshaicreations.com/api.php?action=get_projects");
         if (!res.ok) return;
         const data = await res.json();
         if (data.success && Array.isArray(data.data) && data.data.length > 0) {
@@ -250,6 +256,14 @@ export default function Home() {
     restDelta: 0.001
   });
 
+  const toggleStandard = (std: string) => {
+    if (selectedStandards.includes(std)) {
+      setSelectedStandards(selectedStandards.filter(s => s !== std));
+    } else {
+      setSelectedStandards([...selectedStandards, std]);
+    }
+  };
+
   return (
     <div className="relative overflow-hidden bg-background">
       {/* Scroll Progress Bar */}
@@ -262,11 +276,14 @@ export default function Home() {
       <HeroCarousel />
 
       {/* 2. Trust Strip (Industrial Marquee) */}
-      <div className="border-y border-border bg-surface-alt overflow-hidden py-3.5">
+      <div className="border-y border-border bg-surface overflow-hidden py-3.5 relative">
+        <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-surface to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-surface to-transparent z-10 pointer-events-none" />
+
         <motion.div
           className="flex whitespace-nowrap space-x-12 px-4"
           animate={{ x: ["0%", "-50%"] }}
-          transition={{ ease: "linear", duration: 18, repeat: Infinity }}
+          transition={{ ease: "linear", duration: 20, repeat: Infinity }}
         >
           {[...Array(2)].map((_, i) => (
             <div key={i} className="flex space-x-12 items-center">
@@ -298,7 +315,8 @@ export default function Home() {
 
       {/* 3. Introduction & Tagline Banner */}
       <section className="py-20 bg-background border-b border-border relative">
-        <div className="container mx-auto px-6 max-w-5xl text-center">
+        <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none" />
+        <div className="container mx-auto px-6 max-w-5xl text-center relative z-10">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -307,28 +325,28 @@ export default function Home() {
             className="space-y-6"
           >
             <div className="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-accent/10 border border-accent/30 text-accent">
-              Your Partner for Industrial Excellence
+              <Sparkles className="w-3.5 h-3.5 mr-1.5" /> Your Partner for Industrial Excellence
             </div>
             
-            <h2 className="text-2xl md:text-4xl font-heading font-extrabold text-text-primary leading-tight">
+            <h2 className="text-2xl md:text-4xl lg:text-5xl font-heading font-extrabold text-white leading-tight">
               &ldquo;Better Systems • Safer Workplaces • Sustainable Growth&rdquo;
             </h2>
 
-            <p className="text-base md:text-lg text-text-secondary max-w-3xl mx-auto leading-relaxed">
+            <p className="text-sm md:text-lg text-text-secondary max-w-3xl mx-auto leading-relaxed">
               Axar Creative Management Solutions provides professional consultancy, training and business-support services to industries seeking improved quality, safety, environmental performance, regulatory compliance and sustainable commercial growth.
             </p>
 
             <div className="flex flex-wrap justify-center gap-4 pt-4">
               <Link
                 href="/services"
-                className="px-8 py-3.5 bg-primary text-white font-heading font-bold text-sm rounded-full hover:bg-primary-dark shadow-lg shadow-primary/25 transition-all inline-flex items-center"
+                className="px-8 py-3.5 bg-gradient-to-r from-primary to-primary-light text-white font-heading font-bold text-xs md:text-sm rounded-full hover:shadow-[0_0_25px_rgba(179,40,45,0.5)] transition-all inline-flex items-center"
               >
-                Explore Our Services
+                Explore 7 Core Services
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
               <Link
                 href="/contact?type=quote"
-                className="px-8 py-3.5 bg-surface border border-border text-text-primary font-heading font-bold text-sm rounded-full hover:border-accent hover:text-accent transition-all"
+                className="px-8 py-3.5 bg-surface border border-accent/40 text-accent font-heading font-bold text-xs md:text-sm rounded-full hover:bg-accent/10 hover:border-accent transition-all"
               >
                 Get a Customized Quote
               </Link>
@@ -337,8 +355,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. Core Services (7 Pillars Grid) */}
-      <section className="py-24 bg-surface-alt">
+      {/* 4. Core Services (7 Pillars Grid with Glassmorphism) */}
+      <section className="py-24 bg-surface-alt relative">
         <div className="container mx-auto px-6">
           <motion.div
             initial="hidden"
@@ -348,10 +366,12 @@ export default function Home() {
             className="text-center mb-16"
           >
             <span className="text-xs font-bold font-heading uppercase tracking-widest text-primary mb-2 block">
-              Comprehensive Capabilities
+              Comprehensive Industrial Portfolio
             </span>
-            <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4">Our Core Services</h2>
-            <div className="w-20 h-1 bg-accent mx-auto rounded-full mb-4" />
+            <h2 className="text-3xl md:text-5xl font-heading font-extrabold text-white mb-4">
+              Our 7 Core Services
+            </h2>
+            <div className="w-20 h-1 bg-accent mx-auto rounded-full mb-4 glow-gold" />
             <p className="text-text-secondary max-w-2xl mx-auto text-sm md:text-base">
               From international ISO certifications and laboratory setups to workforce training and risk management.
             </p>
@@ -368,31 +388,30 @@ export default function Home() {
                   hidden: { opacity: 0, y: 30 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: i * 0.08 } }
                 }}
-                whileHover={{ y: -6 }}
-                className="bg-surface border border-border rounded-2xl p-7 flex flex-col justify-between hover:border-accent hover:shadow-[0_15px_35px_rgba(0,0,0,0.1)] transition-all duration-300 relative group"
+                className="glass-card glass-card-hover rounded-2xl p-7 flex flex-col justify-between relative group"
               >
                 <div>
                   <div className="flex items-center justify-between mb-5">
-                    <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                    <div className="w-12 h-12 rounded-xl bg-primary/20 border border-primary/40 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">
                       <service.icon className="w-6 h-6" />
                     </div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-surface-alt border border-border text-text-secondary">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-surface border border-border text-accent">
                       {service.badge}
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-heading font-bold text-text-primary mb-3 group-hover:text-accent transition-colors">
+                  <h3 className="text-xl font-heading font-bold text-white mb-3 group-hover:text-accent transition-colors">
                     {service.title}
                   </h3>
 
-                  <p className="text-text-secondary text-sm leading-relaxed mb-6">
+                  <p className="text-text-secondary text-xs md:text-sm leading-relaxed mb-6">
                     {service.desc}
                   </p>
 
-                  <div className="space-y-2 border-t border-border pt-4 mb-6">
+                  <div className="space-y-2 border-t border-border/80 pt-4 mb-6">
                     {service.highlights.map((item, idx) => (
                       <div key={idx} className="flex items-start text-xs text-text-secondary">
-                        <CheckCircle className="w-3.5 h-3.5 mr-2 text-accent shrink-0 mt-0.5" />
+                        <CheckCircle2 className="w-3.5 h-3.5 mr-2 text-accent shrink-0 mt-0.5" />
                         <span>{item}</span>
                       </div>
                     ))}
@@ -403,7 +422,7 @@ export default function Home() {
                   href={service.link}
                   className="inline-flex items-center text-xs font-heading font-bold text-accent group-hover:text-accent-light transition-colors mt-auto pt-2"
                 >
-                  Learn More & Explore <ArrowRight className="ml-1.5 w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  View Details & Scope <ArrowRight className="ml-1.5 w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </motion.div>
             ))}
@@ -411,8 +430,106 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. Industries We Serve (12 Sectors) */}
-      <section className="py-24 bg-background border-t border-border">
+      {/* 5. Interactive ISO & Scope Estimator Widget */}
+      <section className="py-20 bg-background border-y border-border relative">
+        <div className="container mx-auto px-6 max-w-5xl">
+          <div className="glass-card rounded-3xl p-8 md:p-12 border border-border relative overflow-hidden">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-border">
+              <div>
+                <span className="text-xs font-bold font-heading uppercase tracking-widest text-accent mb-1 block flex items-center">
+                  <Calculator className="w-3.5 h-3.5 mr-1.5" /> Instant Assessment Tool
+                </span>
+                <h3 className="text-2xl md:text-3xl font-heading font-bold text-white">
+                  Plan Your Compliance & Training Roadmap
+                </h3>
+                <p className="text-xs text-text-secondary mt-1">
+                  Select your industry and target management standards for an instant scope summary.
+                </p>
+              </div>
+
+              <Link
+                href={`/contact?industry=${encodeURIComponent(selectedIndustry)}&standards=${encodeURIComponent(selectedStandards.join(','))}&type=quote`}
+                className="px-6 py-3 bg-gradient-to-r from-accent to-accent-light text-background font-heading font-bold text-xs rounded-full shadow-lg shadow-accent/20 hover:scale-105 transition-transform shrink-0 flex items-center justify-center"
+              >
+                Get Formal Quote for Selection <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+              </Link>
+            </div>
+
+            <div className="grid md:grid-cols-12 gap-8 pt-8">
+              {/* Step A: Select Industry */}
+              <div className="md:col-span-5 space-y-3">
+                <label className="text-xs font-bold uppercase tracking-wider text-text-primary block">
+                  1. Select Your Industry Sector:
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {["Manufacturing", "Chemical", "Pharmaceutical", "Food & Beverage", "Laboratory", "Engineering"].map((ind) => (
+                    <button
+                      key={ind}
+                      onClick={() => setSelectedIndustry(ind)}
+                      className={`p-2.5 rounded-xl text-xs font-bold transition-all text-left border cursor-pointer ${
+                        selectedIndustry === ind
+                          ? "bg-primary/30 border-primary text-white"
+                          : "bg-surface border-border text-text-secondary hover:text-white"
+                      }`}
+                    >
+                      {ind}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Step B: Choose Target Standards */}
+              <div className="md:col-span-7 space-y-3">
+                <label className="text-xs font-bold uppercase tracking-wider text-text-primary block">
+                  2. Select Desired ISO Standards / Programs:
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    "ISO 9001 (QMS)",
+                    "ISO 14001 (EMS)",
+                    "ISO 45001 (OH&S)",
+                    "ISO 27001 (IT Security)",
+                    "ISO 20000-1 (ITSM)",
+                    "NABL / ISO 17025",
+                    "QHSE & HIRA Training",
+                    "HACCP / GMP Food Safety",
+                    "Six Sigma (DMAIC)"
+                  ].map((std) => {
+                    const isSelected = selectedStandards.includes(std);
+                    return (
+                      <button
+                        key={std}
+                        onClick={() => toggleStandard(std)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all border cursor-pointer ${
+                          isSelected
+                            ? "bg-accent/20 border-accent text-accent-light"
+                            : "bg-surface border-border text-text-secondary hover:text-white"
+                        }`}
+                      >
+                        {isSelected && <CheckCircle className="w-3 h-3 inline mr-1 text-accent" />}
+                        {std}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-4 p-4 bg-surface rounded-xl border border-border/80 text-xs text-text-secondary flex items-center justify-between">
+                  <div>
+                    <span className="font-bold text-white block">Selected Scope:</span>
+                    <span>{selectedIndustry} with {selectedStandards.length} program(s) selected</span>
+                  </div>
+                  <span className="px-3 py-1 bg-primary/20 text-accent font-bold rounded-full text-[11px]">
+                    Est. 5-Step Pipeline
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. Industries We Serve (12 Sectors Matrix) */}
+      <section className="py-24 bg-background border-b border-border">
         <div className="container mx-auto px-6">
           <motion.div
             initial="hidden"
@@ -424,7 +541,9 @@ export default function Home() {
             <span className="text-xs font-bold font-heading uppercase tracking-widest text-accent mb-2 block">
               Multi-Sector Expertise
             </span>
-            <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4">Industries We Serve</h2>
+            <h2 className="text-3xl md:text-5xl font-heading font-extrabold text-white mb-4">
+              Industries We Serve
+            </h2>
             <div className="w-20 h-1 bg-primary mx-auto rounded-full mb-4" />
             <p className="text-text-secondary max-w-2xl mx-auto text-sm md:text-base">
               Providing sector-specific compliance, safety systems, and growth frameworks across key industrial hubs.
@@ -442,13 +561,12 @@ export default function Home() {
                   hidden: { opacity: 0, scale: 0.95 },
                   visible: { opacity: 1, scale: 1, transition: { duration: 0.4, delay: i * 0.04 } }
                 }}
-                whileHover={{ y: -4, borderColor: "var(--accent)" }}
-                className="bg-surface border border-border p-5 rounded-xl flex flex-col justify-center items-center text-center group transition-all"
+                className="glass-card glass-card-hover p-5 rounded-2xl flex flex-col justify-center items-center text-center group transition-all"
               >
-                <div className="w-12 h-12 rounded-full bg-surface-alt border border-border flex items-center justify-center text-primary group-hover:text-accent group-hover:border-accent transition-colors mb-3">
+                <div className="w-12 h-12 rounded-2xl bg-surface border border-border flex items-center justify-center text-primary group-hover:text-accent group-hover:border-accent transition-colors mb-3">
                   <ind.icon className="w-6 h-6" />
                 </div>
-                <h4 className="font-heading font-bold text-sm text-text-primary mb-1 group-hover:text-accent transition-colors">
+                <h4 className="font-heading font-bold text-sm text-white mb-1 group-hover:text-accent transition-colors">
                   {ind.name}
                 </h4>
                 <p className="text-[11px] text-text-secondary line-clamp-2">
@@ -461,7 +579,7 @@ export default function Home() {
           <div className="text-center mt-12">
             <Link
               href="/industries"
-              className="inline-flex items-center text-xs font-heading font-bold px-6 py-2.5 rounded-full bg-surface border border-border hover:border-accent text-text-primary hover:text-accent transition-all"
+              className="inline-flex items-center text-xs font-heading font-bold px-6 py-3 rounded-full bg-surface border border-border hover:border-accent text-white hover:text-accent transition-all"
             >
               View Detailed Industry Solutions <ArrowRight className="ml-2 w-3.5 h-3.5" />
             </Link>
@@ -469,8 +587,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. Our 5-Step Approach Pipeline */}
-      <section className="py-24 bg-surface-alt border-y border-border">
+      {/* 7. Our 5-Step Approach Pipeline */}
+      <section className="py-24 bg-surface-alt border-b border-border">
         <div className="container mx-auto px-6">
           <motion.div
             initial="hidden"
@@ -482,8 +600,10 @@ export default function Home() {
             <span className="text-xs font-bold font-heading uppercase tracking-widest text-primary mb-2 block">
               Structured Methodology
             </span>
-            <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4">Our 5-Step Approach</h2>
-            <div className="w-20 h-1 bg-accent mx-auto rounded-full mb-4" />
+            <h2 className="text-3xl md:text-5xl font-heading font-extrabold text-white mb-4">
+              Our 5-Step Approach
+            </h2>
+            <div className="w-20 h-1 bg-accent mx-auto rounded-full mb-4 glow-gold" />
             <p className="text-text-secondary max-w-2xl mx-auto text-sm md:text-base">
               A systematic pipeline engineered for seamless audit readiness and sustainable operational success.
             </p>
@@ -500,18 +620,18 @@ export default function Home() {
                   hidden: { opacity: 0, y: 25 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: idx * 0.1 } }
                 }}
-                className="bg-surface border border-border p-6 rounded-2xl relative flex flex-col justify-between group hover:border-primary transition-all"
+                className="glass-card glass-card-hover p-6 rounded-2xl relative flex flex-col justify-between group"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="font-heading font-extrabold text-2xl text-accent/80">
+                    <span className="font-heading font-extrabold text-2xl text-accent">
                       {step.step}
                     </span>
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                    <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                       <step.icon className="w-5 h-5" />
                     </div>
                   </div>
-                  <h3 className="font-heading font-bold text-lg text-text-primary mb-2">
+                  <h3 className="font-heading font-bold text-lg text-white mb-2">
                     {step.title}
                   </h3>
                   <p className="text-text-secondary text-xs leading-relaxed">
@@ -519,7 +639,7 @@ export default function Home() {
                   </p>
                 </div>
 
-                <div className="mt-6 pt-3 border-t border-border/60 flex items-center text-[10px] font-bold tracking-wider text-text-secondary uppercase">
+                <div className="mt-6 pt-3 border-t border-border flex items-center text-[10px] font-bold tracking-wider text-text-secondary uppercase">
                   <span>Phase {idx + 1}</span>
                   {idx < 4 && <ArrowRight className="ml-auto w-3 h-3 text-accent hidden lg:block" />}
                 </div>
@@ -527,15 +647,15 @@ export default function Home() {
             ))}
           </div>
 
-          <div className="mt-12 p-6 bg-surface border border-border rounded-2xl text-center max-w-3xl mx-auto">
-            <span className="font-heading font-extrabold text-sm md:text-base text-text-primary tracking-wide">
+          <div className="mt-12 p-6 glass-card rounded-2xl text-center max-w-3xl mx-auto border border-accent/20">
+            <span className="font-heading font-extrabold text-sm md:text-base text-accent-light tracking-wide">
               ASSESS &nbsp;→&nbsp; PLAN &nbsp;→&nbsp; IMPLEMENT &nbsp;→&nbsp; VERIFY &nbsp;→&nbsp; IMPROVE
             </span>
           </div>
         </div>
       </section>
 
-      {/* 7. Why Choose Axar */}
+      {/* 8. Why Choose Axar & Founder Credential */}
       <section className="py-24 bg-background">
         <div className="container mx-auto px-6">
           <div className="grid lg:grid-cols-12 gap-12 items-center max-w-6xl mx-auto">
@@ -546,23 +666,29 @@ export default function Home() {
               variants={revealVariants}
               className="lg:col-span-5 space-y-6"
             >
-              <span className="text-xs font-bold font-heading uppercase tracking-widest text-accent">
-                The Axar Advantage
-              </span>
-              <h2 className="text-3xl md:text-4xl font-heading font-bold text-text-primary leading-tight">
-                Why Choose Axar Creative Management Solutions?
-              </h2>
-              <div className="w-16 h-1 bg-primary rounded-full" />
-              <p className="text-text-secondary text-sm md:text-base leading-relaxed">
-                Led by <strong>Ghanshyambhai K Patel (Proprietor)</strong>, we combine technical industrial experience with practical consultancy, making quality and safety frameworks effortless to adopt and maintain.
-              </p>
-              <div className="pt-2">
-                <Link
-                  href="/about"
-                  className="inline-flex items-center text-xs font-heading font-bold text-primary hover:text-primary-dark transition-colors"
-                >
-                  Learn more about our team and values <ArrowRight className="ml-1.5 w-4 h-4" />
-                </Link>
+              <div className="glass-card p-8 rounded-3xl border border-border text-center space-y-5">
+                <div className="w-20 h-20 mx-auto rounded-2xl bg-primary/20 border border-primary/40 flex items-center justify-center text-primary">
+                  <Award className="w-10 h-10" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-heading font-bold text-white">
+                    Ghanshyambhai K Patel
+                  </h3>
+                  <p className="text-xs font-bold text-accent uppercase tracking-wider mt-1">
+                    Proprietor & Principal Consultant
+                  </p>
+                  <p className="text-xs text-text-secondary mt-1">
+                    Axar Creative Management Solutions
+                  </p>
+                </div>
+                <div className="p-3 bg-surface rounded-xl border border-border text-xs text-text-secondary text-left space-y-1">
+                  <div className="flex items-center text-white font-bold">
+                    <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-accent" /> Bharuch & Saykha GIDC, Gujarat
+                  </div>
+                  <p>
+                    Practical solutions combining consultancy, laboratory setup, compliance support and business growth.
+                  </p>
+                </div>
               </div>
             </motion.div>
 
@@ -575,17 +701,25 @@ export default function Home() {
               }}
               className="lg:col-span-7 space-y-4"
             >
+              <span className="text-xs font-bold font-heading uppercase tracking-widest text-accent block">
+                The Axar Distinction
+              </span>
+              <h2 className="text-2xl md:text-3xl font-heading font-bold text-white">
+                Why Industry Leaders Choose Axar
+              </h2>
+              <div className="w-16 h-1 bg-primary rounded-full mb-6" />
+
               {WHY_CHOOSE.map((item, idx) => (
                 <motion.div
                   key={idx}
                   variants={revealVariants}
-                  className="bg-surface border border-border p-5 rounded-xl hover:border-accent hover:shadow-md transition-all flex items-start space-x-4"
+                  className="glass-card p-4 rounded-xl hover:border-accent transition-all flex items-start space-x-3.5"
                 >
-                  <div className="w-8 h-8 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center text-accent shrink-0 mt-0.5">
+                  <div className="w-7 h-7 rounded-lg bg-accent/10 border border-accent/30 flex items-center justify-center text-accent shrink-0 mt-0.5">
                     <CheckCircle className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="font-heading font-bold text-sm text-text-primary mb-1">
+                    <h4 className="font-heading font-bold text-sm text-white mb-0.5">
                       {item.title}
                     </h4>
                     <p className="text-text-secondary text-xs leading-relaxed">
@@ -599,13 +733,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 8. Our Commitment Banner */}
-      <section className="py-20 bg-gradient-to-r from-primary/95 to-red-900 text-white relative overflow-hidden">
+      {/* 9. Our Commitment Banner */}
+      <section className="py-20 bg-gradient-to-r from-primary-dark via-primary to-primary-dark text-white relative overflow-hidden">
         <div className="container mx-auto px-6 relative z-10 max-w-4xl text-center space-y-6">
-          <span className="text-xs font-bold uppercase tracking-widest text-accent bg-black/30 px-3 py-1 rounded-full border border-accent/30 inline-block">
+          <span className="text-xs font-bold uppercase tracking-widest text-accent bg-black/40 px-3 py-1 rounded-full border border-accent/40 inline-block">
             Our Core Commitment
           </span>
-          <h2 className="text-2xl md:text-4xl font-heading font-bold leading-snug">
+          <h2 className="text-2xl md:text-4xl font-heading font-extrabold leading-snug">
             &ldquo;We believe that management systems should not become a burden of paperwork.&rdquo;
           </h2>
           <p className="text-sm md:text-base text-gray-200 leading-relaxed max-w-2xl mx-auto">
@@ -614,8 +748,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 9. Featured Projects / Client Showcase */}
-      <section className="py-24 bg-background">
+      {/* 10. Featured Projects / Case Studies */}
+      <section className="py-24 bg-surface-alt">
         <div className="container mx-auto px-6">
           <motion.div
             initial="hidden"
@@ -628,9 +762,9 @@ export default function Home() {
               <span className="text-xs font-bold font-heading uppercase tracking-widest text-primary mb-2 block">
                 Demonstrated Results
               </span>
-              <h2 className="text-3xl md:text-5xl font-heading font-bold mb-2">Projects & Client Engagements</h2>
+              <h2 className="text-3xl md:text-5xl font-heading font-extrabold text-white mb-2">Projects & Client Cases</h2>
               <p className="text-text-secondary max-w-xl text-sm">
-                Case studies demonstrating industrial excellence and compliance achievements.
+                Real-world consulting engagements demonstrating operational quality and regulatory audit success.
               </p>
             </div>
             <Link href="/portfolio" className="inline-flex items-center text-accent font-semibold text-sm mt-4 md:mt-0 hover:text-accent-light transition-colors">
@@ -646,10 +780,9 @@ export default function Home() {
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.3 }}
                 variants={revealVariants}
-                whileHover={{ y: -6 }}
-                className="bg-surface border border-border rounded-2xl overflow-hidden group cursor-pointer flex flex-col"
+                className="glass-card glass-card-hover rounded-2xl overflow-hidden flex flex-col"
               >
-                <div className="aspect-video bg-surface-alt relative overflow-hidden">
+                <div className="aspect-video bg-surface relative overflow-hidden">
                   {item.image_url ? (
                     <Image
                       src={item.image_url}
@@ -665,10 +798,10 @@ export default function Home() {
                 </div>
                 <div className="p-6 flex-1 flex flex-col justify-between">
                   <div>
-                    <span className={`inline-block px-3 py-1 text-[11px] font-bold rounded-full mb-3 ${item.tag_style || "bg-primary/20 text-primary border border-primary/30"}`}>
+                    <span className={`inline-block px-2.5 py-0.5 text-[11px] font-bold rounded-full mb-3 ${item.tag_style || "bg-primary/20 text-primary border border-primary/40"}`}>
                       {item.category_name}
                     </span>
-                    <h4 className="text-lg font-heading font-bold mb-2 text-text-primary group-hover:text-accent transition-colors">
+                    <h4 className="text-lg font-heading font-bold mb-2 text-white group-hover:text-accent transition-colors">
                       {item.title}
                     </h4>
                     <p className="text-text-secondary text-xs leading-relaxed line-clamp-3">
@@ -682,7 +815,7 @@ export default function Home() {
                       rel="noreferrer"
                       className="inline-flex items-center text-xs font-bold text-accent hover:underline mt-4"
                     >
-                      View Live Project <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
+                      View Live Case <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
                     </a>
                   )}
                 </div>
@@ -692,9 +825,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 10. Call to Action / Get a Quote */}
-      <section className="py-24 bg-surface-alt border-t border-border relative">
-        <div className="container mx-auto px-6 text-center max-w-4xl">
+      {/* 11. Final Call to Action */}
+      <section className="py-24 bg-background border-t border-border relative">
+        <div className="container mx-auto px-6 text-center max-w-4xl relative z-10">
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -702,7 +835,7 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="space-y-6"
           >
-            <h2 className="text-3xl md:text-5xl font-heading font-bold text-text-primary">
+            <h2 className="text-3xl md:text-5xl font-heading font-extrabold text-white">
               Let&apos;s Build a Better Future Together
             </h2>
             <p className="text-sm md:text-base text-text-secondary max-w-2xl mx-auto leading-relaxed">
@@ -711,16 +844,16 @@ export default function Home() {
             <div className="flex flex-wrap justify-center gap-4 pt-4">
               <Link
                 href="/contact?type=quote"
-                className="px-8 py-4 font-heading text-sm font-bold text-white bg-primary rounded-full hover:bg-primary-dark shadow-xl shadow-primary/30 transition-all inline-flex items-center"
+                className="px-8 py-4 font-heading text-xs md:text-sm font-bold text-background bg-gradient-to-r from-accent via-accent-light to-accent rounded-full hover:shadow-[0_0_30px_rgba(212,175,55,0.5)] transition-all inline-flex items-center"
               >
                 Request a Proposal / Quote
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
               <Link
                 href="/contact"
-                className="px-8 py-4 font-heading text-sm font-bold text-text-primary bg-surface border border-border rounded-full hover:border-accent hover:text-accent transition-all inline-flex items-center"
+                className="px-8 py-4 font-heading text-xs md:text-sm font-bold text-white bg-surface border border-border rounded-full hover:border-accent hover:text-accent transition-all inline-flex items-center"
               >
-                Contact Our Office
+                Contact Our Bharuch Office
               </Link>
             </div>
           </motion.div>

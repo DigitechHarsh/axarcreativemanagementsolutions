@@ -14,15 +14,12 @@ import {
   CheckCircle2, 
   ArrowRight,
   ShieldCheck,
-  Building,
-  HelpCircle
+  Search,
+  Filter,
+  Sparkles,
+  Zap
 } from "lucide-react";
 import TypewriterText from "../../components/TypewriterText";
-
-const revealVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
-};
 
 const SERVICES_DATA = [
   {
@@ -30,7 +27,7 @@ const SERVICES_DATA = [
     icon: Award,
     title: "1. QMS & ISO Consultancy",
     subtitle: "Complete support for management-system implementation, improvement and certification.",
-    tagline: "Structured Systems for Operational Excellence",
+    tagline: "Better Systems • Safer Workplaces • Sustainable Growth",
     badge: "ISO & IMS Standards",
     description: "We provide end-to-end consultancy for organizations aiming to achieve international management standards. From initial gap assessments and system design to internal audits and certification readiness, we ensure your management systems enhance operational efficiency without burdensome paperwork.",
     standards: [
@@ -143,12 +140,12 @@ const SERVICES_DATA = [
     ],
     offerings: [
       "Six Sigma Awareness for Leadership & Teams",
-      "Lean Manufacturing & 5S Workplace Organization",
+      "Lean Manufacturing & 5S Visual Workplace Management",
       "DMAIC Methodology Implementation",
       "Process Mapping & Capability Analysis",
       "Root Cause Analysis (RCA) & 5-Why / Fishbone Diagnostics",
       "Variation Reduction & Defect Elimination",
-      "Industrial Waste Reduction (Muda Elimination)",
+      "Industrial Waste Reduction (Eliminating 8 Types of Muda)",
       "Green Belt & Advanced Programs through Specialized Arrangements"
     ]
   },
@@ -203,6 +200,7 @@ const SERVICES_DATA = [
 
 export default function ServicesPage() {
   const [activeTab, setActiveTab] = useState("iso");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const handleHash = () => {
@@ -218,31 +216,59 @@ export default function ServicesPage() {
 
   const currentService = SERVICES_DATA.find(s => s.id === activeTab) || SERVICES_DATA[0];
 
+  const filteredServices = SERVICES_DATA.filter(s => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      s.title.toLowerCase().includes(query) ||
+      s.description.toLowerCase().includes(query) ||
+      s.standards.some(std => std.code.toLowerCase().includes(query) || std.name.toLowerCase().includes(query)) ||
+      s.offerings.some(off => off.toLowerCase().includes(query))
+    );
+  });
+
   return (
     <div className="relative overflow-hidden bg-background">
-      {/* Hero Heading */}
-      <section className="pt-20 pb-8 bg-background border-b border-border">
-        <div className="container mx-auto px-6 text-center max-w-4xl min-h-[90px]">
+      {/* Hero Header with Glow Backing */}
+      <section className="pt-20 pb-10 bg-background border-b border-border relative">
+        <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="container mx-auto px-6 text-center max-w-4xl relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-3"
           >
-            <span className="text-xs font-bold font-heading uppercase tracking-widest text-accent bg-accent/10 px-3 py-1 rounded-full border border-accent/20">
-              Axar Solutions Portfolio
+            <span className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-accent/10 border border-accent/30 text-accent">
+              <Sparkles className="w-3.5 h-3.5 mr-1.5" /> Complete Industrial Spectrum
             </span>
-            <h1 className="text-3xl md:text-5xl font-heading font-extrabold flex justify-center text-text-primary">
-              <TypewriterText text="Our Industrial Services" />
+            <h1 className="text-3xl md:text-5xl font-heading font-extrabold text-white">
+              <TypewriterText text="Our 7 Core Services" />
             </h1>
             <p className="text-sm md:text-base text-text-secondary max-w-2xl mx-auto">
               Professional consultancy, laboratory setup, workforce training, risk coverage, and business development designed for industrial excellence.
             </p>
+
+            {/* Quick Search / Filter input */}
+            <div className="pt-4 max-w-md mx-auto">
+              <div className="relative">
+                <Search className="w-4 h-4 text-text-muted absolute left-4 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search ISO standards (e.g. 27001, NABL, HACCP)..."
+                  className="w-full bg-surface border border-border rounded-full pl-10 pr-4 py-2.5 text-xs text-white placeholder-text-muted focus:outline-none focus:border-accent transition-colors"
+                />
+              </div>
+            </div>
           </motion.div>
         </div>
       </section>
 
       {/* Interactive Service Selector Tabs */}
-      <section className="sticky top-16 md:top-20 z-40 bg-background/95 backdrop-blur-md border-b border-border py-3">
+      <section className="sticky top-16 md:top-20 z-40 bg-[#0d1117]/90 backdrop-blur-xl border-b border-border/80 py-3 shadow-lg">
         <div className="container mx-auto px-6">
           <div className="flex overflow-x-auto hide-scrollbar space-x-2 pb-1">
             {SERVICES_DATA.map((service) => {
@@ -256,8 +282,8 @@ export default function ServicesPage() {
                   }}
                   className={`px-4 py-2 rounded-full text-xs font-heading font-bold whitespace-nowrap transition-all cursor-pointer flex items-center space-x-2 ${
                     isActive
-                      ? "bg-primary text-white shadow-md shadow-primary/25"
-                      : "bg-surface border border-border text-text-secondary hover:text-text-primary hover:border-accent"
+                      ? "bg-gradient-to-r from-primary to-primary-light text-white shadow-md shadow-primary/30 scale-105"
+                      : "bg-surface border border-border text-text-secondary hover:text-white hover:border-accent"
                   }`}
                 >
                   <service.icon className="w-3.5 h-3.5" />
@@ -269,7 +295,7 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* Main Active Service Detail Section */}
+      {/* Main Active Service Detail Explorer */}
       <section className="py-16 bg-surface-alt">
         <div className="container mx-auto px-6 max-w-6xl">
           <motion.div
@@ -277,22 +303,22 @@ export default function ServicesPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="bg-surface border border-border rounded-3xl p-6 md:p-10 shadow-xl relative overflow-hidden"
+            className="glass-card rounded-3xl p-6 md:p-10 shadow-2xl relative overflow-hidden border border-border"
           >
             {/* Header / Banner */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-border">
               <div className="flex items-start space-x-4">
-                <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
+                <div className="w-14 h-14 rounded-2xl bg-primary/20 border border-primary/40 flex items-center justify-center text-primary shrink-0">
                   <currentService.icon className="w-7 h-7" />
                 </div>
                 <div>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-accent bg-accent/10 px-2.5 py-0.5 rounded-full border border-accent/20 inline-block mb-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-accent bg-accent/10 px-2.5 py-0.5 rounded-full border border-accent/20 inline-block mb-1.5">
                     {currentService.badge}
                   </span>
-                  <h2 className="text-2xl md:text-3xl font-heading font-bold text-text-primary">
+                  <h2 className="text-2xl md:text-3xl font-heading font-bold text-white">
                     {currentService.title}
                   </h2>
-                  <p className="text-text-secondary text-sm mt-1 font-serif italic">
+                  <p className="text-accent-light text-xs md:text-sm mt-1 font-serif italic">
                     &ldquo;{currentService.tagline}&rdquo;
                   </p>
                 </div>
@@ -301,7 +327,7 @@ export default function ServicesPage() {
               <div className="shrink-0">
                 <Link
                   href={`/contact?service=${encodeURIComponent(currentService.title.split(". ")[1])}&type=quote`}
-                  className="px-6 py-3 bg-primary hover:bg-primary-dark text-white font-heading font-bold text-xs rounded-full shadow-md shadow-primary/30 transition-all inline-flex items-center"
+                  className="px-6 py-3 bg-gradient-to-r from-accent to-accent-light text-background font-heading font-bold text-xs rounded-full shadow-lg shadow-accent/20 hover:scale-105 transition-transform inline-flex items-center"
                 >
                   Request Quote for this Service <ArrowRight className="ml-2 w-3.5 h-3.5" />
                 </Link>
@@ -313,24 +339,24 @@ export default function ServicesPage() {
               {/* Left Column: Description & Applicable Standards */}
               <div className="lg:col-span-6 space-y-6">
                 <div>
-                  <h3 className="font-heading font-bold text-base text-text-primary mb-3">
-                    Overview & Industrial Relevance
+                  <h3 className="font-heading font-bold text-sm uppercase tracking-wider text-accent mb-3 flex items-center">
+                    <Sparkles className="w-4 h-4 mr-1.5" /> Overview & Strategic Scope
                   </h3>
-                  <p className="text-text-secondary text-sm leading-relaxed">
+                  <p className="text-text-secondary text-xs md:text-sm leading-relaxed">
                     {currentService.description}
                   </p>
                 </div>
 
                 <div>
-                  <h3 className="font-heading font-bold text-base text-text-primary mb-3">
-                    Supported Standards & Frameworks
+                  <h3 className="font-heading font-bold text-sm uppercase tracking-wider text-white mb-3">
+                    Applicable Standards & Frameworks:
                   </h3>
                   <div className="grid sm:grid-cols-2 gap-3">
                     {currentService.standards.map((std, idx) => (
-                      <div key={idx} className="bg-background border border-border p-3 rounded-xl flex items-start space-x-2.5">
+                      <div key={idx} className="bg-surface border border-border p-3 rounded-xl flex items-start space-x-2.5 hover:border-accent transition-colors">
                         <ShieldCheck className="w-4 h-4 text-accent shrink-0 mt-0.5" />
                         <div>
-                          <span className="font-heading font-bold text-xs text-text-primary block">{std.code}</span>
+                          <span className="font-heading font-bold text-xs text-white block">{std.code}</span>
                           <span className="text-[11px] text-text-secondary leading-tight block">{std.name}</span>
                         </div>
                       </div>
@@ -340,9 +366,9 @@ export default function ServicesPage() {
               </div>
 
               {/* Right Column: Key Offerings Checklist */}
-              <div className="lg:col-span-6 bg-surface-alt border border-border p-6 rounded-2xl">
-                <h3 className="font-heading font-bold text-base text-text-primary mb-4 flex items-center">
-                  <CheckCircle2 className="w-4 h-4 mr-2 text-primary" /> Key Scope & Implementation Offerings
+              <div className="lg:col-span-6 bg-surface border border-border p-6 rounded-2xl">
+                <h3 className="font-heading font-bold text-sm uppercase tracking-wider text-white mb-4 flex items-center">
+                  <CheckCircle2 className="w-4 h-4 mr-2 text-primary" /> Key Scope & Deliverables:
                 </h3>
 
                 <ul className="space-y-3">
@@ -356,13 +382,13 @@ export default function ServicesPage() {
 
                 <div className="mt-8 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="text-xs text-text-secondary">
-                    Need customized scope for your facility?
+                    Need on-site gap assessment for your facility?
                   </div>
                   <Link
                     href="/contact"
                     className="text-xs font-heading font-bold text-accent hover:underline flex items-center"
                   >
-                    Consult our technical advisor <ArrowRight className="ml-1 w-3 h-3" />
+                    Consult our technical team <ArrowRight className="ml-1 w-3 h-3" />
                   </Link>
                 </div>
               </div>
@@ -371,11 +397,11 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* All 7 Services Card Deck View */}
+      {/* All 7 Services Card Deck */}
       <section className="py-20 bg-background border-t border-border">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16 max-w-3xl mx-auto">
-            <h2 className="text-2xl md:text-4xl font-heading font-bold text-text-primary mb-3">
+            <h2 className="text-2xl md:text-4xl font-heading font-extrabold text-white mb-3">
               Explore All 7 Specialized Divisions
             </h2>
             <p className="text-sm text-text-secondary">
@@ -384,20 +410,22 @@ export default function ServicesPage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {SERVICES_DATA.map((srv) => (
+            {filteredServices.map((srv) => (
               <div
                 key={srv.id}
                 id={srv.id}
-                className="bg-surface border border-border p-6 rounded-2xl flex flex-col justify-between hover:border-primary transition-all scroll-mt-28"
+                className="glass-card glass-card-hover p-6 rounded-2xl flex flex-col justify-between scroll-mt-28"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <srv.icon className="w-8 h-8 text-primary" />
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-surface-alt border border-border text-text-secondary">
+                    <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+                      <srv.icon className="w-5 h-5" />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-surface border border-border text-accent">
                       {srv.badge}
                     </span>
                   </div>
-                  <h3 className="font-heading font-bold text-lg text-text-primary mb-2">
+                  <h3 className="font-heading font-bold text-lg text-white mb-2">
                     {srv.title}
                   </h3>
                   <p className="text-text-secondary text-xs leading-relaxed mb-4">
@@ -409,15 +437,15 @@ export default function ServicesPage() {
                   <button
                     onClick={() => {
                       setActiveTab(srv.id);
-                      window.scrollTo({ top: 300, behavior: "smooth" });
+                      window.scrollTo({ top: 380, behavior: "smooth" });
                     }}
-                    className="text-xs font-bold text-primary hover:underline cursor-pointer"
+                    className="text-xs font-bold text-accent hover:underline cursor-pointer"
                   >
-                    View Details & Scope
+                    View Scope & Standards
                   </button>
                   <Link
                     href={`/contact?service=${encodeURIComponent(srv.title.split(". ")[1])}&type=quote`}
-                    className="text-xs font-bold text-accent hover:underline flex items-center"
+                    className="text-xs font-bold text-primary hover:underline flex items-center"
                   >
                     Get Quote <ArrowRight className="w-3 h-3 ml-1" />
                   </Link>
@@ -431,7 +459,7 @@ export default function ServicesPage() {
       {/* Bottom CTA Banner */}
       <section className="py-20 bg-surface-alt text-center border-t border-border">
         <div className="container mx-auto px-6 max-w-3xl space-y-5">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-text-primary">
+          <h2 className="text-2xl md:text-3xl font-heading font-bold text-white">
             Looking for a Tailored Industrial Management Solution?
           </h2>
           <p className="text-sm text-text-secondary">
@@ -440,7 +468,7 @@ export default function ServicesPage() {
           <div className="pt-2">
             <Link
               href="/contact?type=quote"
-              className="inline-flex items-center px-8 py-3.5 bg-primary text-white font-heading font-bold text-sm rounded-full hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20"
+              className="inline-flex items-center px-8 py-3.5 bg-gradient-to-r from-accent to-accent-light text-background font-heading font-bold text-xs rounded-full shadow-lg shadow-accent/20 hover:scale-105 transition-transform"
             >
               Request a Consultation / Quote
               <ArrowRight className="ml-2 w-4 h-4" />

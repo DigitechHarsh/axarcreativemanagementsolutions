@@ -10,7 +10,8 @@ import {
   FlaskConical, 
   TrendingUp, 
   Globe2, 
-  ArrowRight
+  ArrowRight,
+  Sparkles
 } from "lucide-react";
 import TypewriterText from "../../components/TypewriterText";
 
@@ -63,17 +64,18 @@ export default function ResourcesPage() {
   return (
     <div className="relative overflow-hidden bg-background">
       {/* Hero Header */}
-      <section className="pt-20 pb-8 bg-background border-b border-border">
-        <div className="container mx-auto px-6 text-center max-w-4xl min-h-[90px]">
+      <section className="pt-20 pb-10 bg-background border-b border-border relative">
+        <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none" />
+        <div className="container mx-auto px-6 text-center max-w-4xl relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-3"
           >
-            <span className="text-xs font-bold font-heading uppercase tracking-widest text-accent bg-accent/10 px-3 py-1 rounded-full border border-accent/20">
-              Knowledge & Downloads
+            <span className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-accent/10 border border-accent/30 text-accent">
+              <Sparkles className="w-3.5 h-3.5 mr-1.5" /> Knowledge Center & Downloads
             </span>
-            <h1 className="text-3xl md:text-5xl font-heading font-extrabold flex justify-center text-text-primary">
+            <h1 className="text-3xl md:text-5xl font-heading font-extrabold text-white">
               <TypewriterText text="Industrial Resources & Guides" />
             </h1>
             <p className="text-sm md:text-base text-text-secondary max-w-2xl mx-auto">
@@ -90,11 +92,11 @@ export default function ResourcesPage() {
             {RESOURCES.map((res, idx) => (
               <div
                 key={idx}
-                className="bg-surface border border-border p-6 rounded-2xl flex flex-col justify-between hover:border-accent hover:shadow-lg transition-all"
+                className="glass-card glass-card-hover p-6 rounded-2xl flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                    <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
                       <res.icon className="w-5 h-5" />
                     </div>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-accent bg-accent/10 px-2.5 py-0.5 rounded-full border border-accent/20">
@@ -102,7 +104,7 @@ export default function ResourcesPage() {
                     </span>
                   </div>
 
-                  <h3 className="font-heading font-bold text-base text-text-primary mb-2">
+                  <h3 className="font-heading font-bold text-base text-white mb-2">
                     {res.title}
                   </h3>
 
@@ -112,7 +114,7 @@ export default function ResourcesPage() {
 
                   <div className="flex flex-wrap gap-1.5 mb-6">
                     {res.tags.map((tag, tIdx) => (
-                      <span key={tIdx} className="text-[10px] bg-surface-alt px-2 py-0.5 rounded-md border border-border text-text-secondary">
+                      <span key={tIdx} className="text-[10px] bg-surface px-2 py-0.5 rounded-md border border-border text-text-secondary">
                         {tag}
                       </span>
                     ))}
@@ -121,8 +123,8 @@ export default function ResourcesPage() {
 
                 <div className="pt-3 border-t border-border">
                   <Link
-                    href={`/contact?resource=${encodeURIComponent(res.title)}&type=resource_request`}
-                    className="inline-flex items-center text-xs font-heading font-bold text-primary hover:text-primary-dark transition-colors"
+                    href={`/contact?resource=${encodeURIComponent(res.title)}&type=quote`}
+                    className="inline-flex items-center text-xs font-heading font-bold text-accent hover:text-accent-light transition-colors"
                   >
                     <Download className="w-3.5 h-3.5 mr-1.5" /> Request Resource Copy
                   </Link>
@@ -136,16 +138,16 @@ export default function ResourcesPage() {
       {/* Custom Consulting Assistance */}
       <section className="py-20 bg-background text-center border-t border-border">
         <div className="container mx-auto px-6 max-w-3xl space-y-4">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-text-primary">
+          <h2 className="text-2xl md:text-3xl font-heading font-bold text-white">
             Need Dedicated Guidance for Your Audit?
           </h2>
-          <p className="text-sm text-text-secondary">
+          <p className="text-xs md:text-sm text-text-secondary">
             Our team of certified auditors and consultants can perform an on-site mock audit and gap assessment for your facility.
           </p>
           <div className="pt-2">
             <Link
               href="/contact?type=quote"
-              className="inline-flex items-center px-8 py-3.5 bg-primary text-white font-heading font-bold text-xs rounded-full hover:bg-primary-dark transition-colors shadow-lg shadow-primary/25"
+              className="inline-flex items-center px-8 py-3.5 bg-gradient-to-r from-accent to-accent-light text-background font-heading font-bold text-xs rounded-full shadow-lg shadow-accent/20 hover:scale-105 transition-transform"
             >
               Book an On-Site Gap Assessment <ArrowRight className="ml-2 w-4 h-4" />
             </Link>
