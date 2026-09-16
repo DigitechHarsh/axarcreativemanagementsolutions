@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { 
   ShieldCheck, 
@@ -11,10 +12,51 @@ import {
   Workflow, 
   FileSpreadsheet, 
   Zap, 
-  SearchCheck,
-  ArrowRight,
-  Building
+  SearchCheck, 
+  ArrowRight, 
+  Building,
+  CheckCircle2,
+  Users
 } from "lucide-react";
+
+const TEAM_MEMBERS = [
+  {
+    name: "Ghanshyambhai K Patel",
+    role: "Proprietor & Principal Consultant",
+    qualification: "B.Sc. Tech • Certified Lead Auditor",
+    experience: "30+ Years Industrial Experience",
+    image: "/team/ghanshyam.jpeg",
+    bio: "Pioneering leader in industrial management systems, petrochemical & chemical quality frameworks, NABL laboratory readiness, and corporate governance across Gujarat.",
+    specialties: ["ISO 9001 / 14001 / 45001 / IMS", "NABL Lab Accreditation", "Six Sigma DMAIC Implementation"]
+  },
+  {
+    name: "Narendra Patel",
+    role: "Senior Technical & Safety Consultant",
+    qualification: "Industrial Safety & Compliance Specialist",
+    experience: "Senior QHSE Consultant",
+    image: "/team/narenda.jpeg",
+    bio: "Expert in shop-floor occupational health and safety, Hazard Identification (HIRA), incident investigation, and environmental compliance audits for heavy manufacturing.",
+    specialties: ["HIRA & Workplace Safety Audits", "Incident Investigation & CAPA", "Statutory Compliance & EHS Systems"]
+  },
+  {
+    name: "Mehul Patel",
+    role: "Lead Quality & Laboratory Consultant",
+    qualification: "Testing & Calibration Specialist",
+    experience: "Quality Systems Consultant",
+    image: "/team/mehul.jpeg",
+    bio: "Dedicated specialist in ISO/IEC 17025 compliance, laboratory method validation, measurement uncertainty estimation, and inter-laboratory comparison programs.",
+    specialties: ["ISO/IEC 17025 Documentation", "Testing Equipment Validation", "GLP & Method SOP Development"]
+  },
+  {
+    name: "Harsh Patel",
+    role: "Operations & Digital Systems Lead",
+    qualification: "Information Security & Business Technology",
+    experience: "Systems & Digital Operations",
+    image: "/team/harsh2.jpeg",
+    bio: "Driving digital modernization, ISO 27001 (ISMS), ISO 20000-1 IT service management, and client technical communications for cross-border industrial expansion.",
+    specialties: ["ISO 27001 ISMS & IT Systems", "Technical Business Collaterals", "Export & Client Operations"]
+  }
+];
 
 const VALUES = [
   { title: "Professionalism", desc: "Rigorous standards, deep technical competence, and uncompromising ethical conduct in every plant engagement." },
@@ -57,9 +99,14 @@ export default function AboutPage() {
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="grid lg:grid-cols-12 gap-8 items-center">
             {/* Left Card: Proprietor & Credential Badge */}
-            <div className="lg:col-span-5 bg-[#f8fafc] border border-[#e2e8f0] p-7 rounded-lg text-center space-y-4 shadow-xs">
-              <div className="w-20 h-20 mx-auto rounded-md bg-[#fef2f2] border border-[#fecaca] flex items-center justify-center text-[#b3282d]">
-                <Award className="w-10 h-10" />
+            <div className="lg:col-span-5 bg-[#f8fafc] border border-[#e2e8f0] p-6 md:p-7 rounded-2xl text-center space-y-4 shadow-xs">
+              <div className="w-32 h-32 mx-auto rounded-2xl overflow-hidden relative border-2 border-[#b3282d] shadow-sm group">
+                <Image
+                  src="/team/ghanshyam.jpeg"
+                  alt="Ghanshyambhai K Patel"
+                  fill
+                  className="object-cover object-top grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500 ease-in-out"
+                />
               </div>
 
               <div>
@@ -70,11 +117,11 @@ export default function AboutPage() {
                   Proprietor & Principal Consultant
                 </p>
                 <p className="text-xs text-[#64748b] mt-0.5">
-                  Axar Creative Management Solutions
+                  B.Sc. Tech • Certified Lead Auditor
                 </p>
               </div>
 
-              <div className="p-3.5 bg-white rounded-md border border-[#e2e8f0] text-xs text-[#475569] text-left space-y-1.5 shadow-xs">
+              <div className="p-3.5 bg-white rounded-xl border border-[#e2e8f0] text-xs text-[#475569] text-left space-y-1.5 shadow-xs">
                 <div className="flex items-center text-[#0f172a] font-bold">
                   <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-[#b3282d] shrink-0" /> Industrial Consultancy & Systems
                 </div>
@@ -127,8 +174,78 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Core Team Members Section (Square Image Frame with B&W to Color Hover) */}
+      <section className="py-16 md:py-20 bg-[#f8fafc] border-b border-[#e2e8f0]">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="text-center mb-12">
+            <span className="text-xs font-bold font-heading uppercase tracking-wider text-[#b3282d] mb-1.5 block flex items-center justify-center">
+              <Users className="w-3.5 h-3.5 mr-1.5" /> Technical Leadership
+            </span>
+            <h2 className="text-2xl md:text-4xl font-heading font-extrabold text-[#0f172a] mb-2.5">
+              Meet Our Core Team
+            </h2>
+            <div className="w-12 h-0.5 bg-[#b3282d] mx-auto mb-3" />
+            <p className="text-xs md:text-sm text-[#64748b] max-w-2xl mx-auto">
+              Experienced lead auditors, laboratory specialists, and industrial safety consultants dedicated to your operational excellence.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {TEAM_MEMBERS.map((member, idx) => (
+              <div
+                key={idx}
+                className="group bg-white border border-[#e2e8f0] hover:border-[#cbd5e1] hover:shadow-lg rounded-2xl p-5 flex flex-col justify-between transition-all duration-300"
+              >
+                <div>
+                  {/* Square image frame with rounded corners & B&W -> Color Hover */}
+                  <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-[#f1f5f9] border border-[#e2e8f0] mb-4">
+                    <Image
+                      src={member.image}
+                      alt={member.name}
+                      fill
+                      className="object-cover object-top grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500 ease-in-out"
+                    />
+                    <div className="absolute top-2.5 right-2.5">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-white/90 backdrop-blur-xs text-[#0f172a] shadow-xs">
+                        {idx === 0 ? "Lead" : "Core"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <h3 className="font-heading font-bold text-base text-[#0f172a] group-hover:text-[#b3282d] transition-colors">
+                    {member.name}
+                  </h3>
+                  <p className="text-[11px] font-bold text-[#b3282d] mt-0.5">
+                    {member.role}
+                  </p>
+                  <p className="text-[10px] text-[#64748b] font-medium mb-3">
+                    {member.qualification}
+                  </p>
+
+                  <p className="text-xs text-[#475569] leading-relaxed mb-4">
+                    {member.bio}
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-[#f1f5f9] space-y-1">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748b] block mb-1">
+                    Key Areas:
+                  </span>
+                  {member.specialties.map((spec, sIdx) => (
+                    <div key={sIdx} className="flex items-center text-[11px] text-[#475569]">
+                      <CheckCircle2 className="w-3 h-3 mr-1.5 text-[#b3282d] shrink-0" />
+                      <span className="truncate">{spec}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Core Values Section */}
-      <section className="py-16 bg-[#f8fafc] border-b border-[#e2e8f0]">
+      <section className="py-16 bg-white border-b border-[#e2e8f0]">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-12">
             <span className="text-xs font-bold font-heading uppercase tracking-wider text-[#b3282d] mb-1 block">
@@ -147,7 +264,7 @@ export default function AboutPage() {
             {VALUES.map((val, idx) => (
               <div
                 key={idx}
-                className="bg-white border border-[#e2e8f0] hover:border-[#cbd5e1] hover:shadow-md p-5 rounded-lg transition-all"
+                className="bg-[#f8fafc] border border-[#e2e8f0] hover:border-[#cbd5e1] hover:shadow-md p-5 rounded-xl transition-all"
               >
                 <div className="w-8 h-8 rounded-md bg-[#fef2f2] border border-[#fecaca] flex items-center justify-center text-[#b3282d] mb-3 font-bold text-xs">
                   0{idx + 1}
@@ -165,7 +282,7 @@ export default function AboutPage() {
       </section>
 
       {/* 5-Step Approach Pipeline */}
-      <section className="py-16 bg-white border-b border-[#e2e8f0]">
+      <section className="py-16 bg-[#f8fafc] border-b border-[#e2e8f0]">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-12">
             <span className="text-xs font-bold font-heading uppercase tracking-wider text-[#b3282d] mb-1 block">
@@ -184,7 +301,7 @@ export default function AboutPage() {
             {APPROACH_STEPS.map((step, idx) => (
               <div
                 key={idx}
-                className="bg-[#f8fafc] border border-[#e2e8f0] hover:border-[#cbd5e1] p-5 rounded-lg flex flex-col justify-between transition-all"
+                className="bg-white border border-[#e2e8f0] hover:border-[#cbd5e1] p-5 rounded-xl flex flex-col justify-between transition-all"
               >
                 <div>
                   <div className="flex items-center justify-between mb-3">
@@ -207,7 +324,7 @@ export default function AboutPage() {
       </section>
 
       {/* Dual Locations (Office & Works) */}
-      <section className="py-16 bg-[#f8fafc]">
+      <section className="py-16 bg-white">
         <div className="container mx-auto px-6 max-w-5xl">
           <div className="text-center mb-10">
             <span className="text-xs font-bold font-heading uppercase tracking-wider text-[#b3282d] mb-1 block">
@@ -223,7 +340,7 @@ export default function AboutPage() {
 
           <div className="grid md:grid-cols-2 gap-6">
             {/* Office */}
-            <div className="bg-white border border-[#e2e8f0] p-6 rounded-lg space-y-3 shadow-xs">
+            <div className="bg-[#f8fafc] border border-[#e2e8f0] p-6 rounded-xl space-y-3 shadow-xs">
               <div className="flex items-center space-x-2.5 text-[#b3282d]">
                 <MapPin className="w-5 h-5 shrink-0" />
                 <h3 className="font-heading font-bold text-sm text-[#0f172a]">Registered Office</h3>
@@ -241,7 +358,7 @@ export default function AboutPage() {
             </div>
 
             {/* Works */}
-            <div className="bg-white border border-[#e2e8f0] p-6 rounded-lg space-y-3 shadow-xs">
+            <div className="bg-[#f8fafc] border border-[#e2e8f0] p-6 rounded-xl space-y-3 shadow-xs">
               <div className="flex items-center space-x-2.5 text-[#a16207]">
                 <Building className="w-5 h-5 shrink-0" />
                 <h3 className="font-heading font-bold text-sm text-[#0f172a]">Works Facility</h3>

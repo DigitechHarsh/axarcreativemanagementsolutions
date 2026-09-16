@@ -40,9 +40,14 @@ export default function Footer() {
               Axar Creative Management Solutions provides professional industrial consultancy, ISO & QMS certifications, testing laboratory accreditation, QHSE training, and export business development.
             </p>
 
-            <div className="p-3 bg-white border border-[#e2e8f0] rounded-md flex items-center space-x-3 max-w-sm shadow-xs">
-              <div className="w-9 h-9 rounded-md bg-[#fef2f2] border border-[#fecaca] flex items-center justify-center text-[#b3282d] shrink-0">
-                <Award className="w-4 h-4" />
+            <div className="p-3 bg-white border border-[#e2e8f0] rounded-md flex items-center space-x-3 max-w-sm shadow-xs group">
+              <div className="w-10 h-10 rounded-md overflow-hidden relative border border-[#b3282d] shrink-0">
+                <Image
+                  src="/team/ghanshyam.jpeg"
+                  alt="Ghanshyambhai K Patel"
+                  fill
+                  className="object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-300"
+                />
               </div>
               <div>
                 <span className="font-heading font-bold text-xs text-[#0f172a] block">Ghanshyambhai K Patel</span>

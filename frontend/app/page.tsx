@@ -553,9 +553,14 @@ export default function HomePage() {
         <div className="container mx-auto px-6 max-w-5xl">
           <div className="grid lg:grid-cols-12 gap-8 items-center">
             {/* Left: Founder Card */}
-            <div className="lg:col-span-5 bg-white border border-[#e2e8f0] p-6 rounded-lg text-center space-y-4 shadow-xs">
-              <div className="w-16 h-16 mx-auto rounded-md bg-[#fef2f2] border border-[#fecaca] flex items-center justify-center text-[#b3282d]">
-                <Award className="w-8 h-8" />
+            <div className="lg:col-span-5 bg-white border border-[#e2e8f0] p-6 rounded-2xl text-center space-y-4 shadow-xs group">
+              <div className="w-24 h-24 mx-auto rounded-xl overflow-hidden relative border-2 border-[#b3282d] shadow-xs">
+                <Image
+                  src="/team/ghanshyam.jpeg"
+                  alt="Ghanshyambhai K Patel"
+                  fill
+                  className="object-cover object-top grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500 ease-in-out"
+                />
               </div>
 
               <div>
