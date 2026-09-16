@@ -1,25 +1,24 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #0d1117;
-  --color-surface: #161b22;
-  --color-surface-alt: #21262d;
-  --color-surface-card: rgba(22, 27, 34, 0.85);
+  --color-background: #0f141c;
+  --color-surface: #171f2c;
+  --color-surface-alt: #1e293b;
+  --color-surface-hover: #263348;
   --color-primary: #b3282d;
-  --color-primary-light: #d6383e;
-  --color-primary-dark: #7a1b1f;
-  --color-accent: #d4af37;
-  --color-accent-light: #f3d069;
-  --color-accent-dark: #aa8620;
-  --color-text-primary: #f0f6fc;
-  --color-text-secondary: #8b949e;
-  --color-text-muted: #6e7681;
-  --color-border: #30363d;
-  --color-border-hover: rgba(212, 175, 55, 0.4);
+  --color-primary-dark: #8c1e22;
+  --color-primary-light: #c9383e;
+  --color-accent: #c59b27;
+  --color-accent-light: #dfb547;
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+  --color-border: #243042;
+  --color-border-light: #334155;
 
-  --font-heading: var(--font-space-grotesk), sans-serif;
-  --font-body: var(--font-inter), sans-serif;
-  --font-serif: var(--font-playfair-display), serif;
+  --font-heading: var(--font-space-grotesk), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: var(--font-playfair-display), Georgia, serif;
 }
 
 :root {
@@ -35,18 +34,18 @@ body {
   overflow-x: hidden;
 }
 
-/* Custom Scrollbar */
+/* Custom Clean Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0d1117;
+  background: #0f141c;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #30363d;
+  background: #243042;
   border-radius: 4px;
 }
 
@@ -54,56 +53,46 @@ body {
   background: #b3282d;
 }
 
-/* Advanced Industrial Aesthetic Utilities */
+/* Developer-crafted Clean Component Utilities */
 @layer utilities {
-  .bg-grid-pattern {
-    background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
-    background-size: 24px 24px;
+  .card-clean {
+    background-color: #171f2c;
+    border: 1px solid #243042;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .card-clean:hover {
+    border-color: #3b4d66;
   }
 
-  .bg-dots-pattern {
-    background-image: radial-gradient(rgba(212, 175, 55, 0.15) 1px, transparent 1px);
-    background-size: 32px 32px;
+  .card-featured {
+    background-color: #171f2c;
+    border: 1px solid rgba(197, 155, 39, 0.4);
   }
 
-  .glass-card {
-    background: rgba(22, 27, 34, 0.75);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(240, 246, 252, 0.1);
+  .tag-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.625rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 0.375rem;
+    background-color: #1e293b;
+    border: 1px solid #243042;
+    color: #94a3b8;
   }
 
-  .glass-card-hover {
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .glass-card-hover:hover {
-    border-color: rgba(212, 175, 55, 0.4);
-    box-shadow: 0 12px 36px -10px rgba(179, 40, 45, 0.25), 0 0 20px -5px rgba(212, 175, 55, 0.15);
-    transform: translateY(-4px);
+  .tag-badge-accent {
+    background-color: rgba(197, 155, 39, 0.12);
+    border-color: rgba(197, 155, 39, 0.35);
+    color: #dfb547;
   }
 
-  .gradient-text-primary {
-    background: linear-gradient(135deg, #ffffff 0%, #d4af37 60%, #b3282d 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .gradient-text-gold {
-    background: linear-gradient(135deg, #fef08a 0%, #d4af37 50%, #ca8a04 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .gradient-border-gold {
-    border-image: linear-gradient(to right, #b3282d, #d4af37) 1;
-  }
-
-  .glow-crimson {
-    box-shadow: 0 0 35px -5px rgba(179, 40, 45, 0.4);
-  }
-
-  .glow-gold {
-    box-shadow: 0 0 35px -5px rgba(212, 175, 55, 0.35);
+  .tag-badge-primary {
+    background-color: rgba(179, 40, 45, 0.12);
+    border-color: rgba(179, 40, 45, 0.35);
+    color: #f87171;
   }
 
   .hide-scrollbar::-webkit-scrollbar {
@@ -113,19 +102,4 @@ body {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-}
-
-@keyframes pulseGlow {
-  0%, 100% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
-}
-
-.animate-pulse-glow {
-  animation: pulseGlow 4s infinite ease-in-out;
 }

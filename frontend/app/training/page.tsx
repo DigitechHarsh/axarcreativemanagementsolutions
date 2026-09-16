@@ -1,9 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { 
-  GraduationCap, 
   Award, 
   ShieldCheck, 
   UtensilsCrossed, 
@@ -13,10 +11,8 @@ import {
   BookOpen,
   Users,
   Clock,
-  Briefcase,
-  Sparkles
+  Briefcase
 } from "lucide-react";
-import TypewriterText from "../../components/TypewriterText";
 
 const TRAINING_STREAMS = [
   {
@@ -97,140 +93,126 @@ export default function TrainingPage() {
   return (
     <div className="relative overflow-hidden bg-background">
       {/* Hero Header */}
-      <section className="pt-20 pb-10 bg-background border-b border-border relative">
-        <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none" />
-        <div className="container mx-auto px-6 text-center max-w-4xl relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-3"
-          >
-            <span className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-accent/10 border border-accent/30 text-accent">
-              <Sparkles className="w-3.5 h-3.5 mr-1.5" /> Workforce Competency & Auditing
+      <section className="pt-16 pb-12 bg-background border-b border-[#243042]">
+        <div className="container mx-auto px-6 text-center max-w-4xl">
+          <div className="space-y-3">
+            <span className="inline-flex items-center px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-[#171f2c] border border-[#243042] text-accent">
+              <ShieldCheck className="w-3.5 h-3.5 mr-1.5" /> Workforce Competency & Auditing
             </span>
             <h1 className="text-3xl md:text-5xl font-heading font-extrabold text-white">
-              <TypewriterText text="Industrial Training Programs" />
+              Industrial Training Programs
             </h1>
-            <p className="text-sm md:text-base text-text-secondary max-w-2xl mx-auto">
+            <p className="text-xs md:text-sm text-text-secondary max-w-2xl mx-auto leading-relaxed">
               Practical, competency-driven workshops tailored for industrial personnel, supervisors, engineers, and management teams.
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Value Pillars Banner */}
-      <section className="py-8 bg-surface border-b border-border">
+      {/* Value Pillars Strip */}
+      <section className="py-6 bg-[#0c1017] border-b border-[#243042]">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div className="p-4 glass-card rounded-xl">
-              <BookOpen className="w-6 h-6 text-primary mx-auto mb-2" />
-              <h4 className="font-heading font-bold text-xs md:text-sm text-white">Practical Focus</h4>
-              <p className="text-[11px] text-text-secondary">Applied shop-floor case studies</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div className="p-3.5 bg-[#171f2c] border border-[#243042] rounded-lg">
+              <BookOpen className="w-5 h-5 text-accent mx-auto mb-1.5" />
+              <h4 className="font-heading font-bold text-xs text-white">Practical Focus</h4>
+              <p className="text-[10px] text-text-secondary mt-0.5">Applied shop-floor case studies</p>
             </div>
-            <div className="p-4 glass-card rounded-xl">
-              <Users className="w-6 h-6 text-accent mx-auto mb-2" />
-              <h4 className="font-heading font-bold text-xs md:text-sm text-white">On-Site Delivery</h4>
-              <p className="text-[11px] text-text-secondary">Tailored to your plant shifts</p>
+            <div className="p-3.5 bg-[#171f2c] border border-[#243042] rounded-lg">
+              <Users className="w-5 h-5 text-primary mx-auto mb-1.5" />
+              <h4 className="font-heading font-bold text-xs text-white">On-Site Delivery</h4>
+              <p className="text-[10px] text-text-secondary mt-0.5">Tailored to your plant shifts</p>
             </div>
-            <div className="p-4 glass-card rounded-xl">
-              <Clock className="w-6 h-6 text-primary mx-auto mb-2" />
-              <h4 className="font-heading font-bold text-xs md:text-sm text-white">Flexible Modules</h4>
-              <p className="text-[11px] text-text-secondary">1-day, 3-day & Lead Auditor tracks</p>
+            <div className="p-3.5 bg-[#171f2c] border border-[#243042] rounded-lg">
+              <Clock className="w-5 h-5 text-accent mx-auto mb-1.5" />
+              <h4 className="font-heading font-bold text-xs text-white">Flexible Modules</h4>
+              <p className="text-[10px] text-text-secondary mt-0.5">1-day, 3-day & Auditor tracks</p>
             </div>
-            <div className="p-4 glass-card rounded-xl">
-              <Briefcase className="w-6 h-6 text-accent mx-auto mb-2" />
-              <h4 className="font-heading font-bold text-xs md:text-sm text-white">Certified Competency</h4>
-              <p className="text-[11px] text-text-secondary">Official auditor certificate</p>
+            <div className="p-3.5 bg-[#171f2c] border border-[#243042] rounded-lg">
+              <Briefcase className="w-5 h-5 text-primary mx-auto mb-1.5" />
+              <h4 className="font-heading font-bold text-xs text-white">Plant-Specific</h4>
+              <p className="text-[10px] text-text-secondary mt-0.5">Custom examples from your sector</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 4 Training Modules */}
-      <section className="py-16 bg-surface-alt">
-        <div className="container mx-auto px-6 max-w-6xl space-y-12">
-          {TRAINING_STREAMS.map((stream, idx) => (
-            <motion.div
+      {/* Training Programs Grid */}
+      <section className="py-14 bg-background">
+        <div className="container mx-auto px-6 max-w-6xl space-y-8">
+          {TRAINING_STREAMS.map((stream) => (
+            <div
               key={stream.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.15 }}
-              transition={{ duration: 0.4 }}
-              className="glass-card rounded-3xl p-6 md:p-10 shadow-2xl border border-border"
+              id={stream.id}
+              className="bg-[#171f2c] border border-[#243042] hover:border-[#3b4d66] rounded-lg p-6 md:p-8 transition-colors scroll-mt-24"
             >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-border">
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-2xl bg-primary/20 border border-primary/40 flex items-center justify-center text-primary shrink-0">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#243042]">
+                <div className="flex items-start space-x-3.5">
+                  <div className="w-11 h-11 rounded-md bg-[#1f293d] border border-[#3b4d66] flex items-center justify-center text-accent shrink-0">
                     <stream.icon className="w-6 h-6" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-accent bg-accent/10 px-2.5 py-0.5 rounded-full border border-accent/20 inline-block mb-1">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-text-muted bg-[#0f141c] px-2 py-0.5 rounded border border-[#243042] inline-block mb-1">
                       {stream.badge}
                     </span>
                     <h2 className="text-xl md:text-2xl font-heading font-bold text-white">
                       {stream.title}
                     </h2>
-                    <p className="text-xs text-text-secondary mt-1">
-                      <strong className="text-white">Target Audience:</strong> {stream.target}
+                    <p className="text-xs font-mono text-accent mt-0.5">
+                      Target Audience: {stream.target}
                     </p>
                   </div>
                 </div>
 
-                <div>
+                <div className="shrink-0">
                   <Link
                     href={`/contact?training=${encodeURIComponent(stream.title)}&type=quote`}
-                    className="px-5 py-2.5 bg-gradient-to-r from-accent to-accent-light text-background font-heading font-bold text-xs rounded-full transition-all inline-flex items-center shadow-md shadow-accent/20 hover:scale-105"
+                    className="px-4 py-2 bg-accent text-background font-heading font-bold text-xs rounded-md hover:bg-accent-light transition-colors inline-flex items-center"
                   >
-                    Schedule Training Batch <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
+                    Request Training Batch <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
                   </Link>
                 </div>
               </div>
 
-              <div className="pt-6 grid lg:grid-cols-12 gap-8">
-                <div className="lg:col-span-5 space-y-3">
-                  <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-accent">Program Overview</h3>
-                  <p className="text-xs md:text-sm text-text-secondary leading-relaxed">
-                    {stream.desc}
-                  </p>
-                  <div className="p-4 bg-surface rounded-xl border border-border text-xs text-text-secondary">
-                    Delivered directly on-site at your facility or in structured workshop environments with interactive case reviews and mock audits.
-                  </div>
-                </div>
+              <div className="pt-5 space-y-4">
+                <p className="text-text-secondary text-xs md:text-sm leading-relaxed">
+                  {stream.desc}
+                </p>
 
-                <div className="lg:col-span-7">
-                  <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-white mb-3 flex items-center">
-                    <CheckCircle2 className="w-4 h-4 mr-2 text-primary" /> Key Curriculum Modules:
-                  </h3>
+                <div>
+                  <h4 className="font-heading font-bold text-xs uppercase tracking-wider text-white mb-3">
+                    Key Curriculum Modules:
+                  </h4>
                   <div className="grid sm:grid-cols-2 gap-2.5">
-                    {stream.topics.map((topic, tIdx) => (
-                      <div key={tIdx} className="bg-surface border border-border p-3 rounded-xl flex items-start space-x-2 text-xs text-text-secondary hover:border-accent transition-colors">
-                        <div className="w-1.5 h-1.5 rounded-full bg-accent mt-1.5 shrink-0" />
-                        <span>{topic}</span>
+                    {stream.topics.map((top, idx) => (
+                      <div key={idx} className="bg-[#0f141c] border border-[#243042] p-2.5 rounded-md flex items-start space-x-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" />
+                        <span className="text-xs text-text-secondary">{top}</span>
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>
 
-      {/* CTA Footer */}
-      <section className="py-20 bg-background text-center border-t border-border">
+      {/* Bottom CTA */}
+      <section className="py-14 bg-[#0c1017] border-t border-[#243042] text-center">
         <div className="container mx-auto px-6 max-w-3xl space-y-4">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-white">
-            Plan an In-House Industrial Training Workshop
+          <h2 className="text-2xl font-heading font-bold text-white">
+            Need an In-House Workshop for Your Team?
           </h2>
           <p className="text-xs md:text-sm text-text-secondary">
-            Equip your operational supervisors and technical managers with certified auditing and safety competencies.
+            We conduct customized training sessions directly at your factory or plant facility in Bharuch, Dahej, Ankleshwar, Jhagadia or online.
           </p>
-          <div className="pt-3">
+          <div className="pt-2">
             <Link
               href="/contact?type=quote"
-              className="inline-flex items-center px-8 py-3.5 bg-gradient-to-r from-accent to-accent-light text-background font-heading font-bold text-xs rounded-full shadow-lg shadow-accent/20 hover:scale-105 transition-transform"
+              className="inline-flex items-center px-6 py-2.5 bg-accent text-background font-heading font-bold text-xs rounded-md hover:bg-accent-light transition-colors"
             >
-              Request Training Proposal <ArrowRight className="ml-2 w-4 h-4" />
+              Plan Your Training Schedule <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
             </Link>
           </div>
         </div>

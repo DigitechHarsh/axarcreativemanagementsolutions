@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useSpring, useScroll } from "framer-motion";
+import { motion } from "framer-motion";
 import { 
   ShieldCheck, 
   Award, 
@@ -13,8 +13,7 @@ import {
   TrendingUp, 
   FileText, 
   Globe2, 
-  CheckCircle, 
-  CheckCircle2,
+  CheckCircle2, 
   ArrowRight,
   Factory,
   Cpu,
@@ -33,17 +32,12 @@ import {
   Workflow,
   SearchCheck,
   Zap,
-  Layers,
-  Sparkles,
-  Calculator
+  MapPin,
+  Phone,
+  Mail
 } from "lucide-react";
 
 import HeroCarousel from "../components/HeroCarousel";
-
-const revealVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
-};
 
 interface Project {
   id?: number;
@@ -63,7 +57,7 @@ const DEFAULT_FEATURED: Project[] = [
     description: "Complete Integrated Management System rollout across 3 chemical plants in Gujarat with zero non-conformances on final assessment.",
     image_url: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
     project_url: "",
-    tag_style: "bg-primary/20 text-primary border border-primary/40",
+    tag_style: "bg-[#1f293d] text-white border border-[#3b4d66]",
     featured: true
   },
   { 
@@ -72,7 +66,7 @@ const DEFAULT_FEATURED: Project[] = [
     description: "Laboratory layout design, SOP formulation, equipment validation, and NABL accreditation clearance in record 6 months.",
     image_url: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80",
     project_url: "",
-    tag_style: "bg-accent/20 text-accent border border-accent/40",
+    tag_style: "bg-[#232014] text-accent border border-[#524522]",
     featured: true
   },
   { 
@@ -81,7 +75,7 @@ const DEFAULT_FEATURED: Project[] = [
     description: "Risk identification and structured asset coverage covering property, boiler breakdown, and marine transit for an engineering plant.",
     image_url: "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=800&q=80",
     project_url: "",
-    tag_style: "bg-primary/20 text-primary border border-primary/40",
+    tag_style: "bg-[#1f293d] text-white border border-[#3b4d66]",
     featured: true
   }
 ];
@@ -158,257 +152,202 @@ const INDUSTRIES = [
   { icon: Flame, name: "Chemical & Petrochemical", desc: "HIRA, EMS compliance & process safety" },
   { icon: Pill, name: "Pharmaceutical & Healthcare", desc: "GMP, cleanroom validation & ISO 13485" },
   { icon: UtensilsCrossed, name: "Food & Beverage", desc: "HACCP, GMP, GHP & food safety culture" },
-  { icon: Microscope, name: "Laboratory & Testing", desc: "NABL accreditation & ISO/IEC 17025" },
-  { icon: HardHat, name: "Construction", desc: "Site safety inspections & risk control" },
-  { icon: Building2, name: "Infrastructure", desc: "Energy systems & large-scale compliance" },
-  { icon: Fuel, name: "Oil & Gas", desc: "Stringent safety & emergency frameworks" },
-  { icon: Truck, name: "Logistics & Services", desc: "Supply chain mapping & cargo insurance" },
-  { icon: Ship, name: "Export & Trading", desc: "International buyer compliance & trade" },
-  { icon: Sprout, name: "Agriculture & Allied", desc: "Sustainable agro-practices & certification" }
+  { icon: Microscope, name: "Testing & Calibration Labs", desc: "ISO/IEC 17025 compliance & NABL audits" },
+  { icon: HardHat, name: "Construction & Infrastructure", desc: "Site safety, OH&S & contractor audits" },
+  { icon: Building2, name: "Corporate & Service Sectors", desc: "ISO 27001 ISMS & IT service management" },
+  { icon: Fuel, name: "Energy & Utilities", desc: "ISO 50001 energy audits & hazard control" },
+  { icon: Truck, name: "Logistics & Warehousing", desc: "Supply chain security & transit risk cover" },
+  { icon: Ship, name: "Export-Oriented Units (EOUs)", desc: "Global compliance & buyer audits" },
+  { icon: Sprout, name: "Agro & Food Processing", desc: "Organic standards & hygiene certifications" }
 ];
 
 const APPROACH_STEPS = [
+  { step: "01", title: "ASSESS", desc: "Comprehensive gap analysis, operational risk mapping, and standard compliance review.", icon: SearchCheck },
+  { step: "02", title: "PLAN", desc: "Structured roadmap with milestones, team resource allocation, and documentation architecture.", icon: Compass },
+  { step: "03", title: "IMPLEMENT", desc: "Developing practical SOPs, conducting workforce workshops, and establishing controls.", icon: Workflow },
+  { step: "04", title: "VERIFY", desc: "Rigorous internal audit rounds, management review meetings, and CAPA resolution.", icon: FileSpreadsheet },
+  { step: "05", title: "IMPROVE", desc: "Continual improvement reviews, surveillance readiness, and sustained efficiency.", icon: Zap }
+];
+
+const STANDARDS_DIRECTORY = [
   {
-    step: "01",
-    title: "ASSESS",
-    desc: "Understand your current management systems, operational risks, compliance gaps, and business objectives.",
-    icon: SearchCheck
+    code: "ISO 9001:2015",
+    title: "Quality Management System (QMS)",
+    category: "Management Systems",
+    timeline: "2 to 4 Months",
+    keyDeliverable: "Quality Manual, SOPs, Internal Audit, Management Review",
+    summary: "Standardizes operations, enhances customer satisfaction, and ensures consistent product/service delivery."
   },
   {
-    step: "02",
-    title: "PLAN",
-    desc: "Develop a practical, tailored roadmap with clear timelines, resource allocation, and milestone targets.",
-    icon: Compass
+    code: "ISO 14001:2015",
+    title: "Environmental Management System (EMS)",
+    category: "Environment & Safety",
+    timeline: "2 to 4 Months",
+    keyDeliverable: "Aspect-Impact Register, Legal Matrix, Environmental Objectives",
+    summary: "Systematic control over environmental impacts, waste minimization, and statutory compliance."
   },
   {
-    step: "03",
-    title: "IMPLEMENT",
-    desc: "Support SOP documentation, infrastructure readiness, employee training, and practical system execution.",
-    icon: Workflow
+    code: "ISO 45001:2018",
+    title: "Occupational Health & Safety (OH&S)",
+    category: "Environment & Safety",
+    timeline: "2 to 4 Months",
+    keyDeliverable: "HIRA Register, Emergency Preparedness Plan, Incident Protocols",
+    summary: "Proactive hazard prevention, accident reduction, and safer industrial workplace conditions."
   },
   {
-    step: "04",
-    title: "VERIFY",
-    desc: "Conduct thorough internal audits, identify non-conformances, and drive corrective actions (CAPA).",
-    icon: FileSpreadsheet
+    code: "ISO/IEC 17025:2017",
+    title: "Testing & Calibration Laboratories",
+    category: "Laboratory & NABL",
+    timeline: "4 to 6 Months",
+    keyDeliverable: "Measurement Uncertainty, PT/ILC Protocols, Quality Manual",
+    summary: "NABL readiness demonstrating technical competence and reliable test/calibration results."
   },
   {
-    step: "05",
-    title: "IMPROVE",
-    desc: "Strengthen the management system through ongoing review, management audits, and continual improvement.",
-    icon: Zap
+    code: "ISO 27001:2022",
+    title: "Information Security Management (ISMS)",
+    category: "IT & Cybersecurity",
+    timeline: "3 to 5 Months",
+    keyDeliverable: "Statement of Applicability (SoA), Risk Treatment Plan",
+    summary: "Protects sensitive organizational data, intellectual property, and client data integrity."
+  },
+  {
+    code: "ISO 20000-1:2018",
+    title: "IT Service Management System (ITSM)",
+    category: "IT & Cybersecurity",
+    timeline: "3 to 4 Months",
+    keyDeliverable: "Service Catalogue, SLA Architecture, Incident & Problem SOPs",
+    summary: "Aligns IT delivery with industrial business demands for high availability and reliability."
   }
 ];
 
-const WHY_CHOOSE = [
-  {
-    title: "Practical Industrial Experience",
-    desc: "Solutions designed around real-world industrial shop-floor and laboratory requirements, not textbook bureaucracy."
-  },
-  {
-    title: "Integrated Services Under One Roof",
-    desc: "Consultancy, training, laboratory accreditation, insurance, and export development under one unified platform."
-  },
-  {
-    title: "Customized Approach",
-    desc: "Every system and training program is tailored to your organization's specific facility size, sector, and commercial goals."
-  },
-  {
-    title: "Training with Practical Focus",
-    desc: "Workforce competency programs designed to help employees immediately apply safety and quality principles at the workplace."
-  },
-  {
-    title: "Long-Term Partnership",
-    desc: "Our objective is not only achieving certification—it is helping organizations maintain and continuously improve year after year."
-  }
-];
-
-export default function Home() {
+export default function HomePage() {
   const [featuredProjects, setFeaturedProjects] = useState<Project[]>(DEFAULT_FEATURED);
-  const [selectedIndustry, setSelectedIndustry] = useState<string>("Manufacturing");
-  const [selectedStandards, setSelectedStandards] = useState<string[]>(["ISO 9001", "ISO 45001"]);
+  const [activeStandardTab, setActiveStandardTab] = useState(0);
 
   useEffect(() => {
-    async function fetchFeaturedProjects() {
-      try {
-        const res = await fetch("https://acms.harshaicreations.com/api.php?action=get_projects");
-        if (!res.ok) return;
-        const data = await res.json();
-        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-          const featured = data.data.filter((p: Project) => Boolean(p.featured));
+    fetch("https://acms.harshaicreations.com/api.php?type=projects")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const featured = data.filter((p: any) => p.featured == 1 || p.featured === true);
           if (featured.length > 0) {
-            setFeaturedProjects(featured.slice(0, 6));
+            setFeaturedProjects(featured.slice(0, 3));
           } else {
-            setFeaturedProjects(data.data.slice(0, 3));
+            setFeaturedProjects(data.slice(0, 3));
           }
         }
-      } catch (err) {
-        console.log("Using default featured projects fallback");
-      }
-    }
-    fetchFeaturedProjects();
+      })
+      .catch(() => {
+        // Fallback to default
+      });
   }, []);
-
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
-
-  const toggleStandard = (std: string) => {
-    if (selectedStandards.includes(std)) {
-      setSelectedStandards(selectedStandards.filter(s => s !== std));
-    } else {
-      setSelectedStandards([...selectedStandards, std]);
-    }
-  };
 
   return (
     <div className="relative overflow-hidden bg-background">
-      {/* Scroll Progress Bar */}
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-accent to-primary z-50 origin-left"
-        style={{ scaleX }}
-      />
-
       {/* 1. Hero Carousel */}
       <HeroCarousel />
 
-      {/* 2. Trust Strip (Industrial Marquee) */}
-      <div className="border-y border-border bg-surface overflow-hidden py-3.5 relative">
-        <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-surface to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-surface to-transparent z-10 pointer-events-none" />
-
-        <motion.div
-          className="flex whitespace-nowrap space-x-12 px-4"
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{ ease: "linear", duration: 20, repeat: Infinity }}
-        >
-          {[...Array(2)].map((_, i) => (
-            <div key={i} className="flex space-x-12 items-center">
-              <span className="text-text-secondary font-heading font-bold text-xs tracking-wider flex items-center">
-                <CheckCircle className="w-3.5 h-3.5 mr-2 text-accent" /> ISO 9001 / 14001 / 45001 (IMS)
-              </span>
-              <span className="text-text-secondary font-heading font-bold text-xs tracking-wider flex items-center">
-                <CheckCircle className="w-3.5 h-3.5 mr-2 text-primary" /> ISO 27001 IT Security & ISO 20000-1
-              </span>
-              <span className="text-text-secondary font-heading font-bold text-xs tracking-wider flex items-center">
-                <CheckCircle className="w-3.5 h-3.5 mr-2 text-accent" /> NABL Testing Laboratory Setup
-              </span>
-              <span className="text-text-secondary font-heading font-bold text-xs tracking-wider flex items-center">
-                <CheckCircle className="w-3.5 h-3.5 mr-2 text-primary" /> QHSE & Food Safety (HACCP/GMP)
-              </span>
-              <span className="text-text-secondary font-heading font-bold text-xs tracking-wider flex items-center">
-                <CheckCircle className="w-3.5 h-3.5 mr-2 text-accent" /> Six Sigma DMAIC Process Optimization
-              </span>
-              <span className="text-text-secondary font-heading font-bold text-xs tracking-wider flex items-center">
-                <CheckCircle className="w-3.5 h-3.5 mr-2 text-primary" /> Industrial Insurance Solutions
-              </span>
-              <span className="text-text-secondary font-heading font-bold text-xs tracking-wider flex items-center">
-                <CheckCircle className="w-3.5 h-3.5 mr-2 text-accent" /> Export Market & Buyer Identification
-              </span>
-            </div>
-          ))}
-        </motion.div>
+      {/* 2. Technical Credential Strip */}
+      <div className="bg-[#0c1017] border-b border-[#243042] py-3.5 px-6 overflow-x-auto">
+        <div className="container mx-auto flex items-center justify-between min-w-[760px] text-xs font-mono text-text-secondary">
+          <span className="flex items-center text-white font-medium">
+            <span className="w-2 h-2 rounded-full bg-accent mr-2" />
+            ISO 9001 • 14001 • 45001 • 50001
+          </span>
+          <span className="text-[#3b4d66]">|</span>
+          <span className="flex items-center text-white font-medium">
+            <span className="w-2 h-2 rounded-full bg-primary mr-2" />
+            ISO/IEC 17025 / NABL Readiness
+          </span>
+          <span className="text-[#3b4d66]">|</span>
+          <span className="flex items-center text-white font-medium">
+            <span className="w-2 h-2 rounded-full bg-accent mr-2" />
+            ISO 27001 (ISMS) & 20000-1 (ITSM)
+          </span>
+          <span className="text-[#3b4d66]">|</span>
+          <span className="flex items-center text-white font-medium">
+            <span className="w-2 h-2 rounded-full bg-primary mr-2" />
+            Six Sigma & Industrial Insurance
+          </span>
+        </div>
       </div>
 
-      {/* 3. Introduction & Tagline Banner */}
-      <section className="py-20 bg-background border-b border-border relative">
-        <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none" />
-        <div className="container mx-auto px-6 max-w-5xl text-center relative z-10">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={revealVariants}
-            className="space-y-6"
-          >
-            <div className="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-accent/10 border border-accent/30 text-accent">
-              <Sparkles className="w-3.5 h-3.5 mr-1.5" /> Your Partner for Industrial Excellence
+      {/* 3. Introduction & Value Proposition */}
+      <section className="py-16 md:py-20 bg-background border-b border-[#243042]">
+        <div className="container mx-auto px-6 max-w-5xl text-center">
+          <div className="space-y-4">
+            <div className="inline-flex items-center px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-[#171f2c] border border-[#243042] text-accent">
+              <ShieldCheck className="w-3.5 h-3.5 mr-1.5" /> Your Partner for Industrial Excellence
             </div>
             
-            <h2 className="text-2xl md:text-4xl lg:text-5xl font-heading font-extrabold text-white leading-tight">
+            <h2 className="text-2xl md:text-4xl font-heading font-extrabold text-white leading-tight">
               &ldquo;Better Systems • Safer Workplaces • Sustainable Growth&rdquo;
             </h2>
 
-            <p className="text-sm md:text-lg text-text-secondary max-w-3xl mx-auto leading-relaxed">
+            <p className="text-sm md:text-base text-text-secondary max-w-3xl mx-auto leading-relaxed">
               Axar Creative Management Solutions provides professional consultancy, training and business-support services to industries seeking improved quality, safety, environmental performance, regulatory compliance and sustainable commercial growth.
             </p>
 
-            <div className="flex flex-wrap justify-center gap-4 pt-4">
+            <div className="flex flex-wrap justify-center gap-3 pt-3">
               <Link
                 href="/services"
-                className="px-8 py-3.5 bg-gradient-to-r from-primary to-primary-light text-white font-heading font-bold text-xs md:text-sm rounded-full hover:shadow-[0_0_25px_rgba(179,40,45,0.5)] transition-all inline-flex items-center"
+                className="px-6 py-2.5 bg-primary text-white font-heading font-bold text-xs md:text-sm rounded-md hover:bg-primary-dark transition-all inline-flex items-center shadow-md"
               >
                 Explore 7 Core Services
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
               <Link
                 href="/contact?type=quote"
-                className="px-8 py-3.5 bg-surface border border-accent/40 text-accent font-heading font-bold text-xs md:text-sm rounded-full hover:bg-accent/10 hover:border-accent transition-all"
+                className="px-6 py-2.5 bg-[#171f2c] border border-[#243042] text-white hover:text-accent hover:border-accent font-heading font-bold text-xs md:text-sm rounded-md transition-all"
               >
-                Get a Customized Quote
+                Request a Proposal
               </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* 4. Core Services (7 Pillars Grid with Glassmorphism) */}
-      <section className="py-24 bg-surface-alt relative">
+      {/* 4. Core Services (7 Pillars Grid) */}
+      <section className="py-20 bg-[#0c1017] border-b border-[#243042]">
         <div className="container mx-auto px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={revealVariants}
-            className="text-center mb-16"
-          >
-            <span className="text-xs font-bold font-heading uppercase tracking-widest text-primary mb-2 block">
-              Comprehensive Industrial Portfolio
+          <div className="text-center mb-14">
+            <span className="text-xs font-bold font-heading uppercase tracking-wider text-accent mb-2 block">
+              Core Capabilities
             </span>
-            <h2 className="text-3xl md:text-5xl font-heading font-extrabold text-white mb-4">
+            <h2 className="text-2xl md:text-4xl font-heading font-extrabold text-white mb-3">
               Our 7 Core Services
             </h2>
-            <div className="w-20 h-1 bg-accent mx-auto rounded-full mb-4 glow-gold" />
-            <p className="text-text-secondary max-w-2xl mx-auto text-sm md:text-base">
-              From international ISO certifications and laboratory setups to workforce training and risk management.
+            <div className="w-16 h-0.5 bg-accent mx-auto mb-3" />
+            <p className="text-text-secondary max-w-2xl mx-auto text-xs md:text-sm">
+              Comprehensive consulting, accreditation, training, risk management, and market expansion solutions for modern enterprises.
             </p>
-          </motion.div>
+          </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {CORE_SERVICES.map((service, i) => (
-              <motion.div
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {CORE_SERVICES.map((service) => (
+              <div
                 key={service.id}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.2 }}
-                variants={{
-                  hidden: { opacity: 0, y: 30 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: i * 0.08 } }
-                }}
-                className="glass-card glass-card-hover rounded-2xl p-7 flex flex-col justify-between relative group"
+                className="bg-[#171f2c] border border-[#243042] hover:border-[#3b4d66] rounded-lg p-6 flex flex-col justify-between transition-colors"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-5">
-                    <div className="w-12 h-12 rounded-xl bg-primary/20 border border-primary/40 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                      <service.icon className="w-6 h-6" />
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-10 h-10 rounded-md bg-[#1f293d] border border-[#3b4d66] flex items-center justify-center text-accent">
+                      <service.icon className="w-5 h-5" />
                     </div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-surface border border-border text-accent">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#0f141c] border border-[#243042] text-text-secondary">
                       {service.badge}
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-heading font-bold text-white mb-3 group-hover:text-accent transition-colors">
+                  <h3 className="text-lg font-heading font-bold text-white mb-2">
                     {service.title}
                   </h3>
 
-                  <p className="text-text-secondary text-xs md:text-sm leading-relaxed mb-6">
+                  <p className="text-text-secondary text-xs leading-relaxed mb-5">
                     {service.desc}
                   </p>
 
-                  <div className="space-y-2 border-t border-border/80 pt-4 mb-6">
+                  <div className="space-y-1.5 border-t border-[#243042] pt-4 mb-5">
                     {service.highlights.map((item, idx) => (
                       <div key={idx} className="flex items-start text-xs text-text-secondary">
                         <CheckCircle2 className="w-3.5 h-3.5 mr-2 text-accent shrink-0 mt-0.5" />
@@ -420,218 +359,180 @@ export default function Home() {
 
                 <Link
                   href={service.link}
-                  className="inline-flex items-center text-xs font-heading font-bold text-accent group-hover:text-accent-light transition-colors mt-auto pt-2"
+                  className="inline-flex items-center text-xs font-heading font-bold text-accent hover:text-accent-light transition-colors mt-auto pt-2"
                 >
-                  View Details & Scope <ArrowRight className="ml-1.5 w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  View Details & Scope <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
                 </Link>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* 5. Interactive ISO & Scope Estimator Widget */}
-      <section className="py-20 bg-background border-y border-border relative">
+      {/* 5. Standards Directory & Scope Explorer */}
+      <section className="py-20 bg-background border-b border-[#243042]">
         <div className="container mx-auto px-6 max-w-5xl">
-          <div className="glass-card rounded-3xl p-8 md:p-12 border border-border relative overflow-hidden">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-border">
-              <div>
-                <span className="text-xs font-bold font-heading uppercase tracking-widest text-accent mb-1 block flex items-center">
-                  <Calculator className="w-3.5 h-3.5 mr-1.5" /> Instant Assessment Tool
-                </span>
-                <h3 className="text-2xl md:text-3xl font-heading font-bold text-white">
-                  Plan Your Compliance & Training Roadmap
-                </h3>
-                <p className="text-xs text-text-secondary mt-1">
-                  Select your industry and target management standards for an instant scope summary.
-                </p>
-              </div>
+          <div className="mb-10 text-center">
+            <span className="text-xs font-bold font-heading uppercase tracking-wider text-accent mb-2 block">
+              Standards & Implementation Frameworks
+            </span>
+            <h2 className="text-2xl md:text-3xl font-heading font-extrabold text-white">
+              Technical Specifications Directory
+            </h2>
+            <p className="text-xs md:text-sm text-text-secondary max-w-xl mx-auto mt-2">
+              Review implementation requirements, typical delivery timelines, and audit scope for primary industrial standards.
+            </p>
+          </div>
 
-              <Link
-                href={`/contact?industry=${encodeURIComponent(selectedIndustry)}&standards=${encodeURIComponent(selectedStandards.join(','))}&type=quote`}
-                className="px-6 py-3 bg-gradient-to-r from-accent to-accent-light text-background font-heading font-bold text-xs rounded-full shadow-lg shadow-accent/20 hover:scale-105 transition-transform shrink-0 flex items-center justify-center"
-              >
-                Get Formal Quote for Selection <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
-              </Link>
+          <div className="bg-[#171f2c] border border-[#243042] rounded-lg p-6">
+            {/* Standards Tab Selector */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-6 border-b border-[#243042] pb-4">
+              {STANDARDS_DIRECTORY.map((item, idx) => (
+                <button
+                  key={item.code}
+                  onClick={() => setActiveStandardTab(idx)}
+                  className={`px-3 py-2 rounded-md text-xs font-heading font-bold transition-all text-center border cursor-pointer ${
+                    activeStandardTab === idx
+                      ? "bg-[#1f293d] border-accent text-white"
+                      : "bg-[#0f141c] border-[#243042] text-text-secondary hover:text-white hover:border-[#3b4d66]"
+                  }`}
+                >
+                  {item.code}
+                </button>
+              ))}
             </div>
 
-            <div className="grid md:grid-cols-12 gap-8 pt-8">
-              {/* Step A: Select Industry */}
-              <div className="md:col-span-5 space-y-3">
-                <label className="text-xs font-bold uppercase tracking-wider text-text-primary block">
-                  1. Select Your Industry Sector:
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  {["Manufacturing", "Chemical", "Pharmaceutical", "Food & Beverage", "Laboratory", "Engineering"].map((ind) => (
-                    <button
-                      key={ind}
-                      onClick={() => setSelectedIndustry(ind)}
-                      className={`p-2.5 rounded-xl text-xs font-bold transition-all text-left border cursor-pointer ${
-                        selectedIndustry === ind
-                          ? "bg-primary/30 border-primary text-white"
-                          : "bg-surface border-border text-text-secondary hover:text-white"
-                      }`}
-                    >
-                      {ind}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Step B: Choose Target Standards */}
-              <div className="md:col-span-7 space-y-3">
-                <label className="text-xs font-bold uppercase tracking-wider text-text-primary block">
-                  2. Select Desired ISO Standards / Programs:
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    "ISO 9001 (QMS)",
-                    "ISO 14001 (EMS)",
-                    "ISO 45001 (OH&S)",
-                    "ISO 27001 (IT Security)",
-                    "ISO 20000-1 (ITSM)",
-                    "NABL / ISO 17025",
-                    "QHSE & HIRA Training",
-                    "HACCP / GMP Food Safety",
-                    "Six Sigma (DMAIC)"
-                  ].map((std) => {
-                    const isSelected = selectedStandards.includes(std);
-                    return (
-                      <button
-                        key={std}
-                        onClick={() => toggleStandard(std)}
-                        className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all border cursor-pointer ${
-                          isSelected
-                            ? "bg-accent/20 border-accent text-accent-light"
-                            : "bg-surface border-border text-text-secondary hover:text-white"
-                        }`}
-                      >
-                        {isSelected && <CheckCircle className="w-3 h-3 inline mr-1 text-accent" />}
-                        {std}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <div className="mt-4 p-4 bg-surface rounded-xl border border-border/80 text-xs text-text-secondary flex items-center justify-between">
+            {/* Selected Standard Details */}
+            {STANDARDS_DIRECTORY[activeStandardTab] && (
+              <div className="space-y-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
-                    <span className="font-bold text-white block">Selected Scope:</span>
-                    <span>{selectedIndustry} with {selectedStandards.length} program(s) selected</span>
+                    <span className="text-[11px] font-mono text-accent uppercase tracking-wider block">
+                      {STANDARDS_DIRECTORY[activeStandardTab].category}
+                    </span>
+                    <h3 className="text-xl font-heading font-bold text-white mt-0.5">
+                      {STANDARDS_DIRECTORY[activeStandardTab].code}: {STANDARDS_DIRECTORY[activeStandardTab].title}
+                    </h3>
                   </div>
-                  <span className="px-3 py-1 bg-primary/20 text-accent font-bold rounded-full text-[11px]">
-                    Est. 5-Step Pipeline
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <span className="px-3 py-1 bg-[#0f141c] border border-[#243042] rounded text-xs font-mono text-text-secondary">
+                      Est. Timeline: <strong className="text-white">{STANDARDS_DIRECTORY[activeStandardTab].timeline}</strong>
+                    </span>
+                    <Link
+                      href={`/contact?type=quote&standard=${encodeURIComponent(STANDARDS_DIRECTORY[activeStandardTab].code)}`}
+                      className="px-4 py-2 bg-accent text-background text-xs font-heading font-bold rounded-md hover:bg-accent-light transition-colors"
+                    >
+                      Request Scope
+                    </Link>
+                  </div>
+                </div>
+
+                <p className="text-xs md:text-sm text-text-secondary leading-relaxed bg-[#0f141c] p-4 rounded-md border border-[#243042]">
+                  {STANDARDS_DIRECTORY[activeStandardTab].summary}
+                </p>
+
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="p-3.5 bg-[#0f141c] rounded-md border border-[#243042]">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-text-muted block mb-1">
+                      Key Deliverables:
+                    </span>
+                    <p className="text-xs text-white font-mono">
+                      {STANDARDS_DIRECTORY[activeStandardTab].keyDeliverable}
+                    </p>
+                  </div>
+                  <div className="p-3.5 bg-[#0f141c] rounded-md border border-[#243042]">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-text-muted block mb-1">
+                      Audit Readiness:
+                    </span>
+                    <p className="text-xs text-white">
+                      Stage 1 documentation review + Stage 2 certification body audit support.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* 6. Industries We Serve (12 Sectors Matrix) */}
-      <section className="py-24 bg-background border-b border-border">
+      {/* 6. Industries We Serve (12 Sectors Grid) */}
+      <section className="py-20 bg-[#0c1017] border-b border-[#243042]">
         <div className="container mx-auto px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={revealVariants}
-            className="text-center mb-16"
-          >
-            <span className="text-xs font-bold font-heading uppercase tracking-widest text-accent mb-2 block">
-              Multi-Sector Expertise
+          <div className="text-center mb-14">
+            <span className="text-xs font-bold font-heading uppercase tracking-wider text-accent mb-2 block">
+              Multi-Sector Experience
             </span>
-            <h2 className="text-3xl md:text-5xl font-heading font-extrabold text-white mb-4">
+            <h2 className="text-2xl md:text-4xl font-heading font-extrabold text-white mb-3">
               Industries We Serve
             </h2>
-            <div className="w-20 h-1 bg-primary mx-auto rounded-full mb-4" />
-            <p className="text-text-secondary max-w-2xl mx-auto text-sm md:text-base">
+            <div className="w-16 h-0.5 bg-primary mx-auto mb-3" />
+            <p className="text-text-secondary max-w-2xl mx-auto text-xs md:text-sm">
               Providing sector-specific compliance, safety systems, and growth frameworks across key industrial hubs.
             </p>
-          </motion.div>
+          </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {INDUSTRIES.map((ind, i) => (
-              <motion.div
+              <div
                 key={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.1 }}
-                variants={{
-                  hidden: { opacity: 0, scale: 0.95 },
-                  visible: { opacity: 1, scale: 1, transition: { duration: 0.4, delay: i * 0.04 } }
-                }}
-                className="glass-card glass-card-hover p-5 rounded-2xl flex flex-col justify-center items-center text-center group transition-all"
+                className="bg-[#171f2c] border border-[#243042] hover:border-[#3b4d66] p-4 rounded-lg flex flex-col justify-center items-center text-center transition-colors group"
               >
-                <div className="w-12 h-12 rounded-2xl bg-surface border border-border flex items-center justify-center text-primary group-hover:text-accent group-hover:border-accent transition-colors mb-3">
-                  <ind.icon className="w-6 h-6" />
+                <div className="w-10 h-10 rounded-md bg-[#1f293d] border border-[#3b4d66] flex items-center justify-center text-accent mb-2.5">
+                  <ind.icon className="w-5 h-5" />
                 </div>
-                <h4 className="font-heading font-bold text-sm text-white mb-1 group-hover:text-accent transition-colors">
+                <h4 className="font-heading font-bold text-xs md:text-sm text-white mb-1">
                   {ind.name}
                 </h4>
                 <p className="text-[11px] text-text-secondary line-clamp-2">
                   {ind.desc}
                 </p>
-              </motion.div>
+              </div>
             ))}
           </div>
 
-          <div className="text-center mt-12">
+          <div className="text-center mt-10">
             <Link
               href="/industries"
-              className="inline-flex items-center text-xs font-heading font-bold px-6 py-3 rounded-full bg-surface border border-border hover:border-accent text-white hover:text-accent transition-all"
+              className="inline-flex items-center text-xs font-heading font-bold px-5 py-2.5 rounded-md bg-[#171f2c] border border-[#243042] hover:border-accent text-white hover:text-accent transition-all"
             >
-              View Detailed Industry Solutions <ArrowRight className="ml-2 w-3.5 h-3.5" />
+              View Sector Case Studies <ArrowRight className="ml-2 w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* 7. Our 5-Step Approach Pipeline */}
-      <section className="py-24 bg-surface-alt border-b border-border">
+      {/* 7. 5-Step Approach Pipeline */}
+      <section className="py-20 bg-background border-b border-[#243042]">
         <div className="container mx-auto px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={revealVariants}
-            className="text-center mb-16"
-          >
-            <span className="text-xs font-bold font-heading uppercase tracking-widest text-primary mb-2 block">
+          <div className="text-center mb-14">
+            <span className="text-xs font-bold font-heading uppercase tracking-wider text-accent mb-2 block">
               Structured Methodology
             </span>
-            <h2 className="text-3xl md:text-5xl font-heading font-extrabold text-white mb-4">
+            <h2 className="text-2xl md:text-4xl font-heading font-extrabold text-white mb-3">
               Our 5-Step Approach
             </h2>
-            <div className="w-20 h-1 bg-accent mx-auto rounded-full mb-4 glow-gold" />
-            <p className="text-text-secondary max-w-2xl mx-auto text-sm md:text-base">
+            <div className="w-16 h-0.5 bg-accent mx-auto mb-3" />
+            <p className="text-text-secondary max-w-2xl mx-auto text-xs md:text-sm">
               A systematic pipeline engineered for seamless audit readiness and sustainable operational success.
             </p>
-          </motion.div>
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 relative">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {APPROACH_STEPS.map((step, idx) => (
-              <motion.div
+              <div
                 key={idx}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.2 }}
-                variants={{
-                  hidden: { opacity: 0, y: 25 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: idx * 0.1 } }
-                }}
-                className="glass-card glass-card-hover p-6 rounded-2xl relative flex flex-col justify-between group"
+                className="bg-[#171f2c] border border-[#243042] hover:border-[#3b4d66] p-5 rounded-lg flex flex-col justify-between transition-colors"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="font-heading font-extrabold text-2xl text-accent">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-mono font-bold text-lg text-accent">
                       {step.step}
                     </span>
-                    <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                      <step.icon className="w-5 h-5" />
+                    <div className="w-8 h-8 rounded-md bg-[#1f293d] border border-[#3b4d66] flex items-center justify-center text-white">
+                      <step.icon className="w-4 h-4" />
                     </div>
                   </div>
-                  <h3 className="font-heading font-bold text-lg text-white mb-2">
+                  <h3 className="font-heading font-bold text-sm text-white mb-1.5">
                     {step.title}
                   </h3>
                   <p className="text-text-secondary text-xs leading-relaxed">
@@ -639,224 +540,189 @@ export default function Home() {
                   </p>
                 </div>
 
-                <div className="mt-6 pt-3 border-t border-border flex items-center text-[10px] font-bold tracking-wider text-text-secondary uppercase">
-                  <span>Phase {idx + 1}</span>
-                  {idx < 4 && <ArrowRight className="ml-auto w-3 h-3 text-accent hidden lg:block" />}
+                <div className="mt-5 pt-2.5 border-t border-[#243042] flex items-center text-[10px] font-mono text-text-muted">
+                  <span>Phase {idx + 1} of 5</span>
                 </div>
-              </motion.div>
+              </div>
             ))}
-          </div>
-
-          <div className="mt-12 p-6 glass-card rounded-2xl text-center max-w-3xl mx-auto border border-accent/20">
-            <span className="font-heading font-extrabold text-sm md:text-base text-accent-light tracking-wide">
-              ASSESS &nbsp;→&nbsp; PLAN &nbsp;→&nbsp; IMPLEMENT &nbsp;→&nbsp; VERIFY &nbsp;→&nbsp; IMPROVE
-            </span>
           </div>
         </div>
       </section>
 
-      {/* 8. Why Choose Axar & Founder Credential */}
-      <section className="py-24 bg-background">
-        <div className="container mx-auto px-6">
-          <div className="grid lg:grid-cols-12 gap-12 items-center max-w-6xl mx-auto">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-              variants={revealVariants}
-              className="lg:col-span-5 space-y-6"
-            >
-              <div className="glass-card p-8 rounded-3xl border border-border text-center space-y-5">
-                <div className="w-20 h-20 mx-auto rounded-2xl bg-primary/20 border border-primary/40 flex items-center justify-center text-primary">
-                  <Award className="w-10 h-10" />
-                </div>
-                <div>
-                  <h3 className="text-2xl font-heading font-bold text-white">
-                    Ghanshyambhai K Patel
-                  </h3>
-                  <p className="text-xs font-bold text-accent uppercase tracking-wider mt-1">
-                    Proprietor & Principal Consultant
+      {/* 8. Founder Credential & Regional Presence */}
+      <section className="py-20 bg-[#0c1017] border-b border-[#243042]">
+        <div className="container mx-auto px-6 max-w-5xl">
+          <div className="grid lg:grid-cols-12 gap-8 items-center">
+            {/* Left: Founder Card */}
+            <div className="lg:col-span-5 bg-[#171f2c] border border-[#243042] p-6 rounded-lg text-center space-y-4">
+              <div className="w-16 h-16 mx-auto rounded-md bg-[#1f293d] border border-accent/40 flex items-center justify-center text-accent">
+                <Award className="w-8 h-8" />
+              </div>
+
+              <div>
+                <h3 className="text-lg font-heading font-bold text-white">
+                  Ghanshyambhai K Patel
+                </h3>
+                <p className="text-xs font-medium text-accent mt-0.5">
+                  Proprietor & Principal Consultant
+                </p>
+                <p className="text-xs font-mono text-text-muted mt-0.5">
+                  B.Sc. Tech • Certified Lead Auditor
+                </p>
+              </div>
+
+              <div className="p-3 bg-[#0f141c] rounded border border-[#243042] text-xs text-text-secondary text-left space-y-1.5">
+                <p className="text-white font-medium">30+ Years Industrial Experience</p>
+                <p className="text-[11px] leading-relaxed">
+                  Extensive expertise in petrochemicals, pharmaceuticals, chemical manufacturing, safety compliance, and ISO/NABL systems across Gujarat industrial corridors.
+                </p>
+              </div>
+
+              <div className="pt-2 flex flex-col sm:flex-row gap-2 justify-center">
+                <a
+                  href="tel:+919925534751"
+                  className="px-4 py-2 bg-accent text-background text-xs font-heading font-bold rounded-md hover:bg-accent-light transition-colors inline-flex items-center justify-center"
+                >
+                  <Phone className="w-3.5 h-3.5 mr-1.5" /> +91 99255 34751
+                </a>
+                <a
+                  href="mailto:patelgk4257@gmail.com"
+                  className="px-4 py-2 bg-[#0f141c] border border-[#243042] text-white text-xs font-heading font-bold rounded-md hover:border-accent transition-colors inline-flex items-center justify-center"
+                >
+                  <Mail className="w-3.5 h-3.5 mr-1.5" /> Email Direct
+                </a>
+              </div>
+            </div>
+
+            {/* Right: Regional Footprint & Works */}
+            <div className="lg:col-span-7 space-y-5">
+              <div>
+                <span className="text-xs font-bold font-heading uppercase tracking-wider text-accent mb-1 block">
+                  Gujarat Industrial Belt Operations
+                </span>
+                <h3 className="text-2xl font-heading font-extrabold text-white">
+                  Strategic Presence in Bharuch & Saykha GIDC
+                </h3>
+              </div>
+
+              <p className="text-xs md:text-sm text-text-secondary leading-relaxed">
+                Positioned in the heart of Gujarat&apos;s petrochemical and industrial manufacturing zone, Axar Creative provides rapid on-site consulting, emergency audit preparedness, and regular management system audits across Bharuch, Dahej, Ankleshwar, Jhagadia, Saykha, and Panoli.
+              </p>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="p-4 bg-[#171f2c] border border-[#243042] rounded-lg">
+                  <span className="text-xs font-bold text-white block mb-1 flex items-center">
+                    <MapPin className="w-3.5 h-3.5 mr-1.5 text-accent" /> Bharuch City Office
+                  </span>
+                  <p className="text-xs text-text-secondary leading-relaxed">
+                    101, Harikrushna Complex, Near Zadeshwar Cross Road, Bharuch - 392011, Gujarat
                   </p>
-                  <p className="text-xs text-text-secondary mt-1">
-                    Axar Creative Management Solutions
-                  </p>
                 </div>
-                <div className="p-3 bg-surface rounded-xl border border-border text-xs text-text-secondary text-left space-y-1">
-                  <div className="flex items-center text-white font-bold">
-                    <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-accent" /> Bharuch & Saykha GIDC, Gujarat
-                  </div>
-                  <p>
-                    Practical solutions combining consultancy, laboratory setup, compliance support and business growth.
+                <div className="p-4 bg-[#171f2c] border border-[#243042] rounded-lg">
+                  <span className="text-xs font-bold text-white block mb-1 flex items-center">
+                    <MapPin className="w-3.5 h-3.5 mr-1.5 text-primary" /> Saykha GIDC Branch
+                  </span>
+                  <p className="text-xs text-text-secondary leading-relaxed">
+                    Saykha Industrial Area, Near Dahej Corridor, District Bharuch, Gujarat
                   </p>
                 </div>
               </div>
-            </motion.div>
-
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-              variants={{
-                visible: { transition: { staggerChildren: 0.1 } }
-              }}
-              className="lg:col-span-7 space-y-4"
-            >
-              <span className="text-xs font-bold font-heading uppercase tracking-widest text-accent block">
-                The Axar Distinction
-              </span>
-              <h2 className="text-2xl md:text-3xl font-heading font-bold text-white">
-                Why Industry Leaders Choose Axar
-              </h2>
-              <div className="w-16 h-1 bg-primary rounded-full mb-6" />
-
-              {WHY_CHOOSE.map((item, idx) => (
-                <motion.div
-                  key={idx}
-                  variants={revealVariants}
-                  className="glass-card p-4 rounded-xl hover:border-accent transition-all flex items-start space-x-3.5"
-                >
-                  <div className="w-7 h-7 rounded-lg bg-accent/10 border border-accent/30 flex items-center justify-center text-accent shrink-0 mt-0.5">
-                    <CheckCircle className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="font-heading font-bold text-sm text-white mb-0.5">
-                      {item.title}
-                    </h4>
-                    <p className="text-text-secondary text-xs leading-relaxed">
-                      {item.desc}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 9. Our Commitment Banner */}
-      <section className="py-20 bg-gradient-to-r from-primary-dark via-primary to-primary-dark text-white relative overflow-hidden">
-        <div className="container mx-auto px-6 relative z-10 max-w-4xl text-center space-y-6">
-          <span className="text-xs font-bold uppercase tracking-widest text-accent bg-black/40 px-3 py-1 rounded-full border border-accent/40 inline-block">
-            Our Core Commitment
-          </span>
-          <h2 className="text-2xl md:text-4xl font-heading font-extrabold leading-snug">
-            &ldquo;We believe that management systems should not become a burden of paperwork.&rdquo;
-          </h2>
-          <p className="text-sm md:text-base text-gray-200 leading-relaxed max-w-2xl mx-auto">
-            They should actively help organizations achieve: <strong>Better Quality, Safer Workplaces, Lower Risk, Greater Efficiency, Customer Satisfaction, and Sustainable Growth.</strong>
-          </p>
-        </div>
-      </section>
-
-      {/* 10. Featured Projects / Case Studies */}
-      <section className="py-24 bg-surface-alt">
+      {/* 9. Featured Projects / Client Implementations */}
+      <section className="py-20 bg-background border-b border-[#243042]">
         <div className="container mx-auto px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={revealVariants}
-            className="flex flex-col md:flex-row md:items-end justify-between mb-12"
-          >
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
             <div>
-              <span className="text-xs font-bold font-heading uppercase tracking-widest text-primary mb-2 block">
-                Demonstrated Results
+              <span className="text-xs font-bold font-heading uppercase tracking-wider text-accent mb-2 block">
+                Track Record
               </span>
-              <h2 className="text-3xl md:text-5xl font-heading font-extrabold text-white mb-2">Projects & Client Cases</h2>
-              <p className="text-text-secondary max-w-xl text-sm">
-                Real-world consulting engagements demonstrating operational quality and regulatory audit success.
-              </p>
+              <h2 className="text-2xl md:text-4xl font-heading font-extrabold text-white">
+                Featured Implementations
+              </h2>
             </div>
-            <Link href="/portfolio" className="inline-flex items-center text-accent font-semibold text-sm mt-4 md:mt-0 hover:text-accent-light transition-colors">
-              View All Projects <ArrowRight className="ml-2 w-4 h-4" />
+            <Link
+              href="/portfolio"
+              className="inline-flex items-center text-xs font-heading font-bold text-accent hover:text-accent-light transition-colors mt-3 md:mt-0"
+            >
+              View Full Projects Archive <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
             </Link>
-          </motion.div>
+          </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {featuredProjects.map((item, i) => (
-              <motion.div
-                key={item.id || i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.3 }}
-                variants={revealVariants}
-                className="glass-card glass-card-hover rounded-2xl overflow-hidden flex flex-col"
+          <div className="grid md:grid-cols-3 gap-6">
+            {featuredProjects.map((p, idx) => (
+              <div
+                key={p.id || idx}
+                className="bg-[#171f2c] border border-[#243042] hover:border-[#3b4d66] rounded-lg overflow-hidden flex flex-col justify-between transition-colors"
               >
-                <div className="aspect-video bg-surface relative overflow-hidden">
-                  {item.image_url ? (
-                    <Image
-                      src={item.image_url}
-                      alt={item.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center text-text-secondary opacity-50">
-                      <ShieldCheck className="w-12 h-12 text-primary" />
-                    </div>
-                  )}
-                </div>
-                <div className="p-6 flex-1 flex flex-col justify-between">
-                  <div>
-                    <span className={`inline-block px-2.5 py-0.5 text-[11px] font-bold rounded-full mb-3 ${item.tag_style || "bg-primary/20 text-primary border border-primary/40"}`}>
-                      {item.category_name}
+                <div className="relative h-44 w-full bg-[#0f141c]">
+                  <Image
+                    src={p.image_url}
+                    alt={p.title}
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute top-3 left-3">
+                    <span className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider ${p.tag_style}`}>
+                      {p.category_name}
                     </span>
-                    <h4 className="text-lg font-heading font-bold mb-2 text-white group-hover:text-accent transition-colors">
-                      {item.title}
-                    </h4>
-                    <p className="text-text-secondary text-xs leading-relaxed line-clamp-3">
-                      {item.description}
+                  </div>
+                </div>
+
+                <div className="p-5 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-base font-heading font-bold text-white mb-2">
+                      {p.title}
+                    </h3>
+                    <p className="text-xs text-text-secondary leading-relaxed mb-4">
+                      {p.description}
                     </p>
                   </div>
-                  {item.project_url && (
-                    <a
-                      href={item.project_url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center text-xs font-bold text-accent hover:underline mt-4"
+
+                  <div className="pt-3 border-t border-[#243042] flex items-center justify-between text-xs">
+                    <span className="text-text-muted font-mono text-[11px]">Audit: 100% Passed</span>
+                    <Link
+                      href="/portfolio"
+                      className="text-accent hover:text-accent-light font-bold inline-flex items-center"
                     >
-                      View Live Case <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
-                    </a>
-                  )}
+                      Case details <ArrowRight className="ml-1 w-3 h-3" />
+                    </Link>
+                  </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* 11. Final Call to Action */}
-      <section className="py-24 bg-background border-t border-border relative">
-        <div className="container mx-auto px-6 text-center max-w-4xl relative z-10">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="space-y-6"
-          >
-            <h2 className="text-3xl md:text-5xl font-heading font-extrabold text-white">
-              Let&apos;s Build a Better Future Together
+      {/* 10. Direct CTA */}
+      <section className="py-16 bg-[#0c1017]">
+        <div className="container mx-auto px-6 max-w-4xl text-center">
+          <div className="bg-[#171f2c] border border-[#243042] p-8 md:p-12 rounded-lg space-y-4">
+            <h2 className="text-2xl md:text-3xl font-heading font-extrabold text-white">
+              Ready to Upgrade Your Industrial Systems?
             </h2>
-            <p className="text-sm md:text-base text-text-secondary max-w-2xl mx-auto leading-relaxed">
-              Whether you are planning ISO certification, setting up a testing laboratory, improving QHSE performance, training your workforce or exploring international markets, Axar Creative Management Solutions can support you with practical and professional solutions.
+            <p className="text-xs md:text-sm text-text-secondary max-w-2xl mx-auto leading-relaxed">
+              Contact our Bharuch office for a comprehensive gap audit, ISO roadmap planning, NABL laboratory design, or workforce safety training proposals.
             </p>
-            <div className="flex flex-wrap justify-center gap-4 pt-4">
+            <div className="flex flex-wrap justify-center gap-3 pt-2">
               <Link
                 href="/contact?type=quote"
-                className="px-8 py-4 font-heading text-xs md:text-sm font-bold text-background bg-gradient-to-r from-accent via-accent-light to-accent rounded-full hover:shadow-[0_0_30px_rgba(212,175,55,0.5)] transition-all inline-flex items-center"
+                className="px-6 py-2.5 bg-accent text-background font-heading font-bold text-xs md:text-sm rounded-md hover:bg-accent-light transition-colors"
               >
-                Request a Proposal / Quote
-                <ArrowRight className="ml-2 w-4 h-4" />
+                Request Proposal
               </Link>
               <Link
                 href="/contact"
-                className="px-8 py-4 font-heading text-xs md:text-sm font-bold text-white bg-surface border border-border rounded-full hover:border-accent hover:text-accent transition-all inline-flex items-center"
+                className="px-6 py-2.5 bg-[#0f141c] border border-[#243042] text-white hover:border-accent text-xs md:text-sm font-heading font-bold rounded-md transition-colors"
               >
-                Contact Our Bharuch Office
+                Direct Office Inquiries
               </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
     </div>

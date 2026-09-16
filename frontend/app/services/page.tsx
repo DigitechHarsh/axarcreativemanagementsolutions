@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { 
   Award, 
   FlaskConical, 
@@ -14,12 +13,8 @@ import {
   CheckCircle2, 
   ArrowRight,
   ShieldCheck,
-  Search,
-  Filter,
-  Sparkles,
-  Zap
+  Search
 } from "lucide-react";
-import TypewriterText from "../../components/TypewriterText";
 
 const SERVICES_DATA = [
   {
@@ -229,46 +224,39 @@ export default function ServicesPage() {
 
   return (
     <div className="relative overflow-hidden bg-background">
-      {/* Hero Header with Glow Backing */}
-      <section className="pt-20 pb-10 bg-background border-b border-border relative">
-        <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="container mx-auto px-6 text-center max-w-4xl relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-3"
-          >
-            <span className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-accent/10 border border-accent/30 text-accent">
-              <Sparkles className="w-3.5 h-3.5 mr-1.5" /> Complete Industrial Spectrum
+      {/* Hero Header */}
+      <section className="pt-16 pb-12 bg-background border-b border-[#243042]">
+        <div className="container mx-auto px-6 text-center max-w-4xl">
+          <div className="space-y-3">
+            <span className="inline-flex items-center px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-[#171f2c] border border-[#243042] text-accent">
+              <ShieldCheck className="w-3.5 h-3.5 mr-1.5" /> Comprehensive Industrial Spectrum
             </span>
             <h1 className="text-3xl md:text-5xl font-heading font-extrabold text-white">
-              <TypewriterText text="Our 7 Core Services" />
+              Our 7 Core Services
             </h1>
-            <p className="text-sm md:text-base text-text-secondary max-w-2xl mx-auto">
+            <p className="text-xs md:text-sm text-text-secondary max-w-2xl mx-auto leading-relaxed">
               Professional consultancy, laboratory setup, workforce training, risk coverage, and business development designed for industrial excellence.
             </p>
 
-            {/* Quick Search / Filter input */}
-            <div className="pt-4 max-w-md mx-auto">
+            {/* Quick Search */}
+            <div className="pt-3 max-w-md mx-auto">
               <div className="relative">
-                <Search className="w-4 h-4 text-text-muted absolute left-4 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search ISO standards (e.g. 27001, NABL, HACCP)..."
-                  className="w-full bg-surface border border-border rounded-full pl-10 pr-4 py-2.5 text-xs text-white placeholder-text-muted focus:outline-none focus:border-accent transition-colors"
+                  placeholder="Search standards (e.g. 27001, NABL, HACCP, Six Sigma)..."
+                  className="w-full bg-[#171f2c] border border-[#243042] rounded-md pl-10 pr-4 py-2 text-xs text-white placeholder-text-muted focus:outline-none focus:border-accent transition-colors"
                 />
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Interactive Service Selector Tabs */}
-      <section className="sticky top-16 md:top-20 z-40 bg-[#0d1117]/90 backdrop-blur-xl border-b border-border/80 py-3 shadow-lg">
+      {/* Service Selector Tabs */}
+      <section className="sticky top-[58px] z-40 bg-[#0f141c] border-b border-[#243042] py-2.5">
         <div className="container mx-auto px-6">
           <div className="flex overflow-x-auto hide-scrollbar space-x-2 pb-1">
             {SERVICES_DATA.map((service) => {
@@ -280,13 +268,13 @@ export default function ServicesPage() {
                     setActiveTab(service.id);
                     window.location.hash = service.id;
                   }}
-                  className={`px-4 py-2 rounded-full text-xs font-heading font-bold whitespace-nowrap transition-all cursor-pointer flex items-center space-x-2 ${
+                  className={`px-3.5 py-1.5 rounded-md text-xs font-heading font-bold whitespace-nowrap transition-all cursor-pointer flex items-center space-x-2 border ${
                     isActive
-                      ? "bg-gradient-to-r from-primary to-primary-light text-white shadow-md shadow-primary/30 scale-105"
-                      : "bg-surface border border-border text-text-secondary hover:text-white hover:border-accent"
+                      ? "bg-[#1f293d] border-accent text-white"
+                      : "bg-[#171f2c] border-[#243042] text-text-secondary hover:text-white hover:border-[#3b4d66]"
                   }`}
                 >
-                  <service.icon className="w-3.5 h-3.5" />
+                  <service.icon className="w-3.5 h-3.5 text-accent" />
                   <span>{service.title.split(". ")[1]}</span>
                 </button>
               );
@@ -296,30 +284,24 @@ export default function ServicesPage() {
       </section>
 
       {/* Main Active Service Detail Explorer */}
-      <section className="py-16 bg-surface-alt">
+      <section className="py-12 bg-[#0c1017]">
         <div className="container mx-auto px-6 max-w-6xl">
-          <motion.div
-            key={currentService.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="glass-card rounded-3xl p-6 md:p-10 shadow-2xl relative overflow-hidden border border-border"
-          >
+          <div className="bg-[#171f2c] border border-[#243042] rounded-lg p-6 md:p-8">
             {/* Header / Banner */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-border">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-[#243042]">
               <div className="flex items-start space-x-4">
-                <div className="w-14 h-14 rounded-2xl bg-primary/20 border border-primary/40 flex items-center justify-center text-primary shrink-0">
-                  <currentService.icon className="w-7 h-7" />
+                <div className="w-12 h-12 rounded-md bg-[#1f293d] border border-[#3b4d66] flex items-center justify-center text-accent shrink-0">
+                  <currentService.icon className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-accent bg-accent/10 px-2.5 py-0.5 rounded-full border border-accent/20 inline-block mb-1.5">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-text-muted bg-[#0f141c] px-2 py-0.5 rounded border border-[#243042] inline-block mb-1">
                     {currentService.badge}
                   </span>
-                  <h2 className="text-2xl md:text-3xl font-heading font-bold text-white">
+                  <h2 className="text-xl md:text-2xl font-heading font-bold text-white">
                     {currentService.title}
                   </h2>
-                  <p className="text-accent-light text-xs md:text-sm mt-1 font-serif italic">
-                    &ldquo;{currentService.tagline}&rdquo;
+                  <p className="text-accent text-xs mt-0.5 font-mono">
+                    // {currentService.tagline}
                   </p>
                 </div>
               </div>
@@ -327,36 +309,36 @@ export default function ServicesPage() {
               <div className="shrink-0">
                 <Link
                   href={`/contact?service=${encodeURIComponent(currentService.title.split(". ")[1])}&type=quote`}
-                  className="px-6 py-3 bg-gradient-to-r from-accent to-accent-light text-background font-heading font-bold text-xs rounded-full shadow-lg shadow-accent/20 hover:scale-105 transition-transform inline-flex items-center"
+                  className="px-5 py-2.5 bg-accent text-background font-heading font-bold text-xs rounded-md hover:bg-accent-light transition-colors inline-flex items-center"
                 >
-                  Request Quote for this Service <ArrowRight className="ml-2 w-3.5 h-3.5" />
+                  Request Formal Scope <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
                 </Link>
               </div>
             </div>
 
             {/* Content Grid */}
-            <div className="grid lg:grid-cols-12 gap-10 pt-8">
+            <div className="grid lg:grid-cols-12 gap-8 pt-6">
               {/* Left Column: Description & Applicable Standards */}
-              <div className="lg:col-span-6 space-y-6">
+              <div className="lg:col-span-6 space-y-5">
                 <div>
-                  <h3 className="font-heading font-bold text-sm uppercase tracking-wider text-accent mb-3 flex items-center">
-                    <Sparkles className="w-4 h-4 mr-1.5" /> Overview & Strategic Scope
+                  <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-accent mb-2">
+                    Scope & Methodology
                   </h3>
-                  <p className="text-text-secondary text-xs md:text-sm leading-relaxed">
+                  <p className="text-text-secondary text-xs leading-relaxed">
                     {currentService.description}
                   </p>
                 </div>
 
                 <div>
-                  <h3 className="font-heading font-bold text-sm uppercase tracking-wider text-white mb-3">
-                    Applicable Standards & Frameworks:
+                  <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-white mb-2.5">
+                    Standards & Frameworks Covered:
                   </h3>
-                  <div className="grid sm:grid-cols-2 gap-3">
+                  <div className="grid sm:grid-cols-2 gap-2.5">
                     {currentService.standards.map((std, idx) => (
-                      <div key={idx} className="bg-surface border border-border p-3 rounded-xl flex items-start space-x-2.5 hover:border-accent transition-colors">
-                        <ShieldCheck className="w-4 h-4 text-accent shrink-0 mt-0.5" />
+                      <div key={idx} className="bg-[#0f141c] border border-[#243042] p-2.5 rounded-md flex items-start space-x-2">
+                        <ShieldCheck className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" />
                         <div>
-                          <span className="font-heading font-bold text-xs text-white block">{std.code}</span>
+                          <span className="font-mono font-bold text-xs text-white block">{std.code}</span>
                           <span className="text-[11px] text-text-secondary leading-tight block">{std.name}</span>
                         </div>
                       </div>
@@ -366,45 +348,43 @@ export default function ServicesPage() {
               </div>
 
               {/* Right Column: Key Offerings Checklist */}
-              <div className="lg:col-span-6 bg-surface border border-border p-6 rounded-2xl">
-                <h3 className="font-heading font-bold text-sm uppercase tracking-wider text-white mb-4 flex items-center">
-                  <CheckCircle2 className="w-4 h-4 mr-2 text-primary" /> Key Scope & Deliverables:
+              <div className="lg:col-span-6 bg-[#0f141c] border border-[#243042] p-5 rounded-md">
+                <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-white mb-3 flex items-center">
+                  <CheckCircle2 className="w-4 h-4 mr-1.5 text-accent" /> Key Deliverables & Activities:
                 </h3>
 
-                <ul className="space-y-3">
+                <ul className="space-y-2">
                   {currentService.offerings.map((offering, idx) => (
-                    <li key={idx} className="flex items-start text-xs md:text-sm text-text-secondary">
-                      <div className="w-1.5 h-1.5 rounded-full bg-accent mt-2 mr-3 shrink-0" />
+                    <li key={idx} className="flex items-start text-xs text-text-secondary">
+                      <div className="w-1.5 h-1.5 rounded-full bg-accent mt-1.5 mr-2.5 shrink-0" />
                       <span>{offering}</span>
                     </li>
                   ))}
                 </ul>
 
-                <div className="mt-8 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <div className="text-xs text-text-secondary">
-                    Need on-site gap assessment for your facility?
-                  </div>
+                <div className="mt-6 pt-4 border-t border-[#243042] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                  <span className="text-text-muted">Need an on-site gap assessment?</span>
                   <Link
                     href="/contact"
                     className="text-xs font-heading font-bold text-accent hover:underline flex items-center"
                   >
-                    Consult our technical team <ArrowRight className="ml-1 w-3 h-3" />
+                    Schedule Plant Visit <ArrowRight className="ml-1 w-3 h-3" />
                   </Link>
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* All 7 Services Card Deck */}
-      <section className="py-20 bg-background border-t border-border">
+      {/* All 7 Services Grid */}
+      <section className="py-16 bg-background border-t border-[#243042]">
         <div className="container mx-auto px-6">
-          <div className="text-center mb-16 max-w-3xl mx-auto">
-            <h2 className="text-2xl md:text-4xl font-heading font-extrabold text-white mb-3">
-              Explore All 7 Specialized Divisions
+          <div className="text-center mb-12 max-w-2xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-heading font-extrabold text-white mb-2">
+              All 7 Specialized Divisions
             </h2>
-            <p className="text-sm text-text-secondary">
+            <p className="text-xs md:text-sm text-text-secondary">
               Everything under one roof: From ISO compliance and testing lab setup to industrial insurance and export market entry.
             </p>
           </div>
@@ -414,18 +394,18 @@ export default function ServicesPage() {
               <div
                 key={srv.id}
                 id={srv.id}
-                className="glass-card glass-card-hover p-6 rounded-2xl flex flex-col justify-between scroll-mt-28"
+                className="bg-[#171f2c] border border-[#243042] hover:border-[#3b4d66] p-5 rounded-lg flex flex-col justify-between transition-colors scroll-mt-24"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
-                      <srv.icon className="w-5 h-5" />
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-9 h-9 rounded-md bg-[#1f293d] border border-[#3b4d66] flex items-center justify-center text-accent">
+                      <srv.icon className="w-4 h-4" />
                     </div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-surface border border-border text-accent">
+                    <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-[#0f141c] border border-[#243042] text-text-secondary">
                       {srv.badge}
                     </span>
                   </div>
-                  <h3 className="font-heading font-bold text-lg text-white mb-2">
+                  <h3 className="font-heading font-bold text-base text-white mb-1.5">
                     {srv.title}
                   </h3>
                   <p className="text-text-secondary text-xs leading-relaxed mb-4">
@@ -433,19 +413,19 @@ export default function ServicesPage() {
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-border flex items-center justify-between">
+                <div className="pt-3 border-t border-[#243042] flex items-center justify-between text-xs">
                   <button
                     onClick={() => {
                       setActiveTab(srv.id);
-                      window.scrollTo({ top: 380, behavior: "smooth" });
+                      window.scrollTo({ top: 320, behavior: "smooth" });
                     }}
-                    className="text-xs font-bold text-accent hover:underline cursor-pointer"
+                    className="font-bold text-accent hover:underline cursor-pointer"
                   >
                     View Scope & Standards
                   </button>
                   <Link
                     href={`/contact?service=${encodeURIComponent(srv.title.split(". ")[1])}&type=quote`}
-                    className="text-xs font-bold text-primary hover:underline flex items-center"
+                    className="font-bold text-white hover:text-accent flex items-center"
                   >
                     Get Quote <ArrowRight className="w-3 h-3 ml-1" />
                   </Link>
@@ -456,19 +436,19 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* Bottom CTA Banner */}
-      <section className="py-20 bg-surface-alt text-center border-t border-border">
-        <div className="container mx-auto px-6 max-w-3xl space-y-5">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-white">
+      {/* Bottom CTA */}
+      <section className="py-14 bg-[#0c1017] text-center border-t border-[#243042]">
+        <div className="container mx-auto px-6 max-w-3xl space-y-4">
+          <h2 className="text-xl md:text-2xl font-heading font-bold text-white">
             Looking for a Tailored Industrial Management Solution?
           </h2>
-          <p className="text-sm text-text-secondary">
+          <p className="text-xs md:text-sm text-text-secondary">
             Reach out to our proprietor Ghanshyambhai K Patel and the Axar team for a comprehensive plant audit and custom roadmap.
           </p>
           <div className="pt-2">
             <Link
               href="/contact?type=quote"
-              className="inline-flex items-center px-8 py-3.5 bg-gradient-to-r from-accent to-accent-light text-background font-heading font-bold text-xs rounded-full shadow-lg shadow-accent/20 hover:scale-105 transition-transform"
+              className="inline-flex items-center px-6 py-2.5 bg-accent text-background font-heading font-bold text-xs rounded-md hover:bg-accent-light transition-colors"
             >
               Request a Consultation / Quote
               <ArrowRight className="ml-2 w-4 h-4" />

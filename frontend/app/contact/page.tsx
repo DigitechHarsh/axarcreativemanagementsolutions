@@ -2,10 +2,8 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Phone, Mail, Send, CheckCircle2, AlertCircle, Loader2, Building, Award, ShieldCheck, Sparkles } from "lucide-react";
+import { MapPin, Phone, Mail, Send, CheckCircle2, AlertCircle, Loader2, Building, Award, ShieldCheck } from "lucide-react";
 import { FaLinkedin, FaTwitter, FaInstagram } from "react-icons/fa";
-import TypewriterText from "../../components/TypewriterText";
 
 const SERVICES_LIST = [
   "QMS & ISO Consultancy (ISO 9001, 14001, 45001, 27001, 20000-1)",
@@ -22,7 +20,7 @@ const SERVICES_LIST = [
 
 function ContactFormContent() {
   const searchParams = useSearchParams();
-  const serviceParam = searchParams.get("service") || searchParams.get("training") || searchParams.get("industry") || "";
+  const serviceParam = searchParams.get("service") || searchParams.get("training") || searchParams.get("industry") || searchParams.get("standard") || searchParams.get("project") || searchParams.get("resource") || "";
   const typeParam = searchParams.get("type") || "";
   const standardsParam = searchParams.get("standards") || "";
 
@@ -90,7 +88,7 @@ function ContactFormContent() {
       });
 
       if (!response.ok && response.status === 404) {
-        await new Promise(resolve => setTimeout(resolve, 1200));
+        await new Promise(resolve => setTimeout(resolve, 1000));
         setStatus("success");
         setFormData({ fullName: "", email: "", phone: "", companyName: "", serviceInterested: "", inquiryType: "General Inquiry", message: "", _honeypot: "" });
         return;
@@ -109,43 +107,37 @@ function ContactFormContent() {
       setTimeout(() => {
         setStatus("success");
         setFormData({ fullName: "", email: "", phone: "", companyName: "", serviceInterested: "", inquiryType: "General Inquiry", message: "", _honeypot: "" });
-      }, 1000);
+      }, 800);
     }
   };
 
   return (
-    <div className="grid lg:grid-cols-12 gap-12">
+    <div className="grid lg:grid-cols-12 gap-8">
       {/* Contact Information Cards (Left) */}
-      <motion.div 
-        initial={{ opacity: 0, x: -30 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="lg:col-span-5 space-y-6"
-      >
+      <div className="lg:col-span-5 space-y-4">
         {/* Leadership Contact Badge */}
-        <div className="glass-card p-6 rounded-2xl border border-border">
+        <div className="bg-[#171f2c] border border-[#243042] p-5 rounded-lg">
           <div className="flex items-center space-x-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary shrink-0">
+            <div className="w-10 h-10 rounded-md bg-[#1f293d] border border-accent/40 flex items-center justify-center text-accent shrink-0">
               <Award className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-heading font-bold text-base text-white">Ghanshyambhai K Patel</h3>
-              <p className="text-xs font-semibold text-accent uppercase tracking-wider">Proprietor & Principal Consultant</p>
+              <h3 className="font-heading font-bold text-sm text-white">Ghanshyambhai K Patel</h3>
+              <p className="text-[11px] font-semibold text-accent uppercase tracking-wider">Proprietor & Principal Consultant</p>
             </div>
           </div>
-          <p className="text-xs text-text-secondary mt-2">
+          <p className="text-xs text-text-secondary mt-1">
             Axar Creative Management Solutions — Your Partner for Industrial Excellence.
           </p>
         </div>
 
         {/* Office Location */}
-        <div className="glass-card p-6 rounded-2xl border border-border space-y-2">
-          <div className="flex items-center space-x-2.5 text-accent">
+        <div className="bg-[#171f2c] border border-[#243042] p-5 rounded-lg space-y-1.5">
+          <div className="flex items-center space-x-2 text-accent">
             <MapPin className="w-4 h-4 shrink-0" />
             <h4 className="font-heading font-bold text-xs uppercase tracking-wider text-white">Registered Office:</h4>
           </div>
-          <p className="text-xs md:text-sm text-text-secondary leading-relaxed pl-6">
+          <p className="text-xs text-text-secondary leading-relaxed pl-6">
             26 Ravikiran complex Banglows,<br />
             Near Madhuram party Plot, Zadeshwar Chokdi,<br />
             Bharuch - 392011, Gujarat, India
@@ -153,12 +145,12 @@ function ContactFormContent() {
         </div>
 
         {/* Works Location */}
-        <div className="glass-card p-6 rounded-2xl border border-border space-y-2">
-          <div className="flex items-center space-x-2.5 text-primary">
+        <div className="bg-[#171f2c] border border-[#243042] p-5 rounded-lg space-y-1.5">
+          <div className="flex items-center space-x-2 text-primary">
             <Building className="w-4 h-4 shrink-0" />
             <h4 className="font-heading font-bold text-xs uppercase tracking-wider text-white">Works Facility:</h4>
           </div>
-          <p className="text-xs md:text-sm text-text-secondary leading-relaxed pl-6">
+          <p className="text-xs text-text-secondary leading-relaxed pl-6">
             Green Park Farm, Bhersam Sayakha Road,<br />
             Navi Vasahat, Saykha GIDC,<br />
             Ta Vagra, District: Bharuch, Gujarat, India
@@ -166,50 +158,44 @@ function ContactFormContent() {
         </div>
 
         {/* Phone & Email */}
-        <div className="glass-card p-6 rounded-2xl border border-border space-y-3">
+        <div className="bg-[#171f2c] border border-[#243042] p-5 rounded-lg space-y-2.5">
           <div className="flex items-center space-x-3">
             <Phone className="w-4 h-4 text-accent shrink-0" />
             <div>
-              <span className="text-[11px] text-text-secondary block">Direct Phone / WhatsApp:</span>
-              <a href="tel:+919925534751" className="font-heading font-bold text-sm text-white hover:text-accent transition-colors">
+              <span className="text-[11px] text-text-muted block">Direct Phone / WhatsApp:</span>
+              <a href="tel:+919925534751" className="font-heading font-bold text-xs text-white hover:text-accent transition-colors">
                 +91 99255 34751
               </a>
             </div>
           </div>
 
-          <div className="flex items-center space-x-3 pt-2 border-t border-border/80">
-            <Mail className="w-4 h-4 text-primary shrink-0" />
+          <div className="flex items-center space-x-3 pt-2 border-t border-[#243042]">
+            <Mail className="w-4 h-4 text-accent shrink-0" />
             <div>
-              <span className="text-[11px] text-text-secondary block">Official Inquiries Email:</span>
-              <a href="mailto:patelgk4257@gmail.com" className="font-heading font-bold text-sm text-white hover:text-accent transition-colors">
+              <span className="text-[11px] text-text-muted block">Official Inquiries Email:</span>
+              <a href="mailto:patelgk4257@gmail.com" className="font-heading font-bold text-xs text-white hover:text-accent transition-colors">
                 patelgk4257@gmail.com
               </a>
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Contact / Quote Form (Right) */}
-      <motion.div 
-        initial={{ opacity: 0, x: 30 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="lg:col-span-7 glass-card p-8 md:p-10 rounded-3xl relative shadow-2xl border border-border"
-      >
-        <div className="mb-6">
-          <span className="text-xs font-bold font-heading uppercase tracking-widest text-accent mb-1 block">
+      <div className="lg:col-span-7 bg-[#171f2c] border border-[#243042] p-6 md:p-8 rounded-lg">
+        <div className="mb-5">
+          <span className="text-xs font-bold font-heading uppercase tracking-wider text-accent mb-1 block">
             Direct Commercial Line
           </span>
-          <h3 className="text-2xl font-heading font-extrabold text-white">
+          <h3 className="text-xl font-heading font-extrabold text-white">
             Request a Consultation or Quote
           </h3>
-          <p className="text-xs text-text-secondary mt-1">
+          <p className="text-xs text-text-secondary mt-0.5">
             Fill in your facility requirements and our lead consultants will respond within 24 hours.
           </p>
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3.5">
           <input 
             type="text" 
             name="_honeypot" 
@@ -220,21 +206,21 @@ function ContactFormContent() {
             autoComplete="off" 
           />
 
-          {/* Inquiry Type Radio / Pill Selector */}
+          {/* Inquiry Type Selector */}
           <div>
-            <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-2">
+            <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-1.5">
               Inquiry Type:
             </label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2">
               {["General Inquiry", "Request a Customized Quote"].map((type) => (
                 <button
                   type="button"
                   key={type}
                   onClick={() => setFormData({ ...formData, inquiryType: type })}
-                  className={`py-2 px-3 rounded-xl text-xs font-bold transition-all text-center border cursor-pointer ${
+                  className={`py-2 px-3 rounded-md text-xs font-bold transition-all text-center border cursor-pointer ${
                     formData.inquiryType === type
-                      ? "bg-gradient-to-r from-accent to-accent-light text-background font-extrabold shadow-sm"
-                      : "bg-surface border-border text-text-secondary hover:text-white"
+                      ? "bg-[#1f293d] border-accent text-white"
+                      : "bg-[#0f141c] border-[#243042] text-text-secondary hover:text-white"
                   }`}
                 >
                   {type}
@@ -243,9 +229,9 @@ function ContactFormContent() {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-3.5">
             <div>
-              <label htmlFor="fullName" className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-1.5">
+              <label htmlFor="fullName" className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-1">
                 Full Name *
               </label>
               <input 
@@ -256,11 +242,11 @@ function ContactFormContent() {
                 onChange={handleChange} 
                 required 
                 placeholder="e.g. Rajesh Patel"
-                className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-xs md:text-sm focus:outline-none focus:border-accent transition-colors text-white placeholder-text-muted"
+                className="w-full bg-[#0f141c] border border-[#243042] rounded-md px-3.5 py-2 text-xs text-white placeholder-text-muted focus:outline-none focus:border-accent transition-colors"
               />
             </div>
             <div>
-              <label htmlFor="email" className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-1.5">
+              <label htmlFor="email" className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-1">
                 Email Address *
               </label>
               <input 
@@ -271,14 +257,14 @@ function ContactFormContent() {
                 onChange={handleChange} 
                 required 
                 placeholder="rajesh@company.com"
-                className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-xs md:text-sm focus:outline-none focus:border-accent transition-colors text-white placeholder-text-muted"
+                className="w-full bg-[#0f141c] border border-[#243042] rounded-md px-3.5 py-2 text-xs text-white placeholder-text-muted focus:outline-none focus:border-accent transition-colors"
               />
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-3.5">
             <div>
-              <label htmlFor="phone" className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-1.5">
+              <label htmlFor="phone" className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-1">
                 Phone / WhatsApp Number
               </label>
               <input 
@@ -288,11 +274,11 @@ function ContactFormContent() {
                 value={formData.phone} 
                 onChange={handleChange} 
                 placeholder="+91 99255 34751"
-                className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-xs md:text-sm focus:outline-none focus:border-accent transition-colors text-white placeholder-text-muted"
+                className="w-full bg-[#0f141c] border border-[#243042] rounded-md px-3.5 py-2 text-xs text-white placeholder-text-muted focus:outline-none focus:border-accent transition-colors"
               />
             </div>
             <div>
-              <label htmlFor="companyName" className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-1.5">
+              <label htmlFor="companyName" className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-1">
                 Company / Plant Name
               </label>
               <input 
@@ -301,33 +287,35 @@ function ContactFormContent() {
                 name="companyName" 
                 value={formData.companyName} 
                 onChange={handleChange} 
-                placeholder="e.g. Gujarat Polymer Industries"
-                className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-xs md:text-sm focus:outline-none focus:border-accent transition-colors text-white placeholder-text-muted"
+                placeholder="e.g. Gujarat Synthetics Ltd."
+                className="w-full bg-[#0f141c] border border-[#243042] rounded-md px-3.5 py-2 text-xs text-white placeholder-text-muted focus:outline-none focus:border-accent transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="serviceInterested" className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-1.5">
-              Service / Standard Interested In:
+            <label htmlFor="serviceInterested" className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-1">
+              Primary Area of Interest
             </label>
-            <select 
-              id="serviceInterested" 
-              name="serviceInterested" 
-              value={formData.serviceInterested} 
-              onChange={handleChange} 
-              className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-xs md:text-sm focus:outline-none focus:border-accent transition-colors text-white"
+            <select
+              id="serviceInterested"
+              name="serviceInterested"
+              value={formData.serviceInterested}
+              onChange={handleChange}
+              className="w-full bg-[#0f141c] border border-[#243042] rounded-md px-3.5 py-2 text-xs text-white focus:outline-none focus:border-accent transition-colors"
             >
-              <option value="" className="bg-[#161b22]">Select Service / Program</option>
-              {SERVICES_LIST.map(service => (
-                <option key={service} value={service} className="bg-[#161b22]">{service}</option>
+              <option value="" className="bg-[#0f141c] text-text-secondary">-- Select a Service / Program --</option>
+              {SERVICES_LIST.map((srv) => (
+                <option key={srv} value={srv} className="bg-[#0f141c] text-white">
+                  {srv}
+                </option>
               ))}
             </select>
           </div>
 
           <div>
-            <label htmlFor="message" className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-1.5">
-              Requirements & Scope Details *
+            <label htmlFor="message" className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-1">
+              Message / Facility Scope Details *
             </label>
             <textarea 
               id="message" 
@@ -335,58 +323,43 @@ function ContactFormContent() {
               value={formData.message} 
               onChange={handleChange} 
               required 
-              rows={4}
-              placeholder="Describe your plant facility, current certifications, audit timeline, or specific training requirements..."
-              className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-xs md:text-sm focus:outline-none focus:border-accent transition-colors text-white placeholder-text-muted resize-none"
-            ></textarea>
+              rows={4} 
+              placeholder="Describe your plant location, current certifications, timeline, or specific requirements..."
+              className="w-full bg-[#0f141c] border border-[#243042] rounded-md px-3.5 py-2 text-xs text-white placeholder-text-muted focus:outline-none focus:border-accent transition-colors resize-y"
+            />
           </div>
+
+          {errorMessage && (
+            <div className="p-3 rounded-md bg-red-950/40 border border-red-800 text-red-400 text-xs flex items-center">
+              <AlertCircle className="w-4 h-4 mr-2 shrink-0" />
+              <span>{errorMessage}</span>
+            </div>
+          )}
+
+          {status === "success" && (
+            <div className="p-3.5 rounded-md bg-emerald-950/40 border border-emerald-800 text-emerald-400 text-xs flex items-center">
+              <CheckCircle2 className="w-4 h-4 mr-2 shrink-0" />
+              <span>Inquiry received successfully. Our principal consultant will connect with you promptly.</span>
+            </div>
+          )}
 
           <button 
             type="submit" 
-            disabled={status === "loading" || status === "success"}
-            className="w-full bg-gradient-to-r from-accent via-accent-light to-accent text-background font-heading font-extrabold py-3.5 rounded-xl transition-all flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed group shadow-lg shadow-accent/20 cursor-pointer text-xs md:text-sm hover:scale-[1.02]"
+            disabled={status === "loading"}
+            className="w-full py-2.5 px-6 rounded-md bg-accent text-background font-heading font-bold text-xs hover:bg-accent-light transition-all flex items-center justify-center cursor-pointer disabled:opacity-50"
           >
             {status === "loading" ? (
-              <Loader2 className="w-5 h-5 animate-spin text-background" />
-            ) : status === "success" ? (
-              "Inquiry Sent Successfully!"
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Transmitting Request...
+              </>
             ) : (
               <>
-                Submit Inquiry / Request Quote
-                <Send className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                <Send className="w-3.5 h-3.5 mr-2" /> Submit Formal Request
               </>
             )}
           </button>
         </form>
-
-        {/* Toast Notification */}
-        <div className="absolute top-4 right-4 z-50">
-          <AnimatePresence>
-            {status === "success" && (
-              <motion.div 
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center text-xs font-bold"
-              >
-                <CheckCircle2 className="w-4 h-4 mr-2" />
-                Thank you! We will contact you shortly.
-              </motion.div>
-            )}
-            {status === "error" && (
-              <motion.div 
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="bg-red-600 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center text-xs font-bold"
-              >
-                <AlertCircle className="w-4 h-4 mr-2" />
-                {errorMessage}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
@@ -395,31 +368,30 @@ export default function ContactPage() {
   return (
     <div className="relative overflow-hidden bg-background">
       {/* Hero Header */}
-      <section className="pt-20 pb-10 bg-background border-b border-border relative">
-        <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none" />
-        <div className="container mx-auto px-6 text-center max-w-4xl relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-3"
-          >
-            <span className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-accent/10 border border-accent/30 text-accent">
-              <Sparkles className="w-3.5 h-3.5 mr-1.5" /> Direct Consultation & Proposals
+      <section className="pt-16 pb-12 bg-background border-b border-[#243042]">
+        <div className="container mx-auto px-6 text-center max-w-4xl">
+          <div className="space-y-3">
+            <span className="inline-flex items-center px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-[#171f2c] border border-[#243042] text-accent">
+              <ShieldCheck className="w-3.5 h-3.5 mr-1.5" /> Direct Consultation Line
             </span>
             <h1 className="text-3xl md:text-5xl font-heading font-extrabold text-white">
-              <TypewriterText text="Contact Axar Creative" />
+              Contact Axar Creative
             </h1>
-            <p className="text-sm md:text-base text-text-secondary max-w-2xl mx-auto">
-              Partner with us for ISO implementation, NABL laboratory setup, workforce training, industrial insurance, and export growth.
+            <p className="text-xs md:text-sm text-text-secondary max-w-2xl mx-auto leading-relaxed">
+              Reach our principal consultant and technical team for industrial audits, ISO certifications, laboratory accreditation, and corporate training programs.
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Main Content Area */}
-      <section className="py-16 bg-surface-alt">
+      {/* Contact Content Area */}
+      <section className="py-14 bg-[#0c1017]">
         <div className="container mx-auto px-6 max-w-6xl">
-          <Suspense fallback={<div className="text-center py-12 text-text-secondary">Loading form...</div>}>
+          <Suspense fallback={
+            <div className="text-center py-20 text-text-secondary text-sm">
+              <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-accent" /> Loading contact desk...
+            </div>
+          }>
             <ContactFormContent />
           </Suspense>
         </div>

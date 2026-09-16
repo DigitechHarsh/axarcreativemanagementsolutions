@@ -1,80 +1,74 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, Phone, MapPin, ArrowRight, ShieldCheck, Award } from "lucide-react";
+import { Mail, Phone, MapPin, Award } from "lucide-react";
 import { FaLinkedin, FaTwitter, FaInstagram } from "react-icons/fa";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#0b0e14] border-t border-border mt-auto relative overflow-hidden">
-      {/* Ambient background glow */}
-      <div className="absolute top-0 left-1/3 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="container mx-auto px-6 py-16 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
+    <footer className="bg-[#0a0d13] border-t border-[#243042] mt-auto relative">
+      <div className="container mx-auto px-6 py-14">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
           
           {/* Brand Column (Col 1-4) */}
-          <div className="lg:col-span-4 space-y-6">
-            <Link href="/" className="inline-flex items-center group">
-              <div className="bg-white/95 rounded-lg p-1.5 shadow-md flex items-center">
+          <div className="lg:col-span-4 space-y-4">
+            <Link href="/" className="inline-flex items-center">
+              <div className="bg-white/95 rounded-md px-2 py-1 shadow-sm flex items-center border border-white/20">
                 <Image
                   src="/logo.png"
                   alt="Axar Logo"
                   width={80}
                   height={80}
-                  className="object-contain h-8 w-auto"
+                  className="object-contain h-7 w-auto"
                 />
                 <Image
                   src="/logotext.png"
-                  alt="Axar Creative Management Solutions Text"
+                  alt="Axar Creative Management Solutions"
                   width={240}
                   height={80}
-                  className="object-contain h-6 w-auto -ml-1"
+                  className="object-contain h-5 w-auto -ml-1"
                 />
               </div>
             </Link>
 
-            <p className="text-sm font-heading font-semibold text-accent-light">
-              Better Systems • Safer Workplaces • Sustainable Growth
+            <p className="text-xs font-mono text-accent">
+              // Better Systems • Safer Workplaces • Sustainable Growth
             </p>
 
             <p className="text-xs text-text-secondary leading-relaxed max-w-sm">
               Axar Creative Management Solutions provides professional industrial consultancy, ISO & QMS certifications, testing laboratory accreditation, QHSE training, and export business development.
             </p>
 
-            <div className="p-3.5 bg-surface/70 border border-border/80 rounded-2xl flex items-center space-x-3 max-w-sm">
-              <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary shrink-0">
-                <Award className="w-5 h-5" />
+            <div className="p-3 bg-[#171f2c] border border-[#243042] rounded-md flex items-center space-x-3 max-w-sm">
+              <div className="w-9 h-9 rounded-md bg-[#1f293d] border border-accent/40 flex items-center justify-center text-accent shrink-0">
+                <Award className="w-4 h-4" />
               </div>
               <div>
                 <span className="font-heading font-bold text-xs text-white block">Ghanshyambhai K Patel</span>
-                <span className="text-[11px] text-accent block">Proprietor & Principal Consultant</span>
+                <span className="text-[11px] text-text-muted block">Proprietor & Principal Consultant</span>
               </div>
             </div>
 
-            <div className="flex space-x-3 pt-1">
-              <a href="#" className="w-9 h-9 rounded-xl bg-surface border border-border flex items-center justify-center text-text-secondary hover:text-accent hover:border-accent transition-colors" aria-label="LinkedIn">
-                <FaLinkedin size={16} />
+            <div className="flex space-x-2 pt-1">
+              <a href="#" className="w-8 h-8 rounded-md bg-[#171f2c] border border-[#243042] flex items-center justify-center text-text-secondary hover:text-accent hover:border-accent transition-colors" aria-label="LinkedIn">
+                <FaLinkedin size={14} />
               </a>
-              <a href="#" className="w-9 h-9 rounded-xl bg-surface border border-border flex items-center justify-center text-text-secondary hover:text-accent hover:border-accent transition-colors" aria-label="Twitter">
-                <FaTwitter size={16} />
+              <a href="#" className="w-8 h-8 rounded-md bg-[#171f2c] border border-[#243042] flex items-center justify-center text-text-secondary hover:text-accent hover:border-accent transition-colors" aria-label="Twitter">
+                <FaTwitter size={14} />
               </a>
-              <a href="#" className="w-9 h-9 rounded-xl bg-surface border border-border flex items-center justify-center text-text-secondary hover:text-accent hover:border-accent transition-colors" aria-label="Instagram">
-                <FaInstagram size={16} />
+              <a href="#" className="w-8 h-8 rounded-md bg-[#171f2c] border border-[#243042] flex items-center justify-center text-text-secondary hover:text-accent hover:border-accent transition-colors" aria-label="Instagram">
+                <FaInstagram size={14} />
               </a>
             </div>
           </div>
 
           {/* Quick Navigation (Col 5-6) */}
           <div className="lg:col-span-2">
-            <h3 className="font-heading font-bold text-xs tracking-widest uppercase mb-5 text-accent">Quick Links</h3>
-            <ul className="space-y-2.5 text-xs">
+            <h3 className="font-heading font-bold text-xs tracking-wider uppercase mb-4 text-accent">Quick Links</h3>
+            <ul className="space-y-2 text-xs">
               <li>
-                <Link href="/" className="text-text-secondary hover:text-white transition-colors flex items-center">
-                  <span className="hover:translate-x-1 transition-transform">Home</span>
-                </Link>
+                <Link href="/" className="text-text-secondary hover:text-white transition-colors">Home</Link>
               </li>
               <li>
                 <Link href="/about" className="text-text-secondary hover:text-white transition-colors">About Us</Link>
@@ -105,8 +99,8 @@ export default function Footer() {
 
           {/* 7 Services (Col 7-9) */}
           <div className="lg:col-span-3">
-            <h3 className="font-heading font-bold text-xs tracking-widest uppercase mb-5 text-accent">Core Services</h3>
-            <ul className="space-y-2.5 text-xs">
+            <h3 className="font-heading font-bold text-xs tracking-wider uppercase mb-4 text-accent">Core Services</h3>
+            <ul className="space-y-2 text-xs">
               <li>
                 <Link href="/services#iso" className="text-text-secondary hover:text-white transition-colors">QMS & ISO Consultancy (IMS)</Link>
               </li>
@@ -133,28 +127,28 @@ export default function Footer() {
 
           {/* Contact Details (Col 10-12) */}
           <div className="lg:col-span-3">
-            <h3 className="font-heading font-bold text-xs tracking-widest uppercase mb-5 text-accent">Office & Works</h3>
-            <ul className="space-y-4 text-xs">
-              <li className="flex items-start space-x-3 text-text-secondary">
-                <MapPin size={16} className="text-accent flex-shrink-0 mt-0.5" />
+            <h3 className="font-heading font-bold text-xs tracking-wider uppercase mb-4 text-accent">Office & Works</h3>
+            <ul className="space-y-3.5 text-xs">
+              <li className="flex items-start space-x-2.5 text-text-secondary">
+                <MapPin size={15} className="text-accent flex-shrink-0 mt-0.5" />
                 <div>
                   <span className="font-bold text-white block">Registered Office:</span>
                   <span>26 Ravikiran complex Banglows, Near Madhuram party Plot, Zadeshwar Chokdi, Bharuch, 392011 Gujarat</span>
                 </div>
               </li>
-              <li className="flex items-start space-x-3 text-text-secondary">
-                <MapPin size={16} className="text-primary flex-shrink-0 mt-0.5" />
+              <li className="flex items-start space-x-2.5 text-text-secondary">
+                <MapPin size={15} className="text-primary flex-shrink-0 mt-0.5" />
                 <div>
                   <span className="font-bold text-white block">Works Address:</span>
                   <span>Green Park Farm, Bhersam Sayakha Road, Navi Vasahat, Saykha GIDC, Ta Vagra, Dist: Bharuch, Gujarat</span>
                 </div>
               </li>
-              <li className="flex items-center space-x-3 text-text-secondary">
-                <Phone size={16} className="text-accent flex-shrink-0" />
+              <li className="flex items-center space-x-2.5 text-text-secondary">
+                <Phone size={15} className="text-accent flex-shrink-0" />
                 <a href="tel:+919925534751" className="hover:text-accent font-bold text-white transition-colors">+91 99255 34751</a>
               </li>
-              <li className="flex items-center space-x-3 text-text-secondary">
-                <Mail size={16} className="text-accent flex-shrink-0" />
+              <li className="flex items-center space-x-2.5 text-text-secondary">
+                <Mail size={15} className="text-accent flex-shrink-0" />
                 <a href="mailto:patelgk4257@gmail.com" className="hover:text-accent text-white transition-colors">patelgk4257@gmail.com</a>
               </li>
             </ul>
@@ -163,10 +157,10 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-14 pt-8 border-t border-border/80 flex flex-col md:flex-row justify-between items-center text-xs text-text-muted gap-4">
+        <div className="mt-12 pt-6 border-t border-[#243042] flex flex-col md:flex-row justify-between items-center text-xs text-text-muted gap-4">
           <p>© {currentYear} Axar Creative Management Solutions. All rights reserved.</p>
-          <div className="flex items-center space-x-6">
-            <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
+          <div className="flex items-center space-x-5 font-mono text-[11px]">
+            <Link href="/about" className="hover:text-white transition-colors">About</Link>
             <Link href="/services" className="hover:text-white transition-colors">Services</Link>
             <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
             <Link href="/admin" className="hover:text-accent transition-colors">Admin Portal</Link>

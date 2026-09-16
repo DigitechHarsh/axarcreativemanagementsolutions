@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { 
   Factory, 
   Cpu, 
@@ -16,13 +15,10 @@ import {
   Truck, 
   Ship, 
   Sprout, 
-  CheckCircle, 
+  CheckCircle2, 
   ArrowRight,
-  ShieldCheck,
-  Sparkles,
-  Filter
+  ShieldCheck
 } from "lucide-react";
-import TypewriterText from "../../components/TypewriterText";
 
 const INDUSTRIES_DETAILED = [
   {
@@ -135,39 +131,34 @@ export default function IndustriesPage() {
   return (
     <div className="relative overflow-hidden bg-background">
       {/* Hero Header */}
-      <section className="pt-20 pb-10 bg-background border-b border-border relative">
-        <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none" />
-        <div className="container mx-auto px-6 text-center max-w-4xl relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-3"
-          >
-            <span className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-accent/10 border border-accent/30 text-accent">
-              <Sparkles className="w-3.5 h-3.5 mr-1.5" /> Sector Specialization
+      <section className="pt-16 pb-12 bg-background border-b border-[#243042]">
+        <div className="container mx-auto px-6 text-center max-w-4xl">
+          <div className="space-y-3">
+            <span className="inline-flex items-center px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-[#171f2c] border border-[#243042] text-accent">
+              <ShieldCheck className="w-3.5 h-3.5 mr-1.5" /> Multi-Sector Expertise
             </span>
             <h1 className="text-3xl md:text-5xl font-heading font-extrabold text-white">
-              <TypewriterText text="Industries We Serve" />
+              Industries We Serve
             </h1>
-            <p className="text-sm md:text-base text-text-secondary max-w-2xl mx-auto">
-              Delivering customized ISO systems, NABL laboratory readiness, workforce safety training, and risk management across 12 vital industrial domains.
+            <p className="text-xs md:text-sm text-text-secondary max-w-2xl mx-auto leading-relaxed">
+              Domain-specific management systems, compliance consulting, technical training, and risk mitigation across 12 primary industrial sectors.
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Category Filter Pills */}
-      <section className="sticky top-16 md:top-20 z-40 bg-[#0d1117]/90 backdrop-blur-xl border-b border-border/80 py-3 shadow-md">
+      {/* Category Filter Chips */}
+      <section className="sticky top-[58px] z-40 bg-[#0f141c] border-b border-[#243042] py-2.5">
         <div className="container mx-auto px-6">
-          <div className="flex overflow-x-auto hide-scrollbar space-x-2 pb-1">
+          <div className="flex overflow-x-auto hide-scrollbar space-x-2">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-full text-xs font-heading font-bold whitespace-nowrap transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-md text-xs font-heading font-bold whitespace-nowrap transition-all cursor-pointer border ${
                   selectedCategory === cat
-                    ? "bg-gradient-to-r from-accent to-accent-light text-background font-extrabold shadow-md shadow-accent/20"
-                    : "bg-surface border border-border text-text-secondary hover:text-white hover:border-accent"
+                    ? "bg-[#1f293d] border-accent text-white"
+                    : "bg-[#171f2c] border-[#243042] text-text-secondary hover:text-white hover:border-[#3b4d66]"
                 }`}
               >
                 {cat}
@@ -178,80 +169,77 @@ export default function IndustriesPage() {
       </section>
 
       {/* Industries Grid */}
-      <section className="py-16 bg-surface-alt">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <section className="py-14 bg-[#0c1017]">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((ind, idx) => (
-              <motion.div
+              <div
                 key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: idx * 0.05 }}
-                className="glass-card glass-card-hover rounded-2xl p-7 flex flex-col justify-between"
+                className="bg-[#171f2c] border border-[#243042] hover:border-[#3b4d66] rounded-lg p-6 flex flex-col justify-between transition-colors"
               >
                 <div>
-                  <div className="flex items-center space-x-4 mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-primary/20 border border-primary/40 flex items-center justify-center text-primary shrink-0">
-                      <ind.icon className="w-6 h-6" />
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-10 h-10 rounded-md bg-[#1f293d] border border-[#3b4d66] flex items-center justify-center text-accent">
+                      <ind.icon className="w-5 h-5" />
                     </div>
-                    <div>
-                      <h3 className="font-heading font-bold text-lg text-white">
-                        {ind.title}
-                      </h3>
-                      <span className="text-[11px] font-semibold text-accent block">
-                        {ind.scope}
-                      </span>
-                    </div>
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#0f141c] border border-[#243042] text-text-muted">
+                      {ind.category}
+                    </span>
                   </div>
+
+                  <h3 className="font-heading font-bold text-lg text-white mb-1">
+                    {ind.title}
+                  </h3>
+                  <p className="text-[11px] font-mono text-accent mb-3">
+                    // {ind.scope}
+                  </p>
 
                   <p className="text-text-secondary text-xs leading-relaxed mb-5">
                     {ind.desc}
                   </p>
 
-                  <div className="border-t border-border/80 pt-4 mb-6">
-                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-accent mb-2.5 flex items-center">
-                      <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-accent" /> Key Services Delivered:
-                    </h4>
-                    <ul className="space-y-2">
-                      {ind.keyServices.map((item, sIdx) => (
-                        <li key={sIdx} className="flex items-start text-xs text-text-secondary">
-                          <CheckCircle className="w-3 h-3 text-primary mr-2 shrink-0 mt-0.5" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
+                  <div className="space-y-1.5 border-t border-[#243042] pt-4 mb-4">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted block mb-1">
+                      Applied Solutions:
+                    </span>
+                    {ind.keyServices.map((srv, sIdx) => (
+                      <div key={sIdx} className="flex items-start text-xs text-text-secondary">
+                        <CheckCircle2 className="w-3.5 h-3.5 mr-2 text-accent shrink-0 mt-0.5" />
+                        <span>{srv}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                <div className="pt-2">
+                <div className="pt-3 border-t border-[#243042] flex items-center justify-between">
                   <Link
                     href={`/contact?industry=${encodeURIComponent(ind.title)}&type=quote`}
                     className="inline-flex items-center text-xs font-heading font-bold text-accent hover:text-accent-light transition-colors"
                   >
-                    Request Sector Roadmap <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
+                    Request Sector Scope <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
                   </Link>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Quote Banner */}
-      <section className="py-20 bg-background text-center border-t border-border">
+      {/* Bottom CTA */}
+      <section className="py-14 bg-background border-t border-[#243042] text-center">
         <div className="container mx-auto px-6 max-w-3xl space-y-4">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-white">
-            Don&apos;t See Your Specific Sector Listed?
+          <h2 className="text-2xl font-heading font-bold text-white">
+            Have a Specific Industrial Requirement?
           </h2>
           <p className="text-xs md:text-sm text-text-secondary">
-            Our management frameworks and ISO methodologies are universally adaptable to custom commercial operations and specialty manufacturing units.
+            Our principal consultant Ghanshyambhai K Patel visits facilities across Bharuch, Dahej, Ankleshwar, Jhagadia and nationwide to assess unique plant compliance requirements.
           </p>
-          <div className="pt-3">
+          <div className="pt-2">
             <Link
               href="/contact?type=quote"
-              className="inline-flex items-center px-8 py-3.5 bg-gradient-to-r from-accent to-accent-light text-background font-heading font-bold text-xs rounded-full shadow-lg shadow-accent/20 hover:scale-105 transition-transform"
+              className="inline-flex items-center px-6 py-2.5 bg-accent text-background font-heading font-bold text-xs rounded-md hover:bg-accent-light transition-colors"
             >
-              Discuss Your Facility Requirements <ArrowRight className="ml-2 w-4 h-4" />
+              Request Plant Assessment <ArrowRight className="ml-2 w-4 h-4" />
             </Link>
           </div>
         </div>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Phone, Mail, ArrowRight, ShieldCheck } from "lucide-react";
+import { Menu, X, Phone, Mail, ArrowRight, ShieldCheck, MapPin } from "lucide-react";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -35,37 +35,39 @@ export default function Header() {
 
   return (
     <>
-      {/* Top Quick Info Bar (Desktop) */}
-      <div className="hidden lg:block bg-surface border-b border-border/60 text-text-secondary text-xs py-1.5 px-6">
+      {/* Top Industrial Meta Bar */}
+      <div className="hidden lg:block bg-[#0a0d13] border-b border-[#243042] text-text-secondary text-[11px] py-2 px-6">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-6">
             <span className="flex items-center text-text-muted">
               <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-accent" />
-              <strong className="text-text-primary mr-1">Axar Creative:</strong> Better Systems • Safer Workplaces • Sustainable Growth
+              <strong className="text-white mr-1.5">Axar Creative:</strong> Better Systems • Safer Workplaces • Sustainable Growth
             </span>
           </div>
           <div className="flex items-center space-x-6 font-medium">
-            <a href="tel:+919925534751" className="flex items-center hover:text-accent transition-colors">
+            <a href="tel:+919925534751" className="flex items-center text-text-secondary hover:text-white transition-colors">
               <Phone className="w-3 h-3 mr-1.5 text-primary" /> +91 99255 34751
             </a>
-            <a href="mailto:patelgk4257@gmail.com" className="flex items-center hover:text-accent transition-colors">
+            <a href="mailto:patelgk4257@gmail.com" className="flex items-center text-text-secondary hover:text-white transition-colors">
               <Mail className="w-3 h-3 mr-1.5 text-accent" /> patelgk4257@gmail.com
             </a>
-            <span className="text-text-muted">Bharuch & Saykha GIDC, Gujarat</span>
+            <span className="flex items-center text-text-muted">
+              <MapPin className="w-3 h-3 mr-1 text-text-muted" /> Bharuch & Saykha GIDC, Gujarat
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Main Sticky Header */}
-      <header className={`sticky top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      {/* Main Developer Header */}
+      <header className={`sticky top-0 left-0 right-0 z-50 transition-all duration-200 ${
         isScrolled 
-          ? "bg-[#0d1117]/90 backdrop-blur-xl border-b border-border/80 shadow-[0_10px_30px_rgba(0,0,0,0.5)] py-2" 
-          : "bg-[#0d1117]/75 backdrop-blur-lg border-b border-border/50 py-3"
+          ? "bg-[#0f141c]/95 backdrop-blur-md border-b border-[#243042] shadow-xl py-2.5" 
+          : "bg-[#0f141c] border-b border-[#243042] py-3.5"
       }`}>
         <div className="container mx-auto px-4 lg:px-6 flex items-center justify-between">
-          {/* Logo with White/Gold Backing for supreme visibility */}
-          <Link href="/" className="relative z-50 flex items-center group scale-[1.05] md:scale-[1.2] origin-left transition-transform">
-            <div className="bg-white/95 rounded-lg p-1.5 shadow-md flex items-center">
+          {/* Logo */}
+          <Link href="/" className="relative z-50 flex items-center group">
+            <div className="bg-white/95 rounded-md px-2 py-1 shadow-sm flex items-center border border-white/20">
               <Image
                 src="/logo.png"
                 alt="Axar Logo"
@@ -86,48 +88,37 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden xl:flex items-center space-x-1 lg:space-x-2">
+          <nav className="hidden xl:flex items-center space-x-1">
             {navLinks.map((link) => {
               const isActive = pathname === link.path;
               return (
                 <Link
                   key={link.name}
                   href={link.path}
-                  className={`relative px-3.5 py-1.5 rounded-full text-xs font-heading font-semibold transition-all duration-200 ${
+                  className={`px-3.5 py-1.5 rounded-md text-xs font-heading font-semibold transition-all duration-150 ${
                     isActive
-                      ? "text-white bg-primary/20 border border-primary/40 shadow-sm shadow-primary/20"
-                      : "text-text-secondary hover:text-white hover:bg-white/5"
+                      ? "text-white bg-[#1f293d] border border-[#3b4d66]"
+                      : "text-text-secondary hover:text-white hover:bg-white/5 border border-transparent"
                   }`}
                 >
-                  <span className={isActive ? "text-accent-light font-bold" : ""}>
-                    {link.name}
-                  </span>
-                  {isActive && (
-                    <motion.div
-                      layoutId="active-pill"
-                      className="absolute inset-0 rounded-full bg-primary/10 border border-primary/30 pointer-events-none"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                    />
-                  )}
+                  <span>{link.name}</span>
                 </Link>
               );
             })}
           </nav>
 
           {/* CTA Buttons */}
-          <div className="hidden lg:flex items-center space-x-3">
+          <div className="hidden lg:flex items-center space-x-2.5">
             <Link
               href="/contact?type=quote"
-              className="group relative inline-flex items-center justify-center px-4 py-2 font-heading text-xs font-bold text-background transition-all duration-300 bg-gradient-to-r from-accent via-accent-light to-accent rounded-full hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] hover:scale-105 active:scale-95"
+              className="inline-flex items-center justify-center px-4 py-2 font-heading text-xs font-bold text-background transition-all duration-200 bg-accent rounded-md hover:bg-accent-light active:translate-y-0.5"
             >
               <span>Get a Quote</span>
-              <ArrowRight className="w-3.5 h-3.5 ml-1.5 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
             </Link>
             <Link
               href="/contact"
-              className="group relative inline-flex items-center justify-center px-4 py-2 font-heading text-xs font-bold text-white transition-all duration-300 bg-primary rounded-full hover:bg-primary-dark shadow-md shadow-primary/30 hover:scale-105 active:scale-95"
+              className="inline-flex items-center justify-center px-4 py-2 font-heading text-xs font-bold text-white transition-all duration-200 bg-[#171f2c] border border-[#243042] rounded-md hover:border-primary hover:bg-[#1f293d] active:translate-y-0.5"
             >
               <span>Contact Us</span>
             </Link>
@@ -135,11 +126,11 @@ export default function Header() {
 
           {/* Mobile Menu Toggle Button */}
           <button
-            className="xl:hidden relative z-50 text-text-primary p-2 rounded-xl bg-surface border border-border hover:border-accent transition-colors"
+            className="xl:hidden relative z-50 text-text-primary p-2 rounded-md bg-[#171f2c] border border-[#243042] hover:border-accent transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle Navigation Menu"
           >
-            {isMobileMenuOpen ? <X size={24} className="text-accent" /> : <Menu size={24} />}
+            {isMobileMenuOpen ? <X size={22} className="text-accent" /> : <Menu size={22} />}
           </button>
         </div>
 
@@ -147,13 +138,13 @@ export default function Header() {
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
-              initial={{ opacity: 0, y: -20 }}
+              initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.25 }}
-              className="fixed inset-x-0 top-16 z-40 bg-[#0d1117]/95 backdrop-blur-2xl border-b border-border p-6 shadow-2xl xl:hidden max-h-[85vh] overflow-y-auto"
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.15 }}
+              className="fixed inset-x-0 top-[60px] z-40 bg-[#0f141c] border-b border-[#243042] p-6 shadow-2xl xl:hidden max-h-[85vh] overflow-y-auto"
             >
-              <div className="space-y-3 mb-6">
+              <div className="space-y-1.5 mb-6">
                 {navLinks.map((link) => {
                   const isActive = pathname === link.path;
                   return (
@@ -161,38 +152,38 @@ export default function Header() {
                       key={link.name}
                       href={link.path}
                       onClick={closeMenu}
-                      className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-heading font-bold transition-colors ${
+                      className={`flex items-center justify-between px-3.5 py-2.5 rounded-md text-sm font-heading font-medium transition-colors ${
                         isActive
-                          ? "bg-primary/20 text-accent border border-primary/40"
+                          ? "bg-[#1f293d] text-accent border border-[#3b4d66]"
                           : "text-text-secondary hover:text-white hover:bg-white/5"
                       }`}
                     >
                       <span>{link.name}</span>
-                      {isActive && <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />}
+                      {isActive && <span className="w-1.5 h-1.5 rounded-full bg-accent" />}
                     </Link>
                   );
                 })}
               </div>
 
-              <div className="space-y-3 pt-4 border-t border-border">
+              <div className="space-y-2.5 pt-4 border-t border-[#243042]">
                 <Link
                   href="/contact?type=quote"
                   onClick={closeMenu}
-                  className="w-full flex items-center justify-center py-3 font-heading text-xs font-bold text-background bg-gradient-to-r from-accent to-accent-light rounded-xl shadow-lg shadow-accent/20"
+                  className="w-full flex items-center justify-center py-2.5 font-heading text-xs font-bold text-background bg-accent hover:bg-accent-light rounded-md"
                 >
-                  Get a Customized Quote <ArrowRight className="ml-1.5 w-4 h-4" />
+                  Request a Formal Quote <ArrowRight className="ml-1.5 w-4 h-4" />
                 </Link>
                 <Link
                   href="/contact"
                   onClick={closeMenu}
-                  className="w-full flex items-center justify-center py-3 font-heading text-xs font-bold text-white bg-primary rounded-xl"
+                  className="w-full flex items-center justify-center py-2.5 font-heading text-xs font-bold text-white bg-[#171f2c] border border-[#243042] rounded-md"
                 >
-                  Contact Office Directly
+                  Direct Office Inquiries
                 </Link>
 
                 <div className="pt-3 text-center text-xs text-text-secondary space-y-1">
-                  <p>Direct Call: <a href="tel:+919925534751" className="text-accent font-bold">+91 99255 34751</a></p>
-                  <p>Email: <a href="mailto:patelgk4257@gmail.com" className="text-accent font-bold">patelgk4257@gmail.com</a></p>
+                  <p>Direct Call: <a href="tel:+919925534751" className="text-white font-bold">+91 99255 34751</a></p>
+                  <p>Email: <a href="mailto:patelgk4257@gmail.com" className="text-white font-bold">patelgk4257@gmail.com</a></p>
                 </div>
               </div>
             </motion.div>
