@@ -20,8 +20,8 @@ const carouselSlides = [
     secondaryCtaLink: "/contact?type=quote",
     stats: [
       { label: "Audit Success", value: "100%" },
-      { label: "Sectors Covered", value: "12+" },
-      { label: "Standards Supported", value: "20+" }
+      { label: "Industrial Sectors", value: "12+" },
+      { label: "Standards Covered", value: "20+" }
     ]
   },
   {
@@ -36,9 +36,9 @@ const carouselSlides = [
     secondaryCtaText: "Book Gap Assessment",
     secondaryCtaLink: "/contact?type=quote",
     stats: [
-      { label: "Core IMS", value: "9001/14001/45001" },
-      { label: "IT Standards", value: "ISO 27001 / 20000-1" },
-      { label: "Methodology", value: "Step-by-Step" }
+      { label: "Core IMS Suite", value: "9001 • 14001" },
+      { label: "Cyber Security", value: "ISO 27001" },
+      { label: "Implementation", value: "Step-by-Step" }
     ]
   },
   {
@@ -53,9 +53,9 @@ const carouselSlides = [
     secondaryCtaText: "Download Syllabus",
     secondaryCtaLink: "/resources",
     stats: [
-      { label: "Accreditation", value: "NABL / 17025" },
-      { label: "Training Modules", value: "QHSE & HACCP" },
-      { label: "Continuous Impr.", value: "Lean Six Sigma" }
+      { label: "Lab Readiness", value: "NABL / 17025" },
+      { label: "Workforce Training", value: "QHSE & Safety" },
+      { label: "Process Excellence", value: "Lean Six Sigma" }
     ]
   },
   {
@@ -70,9 +70,9 @@ const carouselSlides = [
     secondaryCtaText: "Get Insurance Review",
     secondaryCtaLink: "/contact?type=quote",
     stats: [
-      { label: "Asset Coverage", value: "Fire & Machinery" },
-      { label: "Export Markets", value: "Global Reach" },
-      { label: "Collaterals", value: "B2B Profiles" }
+      { label: "Plant Asset Cover", value: "Fire & Machinery" },
+      { label: "Global Reach", value: "Export Markets" },
+      { label: "Business Profiles", value: "B2B Collaterals" }
     ]
   }
 ];
@@ -98,7 +98,7 @@ export default function HeroCarousel() {
   const slide = carouselSlides[current];
 
   return (
-    <div className="relative w-full min-h-[480px] md:min-h-[520px] lg:min-h-[560px] overflow-hidden bg-[#f8fafc] flex items-center border-b border-[#e2e8f0]">
+    <div className="relative w-full min-h-[500px] md:min-h-[540px] lg:min-h-[580px] overflow-hidden bg-[#f8fafc] flex items-center border-b border-[#e2e8f0]">
       <AnimatePresence mode="wait">
         <motion.div
           key={current}
@@ -122,7 +122,7 @@ export default function HeroCarousel() {
           <div className="absolute inset-0 bg-gradient-to-r from-[#f8fafc] via-[#f8fafc]/95 to-[#f8fafc]/70 z-10" />
 
           {/* Slide Content Container */}
-          <div className="container mx-auto h-full relative z-20 flex flex-col justify-center items-start text-left px-6 md:px-12 py-10 md:py-12">
+          <div className="container mx-auto h-full relative z-20 flex flex-col justify-center items-start text-left px-8 sm:px-14 md:px-16 lg:px-20 py-10 md:py-12">
             <div className="max-w-3xl space-y-4">
               {/* Badge & Tagline */}
               <div className="flex flex-wrap items-center gap-2.5">
@@ -136,12 +136,12 @@ export default function HeroCarousel() {
               </div>
 
               {/* Title */}
-              <h1 className="text-3xl md:text-5xl lg:text-[3.25rem] font-heading font-extrabold text-[#0f172a] leading-[1.15] tracking-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-[3.25rem] font-heading font-extrabold text-[#0f172a] leading-[1.15] tracking-tight">
                 {slide.title}
               </h1>
               
               {/* Description */}
-              <p className="text-sm md:text-base text-[#475569] max-w-2xl font-body leading-relaxed">
+              <p className="text-xs sm:text-sm md:text-base text-[#475569] max-w-2xl font-body leading-relaxed">
                 {slide.description}
               </p>
               
@@ -149,7 +149,7 @@ export default function HeroCarousel() {
               <div className="flex flex-wrap gap-3 items-center pt-2">
                 <Link
                   href={slide.primaryCtaLink}
-                  className="px-6 py-3 font-heading font-bold text-xs md:text-sm text-white bg-[#b3282d] rounded-md hover:bg-[#8c1e22] transition-all duration-150 group inline-flex items-center shadow-sm active:translate-y-0.5"
+                  className="px-5 sm:px-6 py-2.5 sm:py-3 font-heading font-bold text-xs md:text-sm text-white bg-[#b3282d] rounded-md hover:bg-[#8c1e22] transition-all duration-150 group inline-flex items-center shadow-sm active:translate-y-0.5"
                 >
                   {slide.primaryCtaText}
                   <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -157,20 +157,20 @@ export default function HeroCarousel() {
 
                 <Link
                   href={slide.secondaryCtaLink}
-                  className="px-6 py-3 font-heading font-bold text-xs md:text-sm text-[#0f172a] bg-white border border-[#cbd5e1] rounded-md hover:bg-[#f1f5f9] hover:border-[#94a3b8] transition-all duration-150 inline-flex items-center shadow-xs"
+                  className="px-5 sm:px-6 py-2.5 sm:py-3 font-heading font-bold text-xs md:text-sm text-[#0f172a] bg-white border border-[#cbd5e1] rounded-md hover:bg-[#f1f5f9] hover:border-[#94a3b8] transition-all duration-150 inline-flex items-center shadow-xs"
                 >
                   {slide.secondaryCtaText}
                 </Link>
               </div>
 
-              {/* Stat Badges Grid */}
-              <div className="pt-5 grid grid-cols-3 gap-3 sm:gap-4 border-t border-[#e2e8f0] max-w-lg">
+              {/* Stat Badges Grid - Fixed width & overflow prevention */}
+              <div className="pt-4 grid grid-cols-3 gap-2.5 sm:gap-4 border-t border-[#e2e8f0] w-full max-w-lg">
                 {slide.stats.map((st, sIdx) => (
-                  <div key={sIdx} className="bg-white border border-[#e2e8f0] p-3 rounded-md shadow-xs">
-                    <div className="text-base sm:text-lg font-heading font-bold text-[#b3282d]">
+                  <div key={sIdx} className="bg-white border border-[#e2e8f0] p-2.5 sm:p-3 rounded-lg shadow-xs min-w-0">
+                    <div className="text-xs sm:text-sm md:text-base font-heading font-bold text-[#b3282d] truncate">
                       {st.value}
                     </div>
-                    <div className="text-[11px] text-[#64748b] font-medium truncate mt-0.5">
+                    <div className="text-[10px] sm:text-[11px] text-[#64748b] font-medium truncate mt-0.5">
                       {st.label}
                     </div>
                   </div>
@@ -181,17 +181,17 @@ export default function HeroCarousel() {
         </motion.div>
       </AnimatePresence>
 
-      {/* Navigation Controls */}
+      {/* Navigation Controls with clean positioning and no text overlap */}
       <button 
         onClick={prevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 flex items-center justify-center rounded-md bg-white/90 hover:bg-white border border-[#cbd5e1] text-[#0f172a] shadow-sm transition-all cursor-pointer"
+        className="hidden md:flex absolute left-3 lg:left-6 top-1/2 -translate-y-1/2 z-30 w-9 h-9 items-center justify-center rounded-md bg-white/95 hover:bg-white border border-[#cbd5e1] text-[#0f172a] shadow-sm transition-all cursor-pointer"
         aria-label="Previous Slide"
       >
         <ChevronLeft className="w-5 h-5" />
       </button>
       <button 
         onClick={nextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 flex items-center justify-center rounded-md bg-white/90 hover:bg-white border border-[#cbd5e1] text-[#0f172a] shadow-sm transition-all cursor-pointer"
+        className="hidden md:flex absolute right-3 lg:right-6 top-1/2 -translate-y-1/2 z-30 w-9 h-9 items-center justify-center rounded-md bg-white/95 hover:bg-white border border-[#cbd5e1] text-[#0f172a] shadow-sm transition-all cursor-pointer"
         aria-label="Next Slide"
       >
         <ChevronRight className="w-5 h-5" />
