@@ -49,12 +49,12 @@ const TEAM_MEMBERS = [
   },
   {
     name: "Harsh Patel",
-    role: "Operations & Digital Systems Lead",
-    qualification: "Information Security & Business Technology",
-    experience: "Systems & Digital Operations",
+    role: "AI Creator & Security Expert",
+    qualification: "AI Architect • Information Security Specialist",
+    experience: "AI Solutions & Enterprise Cybersecurity",
     image: "/team/harsh2.jpeg",
-    bio: "Driving digital modernization, ISO 27001 (ISMS), ISO 20000-1 IT service management, and client technical communications for cross-border industrial expansion.",
-    specialties: ["ISO 27001 ISMS & IT Systems", "Technical Business Collaterals", "Export & Client Operations"]
+    bio: "Pioneering intelligent AI systems, enterprise cybersecurity architectures, ISO 27001 (ISMS) compliance frameworks, and digital business transformation for industrial organizations.",
+    specialties: ["AI Solutions & Automation", "ISO 27001 Cybersecurity", "Digital Systems Architecture"]
   }
 ];
 
