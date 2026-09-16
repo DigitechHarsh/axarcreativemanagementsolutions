@@ -129,18 +129,18 @@ export default function IndustriesPage() {
     : INDUSTRIES_DETAILED.filter(i => i.category === selectedCategory);
 
   return (
-    <div className="relative overflow-hidden bg-background">
+    <div className="relative overflow-hidden bg-white text-[#0f172a]">
       {/* Hero Header */}
-      <section className="pt-16 pb-12 bg-background border-b border-[#243042]">
+      <section className="pt-16 pb-12 bg-[#f8fafc] border-b border-[#e2e8f0]">
         <div className="container mx-auto px-6 text-center max-w-4xl">
           <div className="space-y-3">
-            <span className="inline-flex items-center px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-[#171f2c] border border-[#243042] text-accent">
-              <ShieldCheck className="w-3.5 h-3.5 mr-1.5" /> Multi-Sector Expertise
+            <span className="inline-flex items-center px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-white border border-[#e2e8f0] text-[#b3282d] shadow-xs">
+              <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-[#b3282d]" /> Multi-Sector Expertise
             </span>
-            <h1 className="text-3xl md:text-5xl font-heading font-extrabold text-white">
+            <h1 className="text-3xl md:text-5xl font-heading font-extrabold text-[#0f172a]">
               Industries We Serve
             </h1>
-            <p className="text-xs md:text-sm text-text-secondary max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xs md:text-sm text-[#475569] max-w-2xl mx-auto leading-relaxed">
               Domain-specific management systems, compliance consulting, technical training, and risk mitigation across 12 primary industrial sectors.
             </p>
           </div>
@@ -148,7 +148,7 @@ export default function IndustriesPage() {
       </section>
 
       {/* Category Filter Chips */}
-      <section className="sticky top-[58px] z-40 bg-[#0f141c] border-b border-[#243042] py-2.5">
+      <section className="sticky top-[60px] z-40 bg-white/95 backdrop-blur-md border-b border-[#e2e8f0] py-2.5 shadow-xs">
         <div className="container mx-auto px-6">
           <div className="flex overflow-x-auto hide-scrollbar space-x-2">
             {categories.map((cat) => (
@@ -157,8 +157,8 @@ export default function IndustriesPage() {
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-3.5 py-1.5 rounded-md text-xs font-heading font-bold whitespace-nowrap transition-all cursor-pointer border ${
                   selectedCategory === cat
-                    ? "bg-[#1f293d] border-accent text-white"
-                    : "bg-[#171f2c] border-[#243042] text-text-secondary hover:text-white hover:border-[#3b4d66]"
+                    ? "bg-[#fef2f2] border-[#b3282d] text-[#b3282d] shadow-xs"
+                    : "bg-white border-[#e2e8f0] text-[#475569] hover:text-[#0f172a] hover:border-[#cbd5e1]"
                 }`}
               >
                 {cat}
@@ -169,52 +169,52 @@ export default function IndustriesPage() {
       </section>
 
       {/* Industries Grid */}
-      <section className="py-14 bg-[#0c1017]">
+      <section className="py-14 bg-[#f8fafc]">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((ind, idx) => (
               <div
                 key={idx}
-                className="bg-[#171f2c] border border-[#243042] hover:border-[#3b4d66] rounded-lg p-6 flex flex-col justify-between transition-colors"
+                className="bg-white border border-[#e2e8f0] hover:border-[#cbd5e1] hover:shadow-md rounded-lg p-6 flex flex-col justify-between transition-all"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <div className="w-10 h-10 rounded-md bg-[#1f293d] border border-[#3b4d66] flex items-center justify-center text-accent">
+                    <div className="w-10 h-10 rounded-md bg-[#fef2f2] border border-[#fecaca] flex items-center justify-center text-[#b3282d]">
                       <ind.icon className="w-5 h-5" />
                     </div>
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#0f141c] border border-[#243042] text-text-muted">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b]">
                       {ind.category}
                     </span>
                   </div>
 
-                  <h3 className="font-heading font-bold text-lg text-white mb-1">
+                  <h3 className="font-heading font-bold text-lg text-[#0f172a] mb-1">
                     {ind.title}
                   </h3>
-                  <p className="text-[11px] text-accent mb-3">
+                  <p className="text-[11px] text-[#b3282d] font-semibold mb-3">
                     {ind.scope}
                   </p>
 
-                  <p className="text-text-secondary text-xs leading-relaxed mb-5">
+                  <p className="text-[#475569] text-xs leading-relaxed mb-5">
                     {ind.desc}
                   </p>
 
-                  <div className="space-y-1.5 border-t border-[#243042] pt-4 mb-4">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted block mb-1">
+                  <div className="space-y-1.5 border-t border-[#f1f5f9] pt-4 mb-4">
+                    <span className="text-[10px] uppercase tracking-wider text-[#64748b] font-bold block mb-1">
                       Applied Solutions:
                     </span>
                     {ind.keyServices.map((srv, sIdx) => (
-                      <div key={sIdx} className="flex items-start text-xs text-text-secondary">
-                        <CheckCircle2 className="w-3.5 h-3.5 mr-2 text-accent shrink-0 mt-0.5" />
+                      <div key={sIdx} className="flex items-start text-xs text-[#475569]">
+                        <CheckCircle2 className="w-3.5 h-3.5 mr-2 text-[#b3282d] shrink-0 mt-0.5" />
                         <span>{srv}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-[#243042] flex items-center justify-between">
+                <div className="pt-3 border-t border-[#f1f5f9] flex items-center justify-between">
                   <Link
                     href={`/contact?industry=${encodeURIComponent(ind.title)}&type=quote`}
-                    className="inline-flex items-center text-xs font-heading font-bold text-accent hover:text-accent-light transition-colors"
+                    className="inline-flex items-center text-xs font-heading font-bold text-[#b3282d] hover:text-[#8c1e22] transition-colors"
                   >
                     Request Sector Scope <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
                   </Link>
@@ -226,20 +226,20 @@ export default function IndustriesPage() {
       </section>
 
       {/* Bottom CTA */}
-      <section className="py-14 bg-background border-t border-[#243042] text-center">
+      <section className="py-14 bg-white border-t border-[#e2e8f0] text-center">
         <div className="container mx-auto px-6 max-w-3xl space-y-4">
-          <h2 className="text-2xl font-heading font-bold text-white">
+          <h2 className="text-2xl font-heading font-bold text-[#0f172a]">
             Have a Specific Industrial Requirement?
           </h2>
-          <p className="text-xs md:text-sm text-text-secondary">
+          <p className="text-xs md:text-sm text-[#475569]">
             Our principal consultant Ghanshyambhai K Patel visits facilities across Bharuch, Dahej, Ankleshwar, Jhagadia and nationwide to assess unique plant compliance requirements.
           </p>
           <div className="pt-2">
             <Link
               href="/contact?type=quote"
-              className="inline-flex items-center px-6 py-2.5 bg-accent text-background font-heading font-bold text-xs rounded-md hover:bg-accent-light transition-colors"
+              className="inline-flex items-center px-6 py-2.5 bg-[#b3282d] text-white font-heading font-bold text-xs rounded-md hover:bg-[#8c1e22] transition-colors shadow-xs"
             >
-              Request Plant Assessment <ArrowRight className="ml-2 w-4 h-4" />
+              Request Plant Assessment <ArrowRight className="ml-2 w-3.5 h-3.5" />
             </Link>
           </div>
         </div>

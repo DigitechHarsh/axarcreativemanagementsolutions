@@ -223,31 +223,31 @@ export default function ServicesPage() {
   });
 
   return (
-    <div className="relative overflow-hidden bg-background">
+    <div className="relative overflow-hidden bg-white text-[#0f172a]">
       {/* Hero Header */}
-      <section className="pt-16 pb-12 bg-background border-b border-[#243042]">
+      <section className="pt-16 pb-12 bg-[#f8fafc] border-b border-[#e2e8f0]">
         <div className="container mx-auto px-6 text-center max-w-4xl">
           <div className="space-y-3">
-            <span className="inline-flex items-center px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-[#171f2c] border border-[#243042] text-accent">
+            <span className="inline-flex items-center px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-white border border-[#e2e8f0] text-[#b3282d] shadow-xs">
               <ShieldCheck className="w-3.5 h-3.5 mr-1.5" /> Comprehensive Industrial Spectrum
             </span>
-            <h1 className="text-3xl md:text-5xl font-heading font-extrabold text-white">
+            <h1 className="text-3xl md:text-5xl font-heading font-extrabold text-[#0f172a]">
               Our 7 Core Services
             </h1>
-            <p className="text-xs md:text-sm text-text-secondary max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xs md:text-sm text-[#475569] max-w-2xl mx-auto leading-relaxed">
               Professional consultancy, laboratory setup, workforce training, risk coverage, and business development designed for industrial excellence.
             </p>
 
             {/* Quick Search */}
             <div className="pt-3 max-w-md mx-auto">
               <div className="relative">
-                <Search className="w-4 h-4 text-text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-[#94a3b8] absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search standards (e.g. 27001, NABL, HACCP, Six Sigma)..."
-                  className="w-full bg-[#171f2c] border border-[#243042] rounded-md pl-10 pr-4 py-2 text-xs text-white placeholder-text-muted focus:outline-none focus:border-accent transition-colors"
+                  className="w-full bg-white border border-[#cbd5e1] rounded-md pl-10 pr-4 py-2 text-xs text-[#0f172a] placeholder-[#94a3b8] focus:outline-none focus:border-[#b3282d] transition-colors shadow-xs"
                 />
               </div>
             </div>
@@ -256,7 +256,7 @@ export default function ServicesPage() {
       </section>
 
       {/* Service Selector Tabs */}
-      <section className="sticky top-[58px] z-40 bg-[#0f141c] border-b border-[#243042] py-2.5">
+      <section className="sticky top-[60px] z-40 bg-white/95 backdrop-blur-md border-b border-[#e2e8f0] py-2.5 shadow-xs">
         <div className="container mx-auto px-6">
           <div className="flex overflow-x-auto hide-scrollbar space-x-2 pb-1">
             {SERVICES_DATA.map((service) => {
@@ -270,11 +270,11 @@ export default function ServicesPage() {
                   }}
                   className={`px-3.5 py-1.5 rounded-md text-xs font-heading font-bold whitespace-nowrap transition-all cursor-pointer flex items-center space-x-2 border ${
                     isActive
-                      ? "bg-[#1f293d] border-accent text-white"
-                      : "bg-[#171f2c] border-[#243042] text-text-secondary hover:text-white hover:border-[#3b4d66]"
+                      ? "bg-[#fef2f2] border-[#b3282d] text-[#b3282d] shadow-xs"
+                      : "bg-white border-[#e2e8f0] text-[#475569] hover:text-[#0f172a] hover:border-[#cbd5e1]"
                   }`}
                 >
-                  <service.icon className="w-3.5 h-3.5 text-accent" />
+                  <service.icon className="w-3.5 h-3.5 text-[#b3282d]" />
                   <span>{service.title.split(". ")[1]}</span>
                 </button>
               );
@@ -284,23 +284,23 @@ export default function ServicesPage() {
       </section>
 
       {/* Main Active Service Detail Explorer */}
-      <section className="py-12 bg-[#0c1017]">
+      <section className="py-12 bg-[#f8fafc]">
         <div className="container mx-auto px-6 max-w-6xl">
-          <div className="bg-[#171f2c] border border-[#243042] rounded-lg p-6 md:p-8">
+          <div className="bg-white border border-[#e2e8f0] rounded-lg p-6 md:p-8 shadow-xs">
             {/* Header / Banner */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-[#243042]">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-[#e2e8f0]">
               <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 rounded-md bg-[#1f293d] border border-[#3b4d66] flex items-center justify-center text-accent shrink-0">
+                <div className="w-12 h-12 rounded-md bg-[#fef2f2] border border-[#fecaca] flex items-center justify-center text-[#b3282d] shrink-0">
                   <currentService.icon className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-text-muted bg-[#0f141c] px-2 py-0.5 rounded border border-[#243042] inline-block mb-1">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748b] bg-[#f8fafc] px-2 py-0.5 rounded border border-[#e2e8f0] inline-block mb-1">
                     {currentService.badge}
                   </span>
-                  <h2 className="text-xl md:text-2xl font-heading font-bold text-white">
+                  <h2 className="text-xl md:text-2xl font-heading font-bold text-[#0f172a]">
                     {currentService.title}
                   </h2>
-                  <p className="text-accent text-xs mt-0.5 font-medium">
+                  <p className="text-[#b3282d] text-xs mt-0.5 font-medium">
                     {currentService.tagline}
                   </p>
                 </div>
@@ -309,7 +309,7 @@ export default function ServicesPage() {
               <div className="shrink-0">
                 <Link
                   href={`/contact?service=${encodeURIComponent(currentService.title.split(". ")[1])}&type=quote`}
-                  className="px-5 py-2.5 bg-accent text-background font-heading font-bold text-xs rounded-md hover:bg-accent-light transition-colors inline-flex items-center"
+                  className="px-5 py-2.5 bg-[#b3282d] text-white font-heading font-bold text-xs rounded-md hover:bg-[#8c1e22] transition-colors inline-flex items-center shadow-xs"
                 >
                   Request Formal Scope <ArrowRight className="ml-1.5 w-3.5 h-3.5" />
                 </Link>
@@ -321,25 +321,25 @@ export default function ServicesPage() {
               {/* Left Column: Description & Applicable Standards */}
               <div className="lg:col-span-6 space-y-5">
                 <div>
-                  <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-accent mb-2">
+                  <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-[#b3282d] mb-2">
                     Scope & Methodology
                   </h3>
-                  <p className="text-text-secondary text-xs leading-relaxed">
+                  <p className="text-[#475569] text-xs leading-relaxed">
                     {currentService.description}
                   </p>
                 </div>
 
                 <div>
-                  <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-white mb-2.5">
+                  <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-[#0f172a] mb-2.5">
                     Standards & Frameworks Covered:
                   </h3>
                   <div className="grid sm:grid-cols-2 gap-2.5">
                     {currentService.standards.map((std, idx) => (
-                      <div key={idx} className="bg-[#0f141c] border border-[#243042] p-2.5 rounded-md flex items-start space-x-2">
-                        <ShieldCheck className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" />
+                      <div key={idx} className="bg-[#f8fafc] border border-[#e2e8f0] p-2.5 rounded-md flex items-start space-x-2">
+                        <ShieldCheck className="w-3.5 h-3.5 text-[#b3282d] shrink-0 mt-0.5" />
                         <div>
-                          <span className="font-mono font-bold text-xs text-white block">{std.code}</span>
-                          <span className="text-[11px] text-text-secondary leading-tight block">{std.name}</span>
+                          <span className="font-bold text-xs text-[#0f172a] block">{std.code}</span>
+                          <span className="text-[11px] text-[#64748b] leading-tight block">{std.name}</span>
                         </div>
                       </div>
                     ))}
@@ -348,25 +348,25 @@ export default function ServicesPage() {
               </div>
 
               {/* Right Column: Key Offerings Checklist */}
-              <div className="lg:col-span-6 bg-[#0f141c] border border-[#243042] p-5 rounded-md">
-                <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-white mb-3 flex items-center">
-                  <CheckCircle2 className="w-4 h-4 mr-1.5 text-accent" /> Key Deliverables & Activities:
+              <div className="lg:col-span-6 bg-[#f8fafc] border border-[#e2e8f0] p-5 rounded-md">
+                <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-[#0f172a] mb-3 flex items-center">
+                  <CheckCircle2 className="w-4 h-4 mr-1.5 text-[#b3282d]" /> Key Deliverables & Activities:
                 </h3>
 
                 <ul className="space-y-2">
                   {currentService.offerings.map((offering, idx) => (
-                    <li key={idx} className="flex items-start text-xs text-text-secondary">
-                      <div className="w-1.5 h-1.5 rounded-full bg-accent mt-1.5 mr-2.5 shrink-0" />
+                    <li key={idx} className="flex items-start text-xs text-[#475569]">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#b3282d] mt-1.5 mr-2.5 shrink-0" />
                       <span>{offering}</span>
                     </li>
                   ))}
                 </ul>
 
-                <div className="mt-6 pt-4 border-t border-[#243042] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-                  <span className="text-text-muted">Need an on-site gap assessment?</span>
+                <div className="mt-6 pt-4 border-t border-[#e2e8f0] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                  <span className="text-[#64748b]">Need an on-site gap assessment?</span>
                   <Link
                     href="/contact"
-                    className="text-xs font-heading font-bold text-accent hover:underline flex items-center"
+                    className="text-xs font-heading font-bold text-[#b3282d] hover:underline flex items-center"
                   >
                     Schedule Plant Visit <ArrowRight className="ml-1 w-3 h-3" />
                   </Link>
@@ -378,13 +378,13 @@ export default function ServicesPage() {
       </section>
 
       {/* All 7 Services Grid */}
-      <section className="py-16 bg-background border-t border-[#243042]">
+      <section className="py-16 bg-white border-t border-[#e2e8f0]">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12 max-w-2xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-heading font-extrabold text-white mb-2">
+            <h2 className="text-2xl md:text-3xl font-heading font-extrabold text-[#0f172a] mb-2">
               All 7 Specialized Divisions
             </h2>
-            <p className="text-xs md:text-sm text-text-secondary">
+            <p className="text-xs md:text-sm text-[#64748b]">
               Everything under one roof: From ISO compliance and testing lab setup to industrial insurance and export market entry.
             </p>
           </div>
@@ -394,38 +394,38 @@ export default function ServicesPage() {
               <div
                 key={srv.id}
                 id={srv.id}
-                className="bg-[#171f2c] border border-[#243042] hover:border-[#3b4d66] p-5 rounded-lg flex flex-col justify-between transition-colors scroll-mt-24"
+                className="bg-white border border-[#e2e8f0] hover:border-[#cbd5e1] hover:shadow-md p-5 rounded-lg flex flex-col justify-between transition-all scroll-mt-24"
               >
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <div className="w-9 h-9 rounded-md bg-[#1f293d] border border-[#3b4d66] flex items-center justify-center text-accent">
+                    <div className="w-9 h-9 rounded-md bg-[#fef2f2] border border-[#fecaca] flex items-center justify-center text-[#b3282d]">
                       <srv.icon className="w-4 h-4" />
                     </div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-[#0f141c] border border-[#243042] text-text-secondary">
+                    <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-[#f8fafc] border border-[#e2e8f0] text-[#64748b] font-medium">
                       {srv.badge}
                     </span>
                   </div>
-                  <h3 className="font-heading font-bold text-base text-white mb-1.5">
+                  <h3 className="font-heading font-bold text-base text-[#0f172a] mb-1.5">
                     {srv.title}
                   </h3>
-                  <p className="text-text-secondary text-xs leading-relaxed mb-4">
+                  <p className="text-[#64748b] text-xs leading-relaxed mb-4">
                     {srv.subtitle}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-[#243042] flex items-center justify-between text-xs">
+                <div className="pt-3 border-t border-[#f1f5f9] flex items-center justify-between text-xs">
                   <button
                     onClick={() => {
                       setActiveTab(srv.id);
                       window.scrollTo({ top: 320, behavior: "smooth" });
                     }}
-                    className="font-bold text-accent hover:underline cursor-pointer"
+                    className="font-bold text-[#b3282d] hover:underline cursor-pointer"
                   >
                     View Scope & Standards
                   </button>
                   <Link
                     href={`/contact?service=${encodeURIComponent(srv.title.split(". ")[1])}&type=quote`}
-                    className="font-bold text-white hover:text-accent flex items-center"
+                    className="font-bold text-[#0f172a] hover:text-[#b3282d] flex items-center"
                   >
                     Get Quote <ArrowRight className="w-3 h-3 ml-1" />
                   </Link>
@@ -437,18 +437,18 @@ export default function ServicesPage() {
       </section>
 
       {/* Bottom CTA */}
-      <section className="py-14 bg-[#0c1017] text-center border-t border-[#243042]">
+      <section className="py-14 bg-[#f8fafc] text-center border-t border-[#e2e8f0]">
         <div className="container mx-auto px-6 max-w-3xl space-y-4">
-          <h2 className="text-xl md:text-2xl font-heading font-bold text-white">
+          <h2 className="text-xl md:text-2xl font-heading font-bold text-[#0f172a]">
             Looking for a Tailored Industrial Management Solution?
           </h2>
-          <p className="text-xs md:text-sm text-text-secondary">
+          <p className="text-xs md:text-sm text-[#475569]">
             Reach out to our proprietor Ghanshyambhai K Patel and the Axar team for a comprehensive plant audit and custom roadmap.
           </p>
           <div className="pt-2">
             <Link
               href="/contact?type=quote"
-              className="inline-flex items-center px-6 py-2.5 bg-accent text-background font-heading font-bold text-xs rounded-md hover:bg-accent-light transition-colors"
+              className="inline-flex items-center px-6 py-2.5 bg-[#b3282d] text-white font-heading font-bold text-xs rounded-md hover:bg-[#8c1e22] transition-colors shadow-xs"
             >
               Request a Consultation / Quote
               <ArrowRight className="ml-2 w-4 h-4" />

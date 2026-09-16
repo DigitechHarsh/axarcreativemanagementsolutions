@@ -25,7 +25,7 @@ const defaultPortfolioItems: ProjectItem[] = [
     title: "Multi-Site IMS Certification (ISO 9001, 14001, 45001)",
     category: "ISO & IMS Consultancy",
     desc: "Complete Integrated Management System rollout across 3 manufacturing plants in Gujarat with zero non-conformances on final audit.",
-    tagStyle: "bg-[#1f293d] text-white border border-[#3b4d66]",
+    tagStyle: "bg-[#fef2f2] text-[#b91c1c] border border-[#fecaca]",
     image_url: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80"
   },
   {
@@ -35,7 +35,7 @@ const defaultPortfolioItems: ProjectItem[] = [
     title: "NABL Accreditation for Chemical Testing Laboratory",
     category: "Laboratory & NABL",
     desc: "Laboratory layout design, SOP formulation, equipment validation, and NABL accreditation clearance in record 6-month timeframe.",
-    tagStyle: "bg-[#232014] text-accent border border-[#524522]",
+    tagStyle: "bg-[#fefce8] text-[#a16207] border border-[#fef08a]",
     image_url: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80"
   },
   {
@@ -45,7 +45,7 @@ const defaultPortfolioItems: ProjectItem[] = [
     title: "Engineering Plant Risk Audit & Asset Insurance",
     category: "Industrial Insurance",
     desc: "Structured comprehensive risk coverage protecting heavy machinery, fire perils, boilers, and transit cargo for an engineering firm.",
-    tagStyle: "bg-[#1f293d] text-white border border-[#3b4d66]",
+    tagStyle: "bg-[#fef2f2] text-[#b91c1c] border border-[#fecaca]",
     image_url: "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=800&q=80"
   },
   {
@@ -55,7 +55,7 @@ const defaultPortfolioItems: ProjectItem[] = [
     title: "Hazard Identification (HIRA) & Safety Culture Overhaul",
     category: "QHSE & Training",
     desc: "Trained 150+ shop-floor supervisors on risk assessment, emergency preparedness, and behavior-based safety protocols.",
-    tagStyle: "bg-[#232014] text-accent border border-[#524522]",
+    tagStyle: "bg-[#fefce8] text-[#a16207] border border-[#fef08a]",
     image_url: "https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&w=800&q=80"
   },
   {
@@ -65,7 +65,7 @@ const defaultPortfolioItems: ProjectItem[] = [
     title: "Lean DMAIC Process Variation Reduction",
     category: "Six Sigma (DMAIC)",
     desc: "Deployed DMAIC tools to reduce production line scrap rate by 34% and improve overall equipment effectiveness (OEE).",
-    tagStyle: "bg-[#1f293d] text-white border border-[#3b4d66]",
+    tagStyle: "bg-[#fef2f2] text-[#b91c1c] border border-[#fecaca]",
     image_url: "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80"
   },
   {
@@ -75,7 +75,7 @@ const defaultPortfolioItems: ProjectItem[] = [
     title: "International Market Entry & Buyer Identification",
     category: "Export & Global Trade",
     desc: "Facilitated international buyer connections and export documentation for an Indian chemical manufacturer expanding to European markets.",
-    tagStyle: "bg-[#232014] text-accent border border-[#524522]",
+    tagStyle: "bg-[#fefce8] text-[#a16207] border border-[#fef08a]",
     image_url: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=800&q=80"
   }
 ];
@@ -119,7 +119,7 @@ export default function PortfolioPage() {
             desc: item.description,
             image_url: item.image_url,
             project_url: item.project_url,
-            tagStyle: item.tag_style || "bg-[#1f293d] text-white border border-[#3b4d66]"
+            tagStyle: item.tag_style || "bg-[#fef2f2] text-[#b91c1c] border border-[#fecaca]"
           }));
 
           setPortfolioItems(apiItems);
@@ -139,18 +139,18 @@ export default function PortfolioPage() {
   );
 
   return (
-    <div className="relative min-h-screen bg-background pb-20">
+    <div className="relative min-h-screen bg-white text-[#0f172a] pb-20">
       {/* Header Section */}
-      <section className="pt-16 pb-12 bg-background border-b border-[#243042]">
+      <section className="pt-16 pb-12 bg-[#f8fafc] border-b border-[#e2e8f0]">
         <div className="container mx-auto px-6 text-center max-w-4xl">
           <div className="space-y-3">
-            <span className="inline-flex items-center px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-[#171f2c] border border-[#243042] text-accent">
-              <ShieldCheck className="w-3.5 h-3.5 mr-1.5" /> Proven Track Record
+            <span className="inline-flex items-center px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-white border border-[#e2e8f0] text-[#b3282d] shadow-xs">
+              <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-[#b3282d]" /> Proven Track Record
             </span>
-            <h1 className="text-3xl md:text-5xl font-heading font-extrabold text-white">
+            <h1 className="text-3xl md:text-5xl font-heading font-extrabold text-[#0f172a]">
               Projects & Client Engagements
             </h1>
-            <p className="text-xs md:text-sm text-text-secondary max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xs md:text-sm text-[#475569] max-w-2xl mx-auto leading-relaxed">
               Explore recent implementations across ISO certifications, NABL laboratory setups, safety overhauls, and risk management engagements.
             </p>
           </div>
@@ -158,7 +158,7 @@ export default function PortfolioPage() {
       </section>
 
       {/* Category Filter */}
-      <section className="sticky top-[58px] z-40 bg-[#0f141c] border-b border-[#243042] py-2.5">
+      <section className="sticky top-[60px] z-40 bg-white/95 backdrop-blur-md border-b border-[#e2e8f0] py-2.5 shadow-xs">
         <div className="container mx-auto px-6">
           <div className="flex overflow-x-auto hide-scrollbar space-x-2">
             {categories.map((cat) => (
@@ -167,8 +167,8 @@ export default function PortfolioPage() {
                 onClick={() => setActiveCategory(cat)}
                 className={`px-3.5 py-1.5 rounded-md text-xs font-heading font-bold whitespace-nowrap transition-all cursor-pointer border ${
                   activeCategory === cat
-                    ? "bg-[#1f293d] border-accent text-white"
-                    : "bg-[#171f2c] border-[#243042] text-text-secondary hover:text-white hover:border-[#3b4d66]"
+                    ? "bg-[#fef2f2] border-[#b3282d] text-[#b3282d] shadow-xs"
+                    : "bg-white border-[#e2e8f0] text-[#475569] hover:text-[#0f172a] hover:border-[#cbd5e1]"
                 }`}
               >
                 {cat}
@@ -179,16 +179,16 @@ export default function PortfolioPage() {
       </section>
 
       {/* Grid of Projects */}
-      <section className="py-14 bg-[#0c1017]">
+      <section className="py-14 bg-[#f8fafc]">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredItems.map((item) => (
               <div
                 key={item.id}
-                className="bg-[#171f2c] border border-[#243042] hover:border-[#3b4d66] rounded-lg overflow-hidden flex flex-col justify-between transition-colors"
+                className="bg-white border border-[#e2e8f0] hover:border-[#cbd5e1] hover:shadow-md rounded-lg overflow-hidden flex flex-col justify-between transition-all"
               >
                 {item.image_url && (
-                  <div className="relative h-44 w-full bg-[#0f141c]">
+                  <div className="relative h-44 w-full bg-[#f1f5f9]">
                     <Image
                       src={item.image_url}
                       alt={item.title}
@@ -196,7 +196,7 @@ export default function PortfolioPage() {
                       className="object-cover"
                     />
                     <div className="absolute top-3 left-3">
-                      <span className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider ${item.tagStyle}`}>
+                      <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${item.tagStyle}`}>
                         {item.category}
                       </span>
                     </div>
@@ -207,25 +207,25 @@ export default function PortfolioPage() {
                   <div>
                     {!item.image_url && (
                       <div className="mb-2">
-                        <span className={`px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider ${item.tagStyle}`}>
+                        <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${item.tagStyle}`}>
                           {item.category}
                         </span>
                       </div>
                     )}
 
-                    <h3 className="text-base font-heading font-bold text-white mb-2">
+                    <h3 className="text-base font-heading font-bold text-[#0f172a] mb-2">
                       {item.title}
                     </h3>
-                    <p className="text-xs text-text-secondary leading-relaxed mb-4">
+                    <p className="text-xs text-[#64748b] leading-relaxed mb-4">
                       {item.desc}
                     </p>
                   </div>
 
-                  <div className="pt-3 border-t border-[#243042] flex items-center justify-between text-xs">
-                    <span className="text-text-muted font-mono text-[11px]">Audit: 100% Passed</span>
+                  <div className="pt-3 border-t border-[#f1f5f9] flex items-center justify-between text-xs">
+                    <span className="text-[#64748b] text-[11px] font-medium">Audit: 100% Passed</span>
                     <Link
                       href={`/contact?project=${encodeURIComponent(item.title)}&type=quote`}
-                      className="text-accent hover:text-accent-light font-bold inline-flex items-center"
+                      className="text-[#b3282d] hover:text-[#8c1e22] font-bold inline-flex items-center"
                     >
                       Inquire <ArrowRight className="ml-1 w-3 h-3" />
                     </Link>

@@ -7,57 +7,57 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#0a0d13] border-t border-[#243042] mt-auto relative">
+    <footer className="bg-[#f8fafc] border-t border-[#e2e8f0] text-[#0f172a] mt-auto relative">
       <div className="container mx-auto px-6 py-14">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
           
           {/* Brand Column (Col 1-4) */}
           <div className="lg:col-span-4 space-y-4">
             <Link href="/" className="inline-flex items-center">
-              <div className="bg-white/95 rounded-md px-2 py-1 shadow-sm flex items-center border border-white/20">
+              <div className="flex items-center">
                 <Image
                   src="/logo.png"
                   alt="Axar Logo"
                   width={80}
                   height={80}
-                  className="object-contain h-7 w-auto"
+                  className="object-contain h-8 w-auto"
                 />
                 <Image
                   src="/logotext.png"
                   alt="Axar Creative Management Solutions"
                   width={240}
                   height={80}
-                  className="object-contain h-5 w-auto -ml-1"
+                  className="object-contain h-6 w-auto ml-1"
                 />
               </div>
             </Link>
 
-            <p className="text-xs text-accent font-medium">
+            <p className="text-xs text-[#b3282d] font-bold">
               Better Systems • Safer Workplaces • Sustainable Growth
             </p>
 
-            <p className="text-xs text-text-secondary leading-relaxed max-w-sm">
+            <p className="text-xs text-[#475569] leading-relaxed max-w-sm">
               Axar Creative Management Solutions provides professional industrial consultancy, ISO & QMS certifications, testing laboratory accreditation, QHSE training, and export business development.
             </p>
 
-            <div className="p-3 bg-[#171f2c] border border-[#243042] rounded-md flex items-center space-x-3 max-w-sm">
-              <div className="w-9 h-9 rounded-md bg-[#1f293d] border border-accent/40 flex items-center justify-center text-accent shrink-0">
+            <div className="p-3 bg-white border border-[#e2e8f0] rounded-md flex items-center space-x-3 max-w-sm shadow-xs">
+              <div className="w-9 h-9 rounded-md bg-[#fef2f2] border border-[#fecaca] flex items-center justify-center text-[#b3282d] shrink-0">
                 <Award className="w-4 h-4" />
               </div>
               <div>
-                <span className="font-heading font-bold text-xs text-white block">Ghanshyambhai K Patel</span>
-                <span className="text-[11px] text-text-muted block">Proprietor & Principal Consultant</span>
+                <span className="font-heading font-bold text-xs text-[#0f172a] block">Ghanshyambhai K Patel</span>
+                <span className="text-[11px] text-[#64748b] block">Proprietor & Principal Consultant</span>
               </div>
             </div>
 
             <div className="flex space-x-2 pt-1">
-              <a href="#" className="w-8 h-8 rounded-md bg-[#171f2c] border border-[#243042] flex items-center justify-center text-text-secondary hover:text-accent hover:border-accent transition-colors" aria-label="LinkedIn">
+              <a href="#" className="w-8 h-8 rounded-md bg-white border border-[#cbd5e1] flex items-center justify-center text-[#475569] hover:text-[#b3282d] hover:border-[#b3282d] transition-colors shadow-xs" aria-label="LinkedIn">
                 <FaLinkedin size={14} />
               </a>
-              <a href="#" className="w-8 h-8 rounded-md bg-[#171f2c] border border-[#243042] flex items-center justify-center text-text-secondary hover:text-accent hover:border-accent transition-colors" aria-label="Twitter">
+              <a href="#" className="w-8 h-8 rounded-md bg-white border border-[#cbd5e1] flex items-center justify-center text-[#475569] hover:text-[#b3282d] hover:border-[#b3282d] transition-colors shadow-xs" aria-label="Twitter">
                 <FaTwitter size={14} />
               </a>
-              <a href="#" className="w-8 h-8 rounded-md bg-[#171f2c] border border-[#243042] flex items-center justify-center text-text-secondary hover:text-accent hover:border-accent transition-colors" aria-label="Instagram">
+              <a href="#" className="w-8 h-8 rounded-md bg-white border border-[#cbd5e1] flex items-center justify-center text-[#475569] hover:text-[#b3282d] hover:border-[#b3282d] transition-colors shadow-xs" aria-label="Instagram">
                 <FaInstagram size={14} />
               </a>
             </div>
@@ -65,91 +65,91 @@ export default function Footer() {
 
           {/* Quick Navigation (Col 5-6) */}
           <div className="lg:col-span-2">
-            <h3 className="font-heading font-bold text-xs tracking-wider uppercase mb-4 text-accent">Quick Links</h3>
+            <h3 className="font-heading font-bold text-xs tracking-wider uppercase mb-4 text-[#b3282d]">Quick Links</h3>
             <ul className="space-y-2 text-xs">
               <li>
-                <Link href="/" className="text-text-secondary hover:text-white transition-colors">Home</Link>
+                <Link href="/" className="text-[#475569] hover:text-[#0f172a] transition-colors">Home</Link>
               </li>
               <li>
-                <Link href="/about" className="text-text-secondary hover:text-white transition-colors">About Us</Link>
+                <Link href="/about" className="text-[#475569] hover:text-[#0f172a] transition-colors">About Us</Link>
               </li>
               <li>
-                <Link href="/services" className="text-text-secondary hover:text-white transition-colors">Our Services</Link>
+                <Link href="/services" className="text-[#475569] hover:text-[#0f172a] transition-colors">Our Services</Link>
               </li>
               <li>
-                <Link href="/industries" className="text-text-secondary hover:text-white transition-colors">Industries We Serve</Link>
+                <Link href="/industries" className="text-[#475569] hover:text-[#0f172a] transition-colors">Industries We Serve</Link>
               </li>
               <li>
-                <Link href="/training" className="text-text-secondary hover:text-white transition-colors">Training Programs</Link>
+                <Link href="/training" className="text-[#475569] hover:text-[#0f172a] transition-colors">Training Programs</Link>
               </li>
               <li>
-                <Link href="/portfolio" className="text-text-secondary hover:text-white transition-colors">Projects & Clients</Link>
+                <Link href="/portfolio" className="text-[#475569] hover:text-[#0f172a] transition-colors">Projects & Clients</Link>
               </li>
               <li>
-                <Link href="/resources" className="text-text-secondary hover:text-white transition-colors">Resources & Guides</Link>
+                <Link href="/resources" className="text-[#475569] hover:text-[#0f172a] transition-colors">Resources & Guides</Link>
               </li>
               <li>
-                <Link href="/contact" className="text-text-secondary hover:text-white transition-colors">Contact Us</Link>
+                <Link href="/contact" className="text-[#475569] hover:text-[#0f172a] transition-colors">Contact Us</Link>
               </li>
               <li>
-                <Link href="/contact?type=quote" className="text-accent font-bold hover:underline transition-colors">Get a Quote</Link>
+                <Link href="/contact?type=quote" className="text-[#b3282d] font-bold hover:underline transition-colors">Get a Quote</Link>
               </li>
             </ul>
           </div>
 
           {/* 7 Services (Col 7-9) */}
           <div className="lg:col-span-3">
-            <h3 className="font-heading font-bold text-xs tracking-wider uppercase mb-4 text-accent">Core Services</h3>
+            <h3 className="font-heading font-bold text-xs tracking-wider uppercase mb-4 text-[#b3282d]">Core Services</h3>
             <ul className="space-y-2 text-xs">
               <li>
-                <Link href="/services#iso" className="text-text-secondary hover:text-white transition-colors">QMS & ISO Consultancy (IMS)</Link>
+                <Link href="/services#iso" className="text-[#475569] hover:text-[#0f172a] transition-colors">QMS & ISO Consultancy (IMS)</Link>
               </li>
               <li>
-                <Link href="/services#laboratory" className="text-text-secondary hover:text-white transition-colors">Laboratory & NABL Setup</Link>
+                <Link href="/services#laboratory" className="text-[#475569] hover:text-[#0f172a] transition-colors">Laboratory & NABL Setup</Link>
               </li>
               <li>
-                <Link href="/services#qhse" className="text-text-secondary hover:text-white transition-colors">QHSE & Food Safety Training</Link>
+                <Link href="/services#qhse" className="text-[#475569] hover:text-[#0f172a] transition-colors">QHSE & Food Safety Training</Link>
               </li>
               <li>
-                <Link href="/services#insurance" className="text-text-secondary hover:text-white transition-colors">Industrial Insurance Solutions</Link>
+                <Link href="/services#insurance" className="text-[#475569] hover:text-[#0f172a] transition-colors">Industrial Insurance Solutions</Link>
               </li>
               <li>
-                <Link href="/services#six-sigma" className="text-text-secondary hover:text-white transition-colors">Six Sigma Training (DMAIC)</Link>
+                <Link href="/services#six-sigma" className="text-[#475569] hover:text-[#0f172a] transition-colors">Six Sigma Training (DMAIC)</Link>
               </li>
               <li>
-                <Link href="/services#marketing" className="text-text-secondary hover:text-white transition-colors">Marketing Flyers & Profiles</Link>
+                <Link href="/services#marketing" className="text-[#475569] hover:text-[#0f172a] transition-colors">Marketing Flyers & Profiles</Link>
               </li>
               <li>
-                <Link href="/services#export" className="text-text-secondary hover:text-white transition-colors">Export & Global Marketing</Link>
+                <Link href="/services#export" className="text-[#475569] hover:text-[#0f172a] transition-colors">Export & Global Marketing</Link>
               </li>
             </ul>
           </div>
 
           {/* Contact Details (Col 10-12) */}
           <div className="lg:col-span-3">
-            <h3 className="font-heading font-bold text-xs tracking-wider uppercase mb-4 text-accent">Office & Works</h3>
+            <h3 className="font-heading font-bold text-xs tracking-wider uppercase mb-4 text-[#b3282d]">Office & Works</h3>
             <ul className="space-y-3.5 text-xs">
-              <li className="flex items-start space-x-2.5 text-text-secondary">
-                <MapPin size={15} className="text-accent flex-shrink-0 mt-0.5" />
+              <li className="flex items-start space-x-2.5 text-[#475569]">
+                <MapPin size={15} className="text-[#b3282d] flex-shrink-0 mt-0.5" />
                 <div>
-                  <span className="font-bold text-white block">Registered Office:</span>
+                  <span className="font-bold text-[#0f172a] block">Registered Office:</span>
                   <span>26 Ravikiran complex Banglows, Near Madhuram party Plot, Zadeshwar Chokdi, Bharuch, 392011 Gujarat</span>
                 </div>
               </li>
-              <li className="flex items-start space-x-2.5 text-text-secondary">
-                <MapPin size={15} className="text-primary flex-shrink-0 mt-0.5" />
+              <li className="flex items-start space-x-2.5 text-[#475569]">
+                <MapPin size={15} className="text-[#a16207] flex-shrink-0 mt-0.5" />
                 <div>
-                  <span className="font-bold text-white block">Works Address:</span>
+                  <span className="font-bold text-[#0f172a] block">Works Address:</span>
                   <span>Green Park Farm, Bhersam Sayakha Road, Navi Vasahat, Saykha GIDC, Ta Vagra, Dist: Bharuch, Gujarat</span>
                 </div>
               </li>
-              <li className="flex items-center space-x-2.5 text-text-secondary">
-                <Phone size={15} className="text-accent flex-shrink-0" />
-                <a href="tel:+919925534751" className="hover:text-accent font-bold text-white transition-colors">+91 99255 34751</a>
+              <li className="flex items-center space-x-2.5 text-[#475569]">
+                <Phone size={15} className="text-[#b3282d] flex-shrink-0" />
+                <a href="tel:+919925534751" className="hover:text-[#b3282d] font-bold text-[#0f172a] transition-colors">+91 99255 34751</a>
               </li>
-              <li className="flex items-center space-x-2.5 text-text-secondary">
-                <Mail size={15} className="text-accent flex-shrink-0" />
-                <a href="mailto:patelgk4257@gmail.com" className="hover:text-accent text-white transition-colors">patelgk4257@gmail.com</a>
+              <li className="flex items-center space-x-2.5 text-[#475569]">
+                <Mail size={15} className="text-[#a16207] flex-shrink-0" />
+                <a href="mailto:patelgk4257@gmail.com" className="hover:text-[#b3282d] text-[#0f172a] transition-colors">patelgk4257@gmail.com</a>
               </li>
             </ul>
           </div>
@@ -157,13 +157,13 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 pt-6 border-t border-[#243042] flex flex-col md:flex-row justify-between items-center text-xs text-text-muted gap-4">
+        <div className="mt-12 pt-6 border-t border-[#e2e8f0] flex flex-col md:flex-row justify-between items-center text-xs text-[#64748b] gap-4">
           <p>© {currentYear} Axar Creative Management Solutions. All rights reserved.</p>
-          <div className="flex items-center space-x-5 font-mono text-[11px]">
-            <Link href="/about" className="hover:text-white transition-colors">About</Link>
-            <Link href="/services" className="hover:text-white transition-colors">Services</Link>
-            <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
-            <Link href="/admin" className="hover:text-accent transition-colors">Admin Portal</Link>
+          <div className="flex items-center space-x-5 text-[11px]">
+            <Link href="/about" className="hover:text-[#0f172a] transition-colors">About</Link>
+            <Link href="/services" className="hover:text-[#0f172a] transition-colors">Services</Link>
+            <Link href="/contact" className="hover:text-[#0f172a] transition-colors">Contact</Link>
+            <Link href="/admin" className="hover:text-[#b3282d] transition-colors">Admin Portal</Link>
           </div>
         </div>
       </div>

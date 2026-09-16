@@ -98,54 +98,50 @@ export default function HeroCarousel() {
   const slide = carouselSlides[current];
 
   return (
-    <div className="relative w-full min-h-[580px] md:min-h-[640px] lg:min-h-[680px] overflow-hidden bg-[#0a0d13] flex items-center border-b border-[#243042]">
-      {/* Background Tech Grid */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-25 pointer-events-none z-10" />
-
+    <div className="relative w-full min-h-[560px] md:min-h-[600px] lg:min-h-[640px] overflow-hidden bg-[#f8fafc] flex items-center border-b border-[#e2e8f0]">
       <AnimatePresence mode="wait">
         <motion.div
           key={current}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.4 }}
           className="absolute inset-0"
         >
-          {/* Background Image with Dark Technical Vignette */}
+          {/* Subtle Photographic Background with Light Vignette */}
           <div className="absolute inset-0 z-0">
             <Image
               src={slide.image}
               alt={slide.title}
               fill
-              className="object-cover object-center opacity-30"
+              className="object-cover object-center opacity-10"
               priority
             />
           </div>
 
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0a0d13] via-[#0a0d13]/90 to-[#0a0d13]/60 z-10" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0d13] via-transparent to-transparent z-10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#f8fafc] via-[#f8fafc]/95 to-[#f8fafc]/70 z-10" />
 
           {/* Slide Content Container */}
-          <div className="container mx-auto h-full relative z-20 flex flex-col justify-center items-start text-left px-6 md:px-12 py-16">
-            <div className="max-w-4xl space-y-5">
+          <div className="container mx-auto h-full relative z-20 flex flex-col justify-center items-start text-left px-6 md:px-12 py-14">
+            <div className="max-w-3xl space-y-4">
               {/* Badge & Tagline */}
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="inline-flex items-center px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-[#1f293d] border border-[#3b4d66] text-white">
-                  <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-accent" />
+              <div className="flex flex-wrap items-center gap-2.5">
+                <span className="inline-flex items-center px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-white border border-[#cbd5e1] text-[#b3282d] shadow-xs">
+                  <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-[#b3282d]" />
                   {slide.badge}
                 </span>
-                <span className="text-xs text-text-secondary hidden sm:inline-block">
+                <span className="text-xs text-[#64748b] hidden sm:inline-block font-medium">
                   {slide.tagline}
                 </span>
               </div>
 
               {/* Title */}
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-heading font-extrabold text-white leading-tight">
+              <h1 className="text-3xl md:text-5xl lg:text-[3.25rem] font-heading font-extrabold text-[#0f172a] leading-[1.15] tracking-tight">
                 {slide.title}
               </h1>
               
               {/* Description */}
-              <p className="text-sm md:text-base text-text-secondary max-w-2xl font-body leading-relaxed">
+              <p className="text-sm md:text-base text-[#475569] max-w-2xl font-body leading-relaxed">
                 {slide.description}
               </p>
               
@@ -153,7 +149,7 @@ export default function HeroCarousel() {
               <div className="flex flex-wrap gap-3 items-center pt-2">
                 <Link
                   href={slide.primaryCtaLink}
-                  className="px-6 py-3 font-heading font-bold text-xs md:text-sm text-white bg-primary rounded-md hover:bg-primary-dark transition-all duration-150 group inline-flex items-center shadow-md"
+                  className="px-6 py-3 font-heading font-bold text-xs md:text-sm text-white bg-[#b3282d] rounded-md hover:bg-[#8c1e22] transition-all duration-150 group inline-flex items-center shadow-sm active:translate-y-0.5"
                 >
                   {slide.primaryCtaText}
                   <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -161,20 +157,20 @@ export default function HeroCarousel() {
 
                 <Link
                   href={slide.secondaryCtaLink}
-                  className="px-6 py-3 font-heading font-bold text-xs md:text-sm text-white bg-[#171f2c] border border-[#243042] rounded-md hover:border-accent hover:text-accent transition-all duration-150 inline-flex items-center"
+                  className="px-6 py-3 font-heading font-bold text-xs md:text-sm text-[#0f172a] bg-white border border-[#cbd5e1] rounded-md hover:bg-[#f1f5f9] hover:border-[#94a3b8] transition-all duration-150 inline-flex items-center shadow-xs"
                 >
                   {slide.secondaryCtaText}
                 </Link>
               </div>
 
               {/* Stat Badges Grid */}
-              <div className="pt-6 grid grid-cols-3 gap-3 sm:gap-4 border-t border-[#243042] max-w-lg">
+              <div className="pt-5 grid grid-cols-3 gap-3 sm:gap-4 border-t border-[#e2e8f0] max-w-lg">
                 {slide.stats.map((st, sIdx) => (
-                  <div key={sIdx} className="bg-[#171f2c] border border-[#243042] p-3 rounded-md">
-                    <div className="text-base sm:text-lg font-heading font-bold text-accent">
+                  <div key={sIdx} className="bg-white border border-[#e2e8f0] p-3 rounded-md shadow-xs">
+                    <div className="text-base sm:text-lg font-heading font-bold text-[#b3282d]">
                       {st.value}
                     </div>
-                    <div className="text-[11px] text-text-muted font-medium truncate mt-0.5">
+                    <div className="text-[11px] text-[#64748b] font-medium truncate mt-0.5">
                       {st.label}
                     </div>
                   </div>
@@ -188,28 +184,28 @@ export default function HeroCarousel() {
       {/* Navigation Controls */}
       <button 
         onClick={prevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 flex items-center justify-center rounded-md bg-[#171f2c]/80 hover:bg-[#1f293d] border border-[#243042] text-white transition-all cursor-pointer"
+        className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 flex items-center justify-center rounded-md bg-white/90 hover:bg-white border border-[#cbd5e1] text-[#0f172a] shadow-sm transition-all cursor-pointer"
         aria-label="Previous Slide"
       >
         <ChevronLeft className="w-5 h-5" />
       </button>
       <button 
         onClick={nextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 flex items-center justify-center rounded-md bg-[#171f2c]/80 hover:bg-[#1f293d] border border-[#243042] text-white transition-all cursor-pointer"
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 flex items-center justify-center rounded-md bg-white/90 hover:bg-white border border-[#cbd5e1] text-[#0f172a] shadow-sm transition-all cursor-pointer"
         aria-label="Next Slide"
       >
         <ChevronRight className="w-5 h-5" />
       </button>
 
       {/* Slide Indicators */}
-      <div className="absolute bottom-5 left-0 right-0 z-30 flex justify-center space-x-2">
+      <div className="absolute bottom-4 left-0 right-0 z-30 flex justify-center space-x-2">
         {carouselSlides.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrent(index)}
             aria-label={`Go to slide ${index + 1}`}
             className={`h-1.5 rounded-full transition-all cursor-pointer ${
-              index === current ? "bg-accent w-8" : "bg-white/25 hover:bg-white/50 w-2"
+              index === current ? "bg-[#b3282d] w-8" : "bg-[#cbd5e1] hover:bg-[#94a3b8] w-2"
             }`}
           />
         ))}

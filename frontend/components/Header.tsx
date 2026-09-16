@@ -35,45 +35,45 @@ export default function Header() {
 
   return (
     <>
-      {/* Top Industrial Meta Bar */}
-      <div className="hidden lg:block bg-[#0a0d13] border-b border-[#243042] text-text-secondary text-[11px] py-2 px-6">
+      {/* Top Industrial Meta Bar (Light) */}
+      <div className="hidden lg:block bg-[#f8fafc] border-b border-[#e2e8f0] text-[#475569] text-[11px] py-2 px-6">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-6">
-            <span className="flex items-center text-text-muted">
-              <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-accent" />
-              <strong className="text-white mr-1.5">Axar Creative:</strong> Better Systems • Safer Workplaces • Sustainable Growth
+            <span className="flex items-center">
+              <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-[#b3282d]" />
+              <strong className="text-[#0f172a] mr-1.5">Axar Creative:</strong> Better Systems • Safer Workplaces • Sustainable Growth
             </span>
           </div>
           <div className="flex items-center space-x-6 font-medium">
-            <a href="tel:+919925534751" className="flex items-center text-text-secondary hover:text-white transition-colors">
-              <Phone className="w-3 h-3 mr-1.5 text-primary" /> +91 99255 34751
+            <a href="tel:+919925534751" className="flex items-center text-[#475569] hover:text-[#0f172a] transition-colors">
+              <Phone className="w-3 h-3 mr-1.5 text-[#b3282d]" /> +91 99255 34751
             </a>
-            <a href="mailto:patelgk4257@gmail.com" className="flex items-center text-text-secondary hover:text-white transition-colors">
-              <Mail className="w-3 h-3 mr-1.5 text-accent" /> patelgk4257@gmail.com
+            <a href="mailto:patelgk4257@gmail.com" className="flex items-center text-[#475569] hover:text-[#0f172a] transition-colors">
+              <Mail className="w-3 h-3 mr-1.5 text-[#a16207]" /> patelgk4257@gmail.com
             </a>
-            <span className="flex items-center text-text-muted">
-              <MapPin className="w-3 h-3 mr-1 text-text-muted" /> Bharuch & Saykha GIDC, Gujarat
+            <span className="flex items-center text-[#64748b]">
+              <MapPin className="w-3 h-3 mr-1 text-[#94a3b8]" /> Bharuch & Saykha GIDC, Gujarat
             </span>
           </div>
         </div>
       </div>
 
-      {/* Main Developer Header */}
+      {/* Main Developer Header (White Theme) */}
       <header className={`sticky top-0 left-0 right-0 z-50 transition-all duration-200 ${
         isScrolled 
-          ? "bg-[#0f141c]/95 backdrop-blur-md border-b border-[#243042] shadow-xl py-2.5" 
-          : "bg-[#0f141c] border-b border-[#243042] py-3.5"
+          ? "bg-white/95 backdrop-blur-md border-b border-[#e2e8f0] shadow-sm py-2.5" 
+          : "bg-white border-b border-[#e2e8f0] py-3.5"
       }`}>
         <div className="container mx-auto px-4 lg:px-6 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="relative z-50 flex items-center group">
-            <div className="bg-white/95 rounded-md px-2 py-1 shadow-sm flex items-center border border-white/20">
+            <div className="flex items-center">
               <Image
                 src="/logo.png"
                 alt="Axar Logo"
                 width={70}
                 height={70}
-                className="object-contain h-7 md:h-8 w-auto"
+                className="object-contain h-8 md:h-9 w-auto"
                 priority
               />
               <Image
@@ -81,7 +81,7 @@ export default function Header() {
                 alt="Axar Creative Management Solutions"
                 width={220}
                 height={70}
-                className="object-contain h-5 md:h-6 w-auto -ml-1"
+                className="object-contain h-6 md:h-7 w-auto ml-1"
                 priority
               />
             </div>
@@ -97,8 +97,8 @@ export default function Header() {
                   href={link.path}
                   className={`px-3.5 py-1.5 rounded-md text-xs font-heading font-semibold transition-all duration-150 ${
                     isActive
-                      ? "text-white bg-[#1f293d] border border-[#3b4d66]"
-                      : "text-text-secondary hover:text-white hover:bg-white/5 border border-transparent"
+                      ? "text-[#0f172a] bg-[#f1f5f9] border border-[#cbd5e1]"
+                      : "text-[#475569] hover:text-[#0f172a] hover:bg-[#f8fafc] border border-transparent"
                   }`}
                 >
                   <span>{link.name}</span>
@@ -111,14 +111,14 @@ export default function Header() {
           <div className="hidden lg:flex items-center space-x-2.5">
             <Link
               href="/contact?type=quote"
-              className="inline-flex items-center justify-center px-4 py-2 font-heading text-xs font-bold text-background transition-all duration-200 bg-accent rounded-md hover:bg-accent-light active:translate-y-0.5"
+              className="inline-flex items-center justify-center px-4 py-2 font-heading text-xs font-bold text-white transition-all duration-200 bg-[#b3282d] rounded-md hover:bg-[#8c1e22] shadow-sm active:translate-y-0.5"
             >
               <span>Get a Quote</span>
               <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
             </Link>
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center px-4 py-2 font-heading text-xs font-bold text-white transition-all duration-200 bg-[#171f2c] border border-[#243042] rounded-md hover:border-primary hover:bg-[#1f293d] active:translate-y-0.5"
+              className="inline-flex items-center justify-center px-4 py-2 font-heading text-xs font-bold text-[#0f172a] transition-all duration-200 bg-white border border-[#cbd5e1] rounded-md hover:bg-[#f8fafc] hover:border-[#94a3b8] active:translate-y-0.5"
             >
               <span>Contact Us</span>
             </Link>
@@ -126,11 +126,11 @@ export default function Header() {
 
           {/* Mobile Menu Toggle Button */}
           <button
-            className="xl:hidden relative z-50 text-text-primary p-2 rounded-md bg-[#171f2c] border border-[#243042] hover:border-accent transition-colors"
+            className="xl:hidden relative z-50 text-[#0f172a] p-2 rounded-md bg-[#f8fafc] border border-[#cbd5e1] hover:border-[#b3282d] transition-colors cursor-pointer"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle Navigation Menu"
           >
-            {isMobileMenuOpen ? <X size={22} className="text-accent" /> : <Menu size={22} />}
+            {isMobileMenuOpen ? <X size={22} className="text-[#b3282d]" /> : <Menu size={22} />}
           </button>
         </div>
 
@@ -142,7 +142,7 @@ export default function Header() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.15 }}
-              className="fixed inset-x-0 top-[60px] z-40 bg-[#0f141c] border-b border-[#243042] p-6 shadow-2xl xl:hidden max-h-[85vh] overflow-y-auto"
+              className="fixed inset-x-0 top-[65px] z-40 bg-white border-b border-[#e2e8f0] p-6 shadow-xl xl:hidden max-h-[85vh] overflow-y-auto"
             >
               <div className="space-y-1.5 mb-6">
                 {navLinks.map((link) => {
@@ -154,36 +154,36 @@ export default function Header() {
                       onClick={closeMenu}
                       className={`flex items-center justify-between px-3.5 py-2.5 rounded-md text-sm font-heading font-medium transition-colors ${
                         isActive
-                          ? "bg-[#1f293d] text-accent border border-[#3b4d66]"
-                          : "text-text-secondary hover:text-white hover:bg-white/5"
+                          ? "bg-[#f1f5f9] text-[#b3282d] border border-[#cbd5e1]"
+                          : "text-[#475569] hover:text-[#0f172a] hover:bg-[#f8fafc]"
                       }`}
                     >
                       <span>{link.name}</span>
-                      {isActive && <span className="w-1.5 h-1.5 rounded-full bg-accent" />}
+                      {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#b3282d]" />}
                     </Link>
                   );
                 })}
               </div>
 
-              <div className="space-y-2.5 pt-4 border-t border-[#243042]">
+              <div className="space-y-2.5 pt-4 border-t border-[#e2e8f0]">
                 <Link
                   href="/contact?type=quote"
                   onClick={closeMenu}
-                  className="w-full flex items-center justify-center py-2.5 font-heading text-xs font-bold text-background bg-accent hover:bg-accent-light rounded-md"
+                  className="w-full flex items-center justify-center py-2.5 font-heading text-xs font-bold text-white bg-[#b3282d] hover:bg-[#8c1e22] rounded-md shadow-sm"
                 >
                   Request a Formal Quote <ArrowRight className="ml-1.5 w-4 h-4" />
                 </Link>
                 <Link
                   href="/contact"
                   onClick={closeMenu}
-                  className="w-full flex items-center justify-center py-2.5 font-heading text-xs font-bold text-white bg-[#171f2c] border border-[#243042] rounded-md"
+                  className="w-full flex items-center justify-center py-2.5 font-heading text-xs font-bold text-[#0f172a] bg-white border border-[#cbd5e1] rounded-md"
                 >
                   Direct Office Inquiries
                 </Link>
 
-                <div className="pt-3 text-center text-xs text-text-secondary space-y-1">
-                  <p>Direct Call: <a href="tel:+919925534751" className="text-white font-bold">+91 99255 34751</a></p>
-                  <p>Email: <a href="mailto:patelgk4257@gmail.com" className="text-white font-bold">patelgk4257@gmail.com</a></p>
+                <div className="pt-3 text-center text-xs text-[#64748b] space-y-1">
+                  <p>Direct Call: <a href="tel:+919925534751" className="text-[#0f172a] font-bold">+91 99255 34751</a></p>
+                  <p>Email: <a href="mailto:patelgk4257@gmail.com" className="text-[#0f172a] font-bold">patelgk4257@gmail.com</a></p>
                 </div>
               </div>
             </motion.div>
