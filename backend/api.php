@@ -110,7 +110,8 @@ if ($action === 'get_services') {
 if ($action === 'save_service') {
     $id = !empty($body['id']) ? intval($body['id']) : (!empty($_POST['id']) ? intval($_POST['id']) : null);
     $title = trim($body['title'] ?? $_POST['title'] ?? '');
-    $category = in_array($body['category'] ?? $_POST['category'] ?? '', ['Business Consulting', 'Technical Expertise']) ? ($body['category'] ?? $_POST['category']) : 'Business Consulting';
+    $category = trim($body['category'] ?? $_POST['category'] ?? 'Industrial Consultancy');
+    if (empty($category)) { $category = 'Industrial Consultancy'; }
     $short_desc = trim($body['short_desc'] ?? $_POST['short_desc'] ?? '');
     $image_url = trim($body['image_url'] ?? $_POST['image_url'] ?? '');
     $details = trim($body['details'] ?? $_POST['details'] ?? '');

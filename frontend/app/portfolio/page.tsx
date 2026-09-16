@@ -21,54 +21,71 @@ interface ProjectItem {
 const defaultPortfolioItems: ProjectItem[] = [
   {
     id: 1,
-    service_id: 3,
-    service_title: "Supply Chain",
-    title: "Global Supply Chain Overhaul",
-    category: "Consulting Case Studies",
-    desc: "Streamlined logistics for a multinational FMCG, saving 15% in operational costs.",
+    service_id: 1,
+    service_title: "QMS & ISO Consultancy",
+    title: "Multi-Site IMS Certification (ISO 9001, 14001, 45001)",
+    category: "ISO & IMS Consultancy",
+    desc: "Complete Integrated Management System rollout across 3 manufacturing plants in Gujarat with zero non-conformances on final audit.",
     tagStyle: "bg-primary/20 text-primary border border-primary/30",
   },
   {
     id: 2,
-    service_id: 5,
-    service_title: "AI Video Ads & Creative",
-    title: "Cinematic Product Launch",
-    category: "AI Video Ads",
-    desc: "A fully CGI/AI-generated commercial that drove 300% ROAS on social platforms.",
+    service_id: 2,
+    service_title: "Laboratory Consultancy & Accreditation",
+    title: "NABL Accreditation for Chemical Testing Laboratory",
+    category: "Laboratory & NABL",
+    desc: "Laboratory layout design, SOP formulation, equipment validation, and NABL accreditation clearance in record 6-month timeframe.",
     tagStyle: "bg-accent/20 text-accent border border-accent/30",
   },
   {
     id: 3,
-    service_id: 6,
-    service_title: "Website Development",
-    title: "E-Commerce Transformation",
-    category: "Websites",
-    desc: "Next.js & React powered headless commerce solution with 99/100 Core Web Vitals.",
-    tagStyle: "bg-accent/20 text-accent border border-accent/30",
+    service_id: 4,
+    service_title: "Industrial Insurance Solutions",
+    title: "Engineering Plant Risk Audit & Asset Insurance",
+    category: "Industrial Insurance",
+    desc: "Structured comprehensive risk coverage protecting heavy machinery, fire perils, boilers, and transit cargo for an engineering firm.",
+    tagStyle: "bg-primary/20 text-primary border border-primary/30",
   },
   {
     id: 4,
-    service_id: 1,
-    service_title: "ISO Management Systems",
-    title: "ISO 27001 Implementation",
-    category: "Consulting Case Studies",
-    desc: "Guided a tech startup through information security frameworks to achieve ISO certification in 4 months.",
-    tagStyle: "bg-primary/20 text-primary border border-primary/30",
+    service_id: 3,
+    service_title: "QHSE & Food Safety Training",
+    title: "Hazard Identification (HIRA) & Safety Culture Overhaul",
+    category: "QHSE & Training",
+    desc: "Trained 150+ shop-floor supervisors on risk assessment, emergency preparedness, and behavior-based safety protocols.",
+    tagStyle: "bg-accent/20 text-accent border border-accent/30",
   },
   {
     id: 5,
     service_id: 5,
-    service_title: "AI Video Ads & Creative",
-    title: "UGC Social Campaign",
-    category: "AI Video Ads",
-    desc: "High-volume AI-generated UGC variations for A/B testing at scale.",
+    service_title: "Six Sigma Training",
+    title: "Lean DMAIC Process Variation Reduction",
+    category: "Six Sigma (DMAIC)",
+    desc: "Deployed DMAIC tools to reduce production line scrap rate by 34% and improve overall equipment effectiveness (OEE).",
+    tagStyle: "bg-primary/20 text-primary border border-primary/30",
+  },
+  {
+    id: 6,
+    service_id: 7,
+    service_title: "Export & International Marketing",
+    title: "International Market Entry & Buyer Identification",
+    category: "Export & Global Trade",
+    desc: "Facilitated international buyer connections and export documentation for an Indian chemical manufacturer expanding to European markets.",
     tagStyle: "bg-accent/20 text-accent border border-accent/30",
   }
 ];
 
 export default function PortfolioPage() {
   const [portfolioItems, setPortfolioItems] = useState<ProjectItem[]>(defaultPortfolioItems);
-  const [categories, setCategories] = useState<string[]>(["All", "Consulting Case Studies", "AI Video Ads", "Websites"]);
+  const [categories, setCategories] = useState<string[]>([
+    "All", 
+    "ISO & IMS Consultancy", 
+    "Laboratory & NABL", 
+    "Industrial Insurance", 
+    "QHSE & Training", 
+    "Six Sigma (DMAIC)", 
+    "Export & Global Trade"
+  ]);
   const [activeCategory, setActiveCategory] = useState<string>("All");
 
   useEffect(() => {

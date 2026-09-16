@@ -1,8 +1,24 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { Target, Lightbulb } from "lucide-react";
+import { 
+  Target, 
+  Lightbulb, 
+  ShieldCheck, 
+  CheckCircle, 
+  MapPin, 
+  Phone, 
+  Mail, 
+  Award, 
+  Compass, 
+  Workflow, 
+  FileSpreadsheet, 
+  Zap, 
+  SearchCheck,
+  ArrowRight
+} from "lucide-react";
 import TypewriterText from "../../components/TypewriterText";
 
 const revealVariants = {
@@ -10,164 +26,274 @@ const revealVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
 };
 
+const VALUES = [
+  { title: "Professionalism", desc: "Rigorous standards, expert knowledge, and uncompromising ethical conduct in every engagement." },
+  { title: "Practical Solutions", desc: "Straightforward systems tailored for shop-floor adoption rather than overwhelming administrative burden." },
+  { title: "Client Focus", desc: "Deeply understanding client risks, constraints, and commercial aspirations to deliver measurable value." },
+  { title: "Integrity", desc: "Honest, transparent guidance with genuine care for employee safety and enterprise longevity." },
+  { title: "Continuous Improvement", desc: "Instilling a Kaizen mindset and data-driven methods to ensure sustained progress." }
+];
+
+const APPROACH_STEPS = [
+  { step: "01", title: "ASSESS", desc: "Understand your current systems, operational risks, and business requirements.", icon: SearchCheck },
+  { step: "02", title: "PLAN", desc: "Develop a practical roadmap based on your objectives, deadlines, and resources.", icon: Compass },
+  { step: "03", title: "IMPLEMENT", desc: "Support documentation, SOPs, infrastructure setup, and team implementation.", icon: Workflow },
+  { step: "04", title: "VERIFY", desc: "Conduct internal audits, identify compliance gaps, and support corrective actions (CAPA).", icon: FileSpreadsheet },
+  { step: "05", title: "IMPROVE", desc: "Strengthen the management system through ongoing review and continual improvement.", icon: Zap }
+];
+
 export default function AboutPage() {
   return (
     <div className="relative overflow-hidden bg-background">
-      <section className="pt-20 pb-4 bg-background">
-        <div className="container mx-auto px-6 text-center max-w-4xl mb-12 min-h-[80px]">
-          <motion.h1 
+      {/* Hero Section */}
+      <section className="pt-20 pb-8 bg-background border-b border-border">
+        <div className="container mx-auto px-6 text-center max-w-4xl min-h-[90px]">
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl font-heading font-bold mb-4 flex justify-center"
+            className="space-y-3"
           >
-            <TypewriterText text="About Us" />
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-lg text-text-secondary"
-          >
-            Bridging traditional business consulting with modern creative and technical solutions.
-          </motion.p>
-        </div>
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col lg:flex-row items-center gap-16 max-w-6xl mx-auto">
-            {/* Image Placeholder with Gold Ring Hover */}
-            <motion.div 
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-              variants={revealVariants}
-              className="lg:w-2/5"
-            >
-              <div className="relative group cursor-pointer w-full max-w-md mx-auto aspect-square">
-                <div className="absolute inset-0 rounded-full border-4 border-transparent group-hover:border-accent group-hover:scale-105 transition-all duration-500 z-10 pointer-events-none" />
-                <div className="absolute inset-4 rounded-full overflow-hidden bg-surface-alt">
-                  <Image 
-                    src="https://placehold.co/800x800/1C1C1C/A0A0A0?text=Founder+Photo" 
-                    alt="Founder" 
-                    fill 
-                    className="object-cover group-hover:scale-110 transition-transform duration-700" 
-                  />
-                </div>
-                {/* Decorative Elements */}
-                <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary/20 rounded-full blur-xl group-hover:bg-primary/40 transition-colors" />
-                <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-accent/20 rounded-full blur-xl group-hover:bg-accent/40 transition-colors" />
-              </div>
-            </motion.div>
-
-            {/* Story Text */}
-            <motion.div 
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-              variants={revealVariants}
-              className="lg:w-3/5"
-            >
-              <h2 className="text-3xl md:text-4xl font-heading font-bold mb-6">Our Story</h2>
-              <div className="w-16 h-1 bg-primary rounded-full mb-8" />
-              <div className="space-y-6 text-text-secondary text-lg">
-                <p>
-                  At Axar Creative Management Solutions, we observed a critical gap in the modern business landscape. Traditional consulting firms excelled in process and compliance but struggled with digital agility, while tech agencies lacked the foundational business acumen to align code with core strategic objectives.
-                </p>
-                <p>
-                  We were founded to bridge this divide. We combine the rigorous methodology of ISO standards and Six Sigma with the cutting-edge capabilities of AI-driven creative production and full-stack web development.
-                </p>
-                <p className="font-serif italic text-xl text-text-primary border-l-4 border-accent pl-6 py-2 mt-8">
-                  &quot;We don&apos;t just advise; we build, we secure, and we scale. We are your partner for business excellence.&quot;
-                </p>
-              </div>
-            </motion.div>
-          </div>
+            <span className="text-xs font-bold font-heading uppercase tracking-widest text-accent bg-accent/10 px-3 py-1 rounded-full border border-accent/20">
+              About Axar Creative Management Solutions
+            </span>
+            <h1 className="text-3xl md:text-5xl font-heading font-extrabold flex justify-center text-text-primary">
+              <TypewriterText text="Your Partner for Industrial Excellence" />
+            </h1>
+            <p className="text-sm md:text-base text-text-secondary max-w-2xl mx-auto">
+              Empowering organizations across India and beyond with practical management systems, NABL laboratory readiness, workforce training, and sustainable business growth.
+            </p>
+          </motion.div>
         </div>
       </section>
 
-      {/* Mission / Vision Two-Column */}
-      <section className="py-24 bg-surface-alt border-y border-border">
-        <div className="container mx-auto px-6 max-w-5xl">
-          <div className="grid md:grid-cols-2 gap-12">
-            
-            <motion.div 
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-              variants={revealVariants}
-              className="bg-background border border-border p-10 rounded-2xl relative overflow-hidden"
-            >
-              <div className="absolute -right-10 -top-10 w-40 h-40 bg-primary/5 rounded-full pointer-events-none" />
-              <Target className="w-12 h-12 text-primary mb-6 relative z-10" />
-              <h3 className="text-2xl font-heading font-bold mb-4 relative z-10">Our Mission</h3>
-              <p className="text-text-secondary leading-relaxed relative z-10">
-                To empower organizations with comprehensive solutions that streamline operations, elevate brand presence, and secure digital assets. We deliver measurable excellence by merging traditional management consulting with next-generation technology.
-              </p>
-            </motion.div>
-
-            <motion.div 
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-              variants={{
-                hidden: { opacity: 0, y: 30 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.2, ease: "easeOut" } },
-              }}
-              className="bg-background border border-border p-10 rounded-2xl relative overflow-hidden"
-            >
-              <div className="absolute -right-10 -top-10 w-40 h-40 bg-accent/5 rounded-full pointer-events-none" />
-              <Lightbulb className="w-12 h-12 text-accent mb-6 relative z-10" />
-              <h3 className="text-2xl font-heading font-bold mb-4 relative z-10">Our Vision</h3>
-              <p className="text-text-secondary leading-relaxed relative z-10">
-                To be the globally recognized benchmark for integrated business excellence—where visionary strategy, creative innovation, and impenetrable security converge under one trusted partnership.
-              </p>
-            </motion.div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* Our Approach (3-step stepper) */}
-      <section className="py-24">
+      {/* Leadership & Story Section */}
+      <section className="py-20 bg-background">
         <div className="container mx-auto px-6 max-w-6xl">
-          <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">Our Approach</h2>
-            <div className="w-16 h-1 bg-accent rounded-full mx-auto" />
+          <div className="grid lg:grid-cols-12 gap-12 items-center">
+            {/* Left Card: Proprietor & Credential Badge */}
+            <motion.div 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={revealVariants}
+              className="lg:col-span-5"
+            >
+              <div className="bg-surface border border-border p-8 rounded-3xl shadow-xl relative overflow-hidden text-center space-y-6">
+                <div className="w-28 h-28 mx-auto rounded-full bg-primary/10 border-2 border-accent/40 flex items-center justify-center text-primary">
+                  <Award className="w-14 h-14" />
+                </div>
+
+                <div>
+                  <h3 className="text-2xl font-heading font-bold text-text-primary">
+                    Ghanshyambhai K Patel
+                  </h3>
+                  <p className="text-sm font-semibold text-accent uppercase tracking-wider mt-1">
+                    Proprietor & Principal Consultant
+                  </p>
+                  <p className="text-xs text-text-secondary mt-1">
+                    Axar Creative Management Solutions
+                  </p>
+                </div>
+
+                <div className="p-4 bg-surface-alt rounded-2xl border border-border text-xs text-text-secondary text-left space-y-2">
+                  <div className="flex items-center text-text-primary font-bold">
+                    <ShieldCheck className="w-4 h-4 mr-2 text-primary shrink-0" /> Industrial Consultancy & Systems
+                  </div>
+                  <p>
+                    Specializing in QMS/EMS/OH&S standards, NABL testing laboratory setup, Six Sigma, and international business development across Bharuch industrial belts and nationwide.
+                  </p>
+                </div>
+
+                <div className="flex justify-center space-x-4 pt-2">
+                  <Link
+                    href="/contact"
+                    className="px-6 py-2.5 bg-primary text-white text-xs font-heading font-bold rounded-full hover:bg-primary-dark transition-all"
+                  >
+                    Connect Directly
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Right Column: Narrative Story */}
+            <motion.div 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={revealVariants}
+              className="lg:col-span-7 space-y-6"
+            >
+              <div>
+                <span className="text-xs font-bold font-heading uppercase tracking-widest text-primary mb-2 block">
+                  Our Mission & Evolution
+                </span>
+                <h2 className="text-3xl md:text-4xl font-heading font-bold text-text-primary mb-4">
+                  Transforming Industrial Compliance into Business Opportunity
+                </h2>
+                <div className="w-16 h-1 bg-accent rounded-full mb-6" />
+              </div>
+
+              <div className="space-y-4 text-text-secondary text-sm md:text-base leading-relaxed">
+                <p>
+                  <strong>Axar Creative Management Solutions</strong> is an industrial consultancy and business-support organization focused on helping companies improve their systems, people and performance.
+                </p>
+                <p>
+                  Led by <strong>Ghanshyambhai K Patel, Proprietor</strong>, Axar provides practical solutions combining consultancy, training, compliance support and business-development services.
+                </p>
+                <p>
+                  We work with organizations to develop effective management systems, strengthen operational performance, build competent teams and create new business opportunities across domestic and global markets.
+                </p>
+                <p className="font-serif italic text-base md:text-lg text-text-primary border-l-4 border-accent pl-5 py-2 my-4 bg-surface-alt rounded-r-xl">
+                  &ldquo;Better Systems • Safer Workplaces • Sustainable Growth&rdquo;
+                </p>
+                <p>
+                  Our objective is to become a trusted long-term partner for industries that want to improve compliance, efficiency, safety and sustainable business growth.
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Core Values Section */}
+      <section className="py-20 bg-surface-alt border-y border-border">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="text-center mb-16">
+            <span className="text-xs font-bold font-heading uppercase tracking-widest text-primary mb-2 block">
+              Guiding Principles
+            </span>
+            <h2 className="text-2xl md:text-4xl font-heading font-bold text-text-primary mb-3">
+              Our Core Values
+            </h2>
+            <div className="w-16 h-1 bg-accent mx-auto rounded-full mb-4" />
+            <p className="text-sm text-text-secondary max-w-xl mx-auto">
+              Professionalism • Practical Solutions • Client Focus • Integrity • Continuous Improvement
+            </p>
           </div>
 
-          <div className="relative">
-            {/* Connecting Line (Desktop) */}
-            <div className="hidden md:block absolute top-1/2 left-0 w-full h-[2px] bg-border -translate-y-1/2 z-0" />
-            
-            <div className="grid md:grid-cols-3 gap-12 relative z-10">
-              {[
-                { step: "01", title: "Assess & Strategize", desc: "Deep-dive analysis of your current operations, compliance posture, and digital footprint to uncover growth opportunities." },
-                { step: "02", title: "Advise & Build", desc: "Execution of tailored consulting frameworks alongside the rapid development of web assets and AI-driven campaigns." },
-                { step: "03", title: "Secure & Scale", desc: "Rigorous quality auditing to fortify your infrastructure, enabling sustainable, secure, and confident global expansion." }
-              ].map((item, i) => (
-                <motion.div 
-                  key={i}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 0.3 }}
-                  variants={{
-                    hidden: { opacity: 0, y: 40 },
-                    visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: i * 0.2 } },
-                  }}
-                  className="flex flex-col items-center text-center group"
-                >
-                  <div className="w-20 h-20 bg-background border-4 border-surface rounded-full flex items-center justify-center mb-6 group-hover:border-primary transition-colors duration-300 shadow-xl relative">
-                    <span className="font-heading font-bold text-2xl text-text-secondary group-hover:text-primary transition-colors">{item.step}</span>
-                    {/* Pulsing ring on hover */}
-                    <div className="absolute inset-0 rounded-full border border-primary scale-110 opacity-0 group-hover:opacity-100 group-hover:animate-ping" />
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {VALUES.map((val, idx) => (
+              <motion.div
+                key={idx}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: idx * 0.08 } }
+                }}
+                className="bg-surface border border-border p-6 rounded-2xl hover:border-accent transition-all"
+              >
+                <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent mb-4 font-heading font-bold text-sm">
+                  0{idx + 1}
+                </div>
+                <h3 className="font-heading font-bold text-lg text-text-primary mb-2">
+                  {val.title}
+                </h3>
+                <p className="text-xs md:text-sm text-text-secondary leading-relaxed">
+                  {val.desc}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 5-Step Approach Section */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="text-center mb-16">
+            <span className="text-xs font-bold font-heading uppercase tracking-widest text-accent mb-2 block">
+              Proven Workflow
+            </span>
+            <h2 className="text-2xl md:text-4xl font-heading font-bold text-text-primary mb-3">
+              Our 5-Step Implementation Approach
+            </h2>
+            <div className="w-16 h-1 bg-primary mx-auto rounded-full mb-4" />
+            <p className="text-sm text-text-secondary max-w-xl mx-auto">
+              ASSESS &nbsp;→&nbsp; PLAN &nbsp;→&nbsp; IMPLEMENT &nbsp;→&nbsp; VERIFY &nbsp;→&nbsp; IMPROVE
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            {APPROACH_STEPS.map((step, idx) => (
+              <div
+                key={idx}
+                className="bg-surface border border-border p-6 rounded-2xl flex flex-col justify-between hover:border-primary transition-all group"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="font-heading font-extrabold text-2xl text-accent">
+                      {step.step}
+                    </span>
+                    <step.icon className="w-6 h-6 text-primary group-hover:scale-110 transition-transform" />
                   </div>
-                  <h4 className="text-xl font-heading font-bold mb-4">{item.title}</h4>
-                  <p className="text-text-secondary text-sm px-4">{item.desc}</p>
-                </motion.div>
-              ))}
+                  <h3 className="font-heading font-bold text-base text-text-primary mb-2">
+                    {step.title}
+                  </h3>
+                  <p className="text-text-secondary text-xs leading-relaxed">
+                    {step.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Dual Locations (Office & Works) */}
+      <section className="py-20 bg-surface-alt border-t border-border">
+        <div className="container mx-auto px-6 max-w-5xl">
+          <div className="text-center mb-12">
+            <span className="text-xs font-bold font-heading uppercase tracking-widest text-primary mb-2 block">
+              Physical Presence & Reach
+            </span>
+            <h2 className="text-2xl md:text-3xl font-heading font-bold text-text-primary mb-3">
+              Our Office & Works Locations
+            </h2>
+            <p className="text-xs md:text-sm text-text-secondary">
+              Conveniently located in Gujarat&apos;s premier industrial hub in Bharuch & Saykha GIDC.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Office */}
+            <div className="bg-surface border border-border p-8 rounded-2xl space-y-4">
+              <div className="flex items-center space-x-3 text-primary">
+                <MapPin className="w-6 h-6 shrink-0" />
+                <h3 className="font-heading font-bold text-lg text-text-primary">Registered Office</h3>
+              </div>
+              <p className="text-text-secondary text-sm leading-relaxed">
+                26 Ravikiran complex Banglows,<br />
+                Near Madhuram party Plot, Zadeshwar Chokdi,<br />
+                Bharuch, 392011, Gujarat, India
+              </p>
+            </div>
+
+            {/* Works */}
+            <div className="bg-surface border border-border p-8 rounded-2xl space-y-4">
+              <div className="flex items-center space-x-3 text-accent">
+                <MapPin className="w-6 h-6 shrink-0" />
+                <h3 className="font-heading font-bold text-lg text-text-primary">Works Address</h3>
+              </div>
+              <p className="text-text-secondary text-sm leading-relaxed">
+                Green Park Farm, Bhersam Sayakha Road,<br />
+                Navi Vasahat, Saykha GIDC,<br />
+                Ta Vagra, District: Bharuch, Gujarat, India
+              </p>
             </div>
           </div>
+
+          <div className="mt-8 text-center">
+            <Link
+              href="/contact"
+              className="inline-flex items-center px-8 py-3.5 bg-primary text-white font-heading font-bold text-xs rounded-full hover:bg-primary-dark transition-all shadow-md shadow-primary/20"
+            >
+              Contact Us for On-Site Consultation <ArrowRight className="ml-2 w-3.5 h-3.5" />
+            </Link>
+          </div>
         </div>
       </section>
-
     </div>
   );
 }

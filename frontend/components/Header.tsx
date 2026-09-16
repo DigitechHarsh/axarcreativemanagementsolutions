@@ -9,9 +9,12 @@ import { Menu, X } from "lucide-react";
 
 const navLinks = [
   { name: "Home", path: "/" },
+  { name: "About Us", path: "/about" },
   { name: "Services", path: "/services" },
-  { name: "About", path: "/about" },
-  { name: "Portfolio", path: "/portfolio" },
+  { name: "Industries", path: "/industries" },
+  { name: "Training", path: "/training" },
+  { name: "Projects", path: "/portfolio" },
+  { name: "Resources", path: "/resources" },
   { name: "Contact", path: "/contact" },
 ];
 
@@ -32,36 +35,36 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border transition-all duration-300">
-      <div className="container mx-auto px-6 h-16 md:h-24 flex items-center justify-between">
+      <div className="container mx-auto px-4 lg:px-6 h-16 md:h-20 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="relative z-50 flex items-center scale-[1.25] md:scale-[1.50] origin-left">
+        <Link href="/" className="relative z-50 flex items-center scale-[1.1] md:scale-[1.3] origin-left">
           <Image
             src="/logo.png"
             alt="Axar Logo"
-            width={100}
-            height={100}
-            className="object-contain h-10 md:h-12 w-auto"
+            width={90}
+            height={90}
+            className="object-contain h-9 md:h-11 w-auto"
             priority
           />
           <Image
             src="/logotext.png"
             alt="Axar Creative Management Solutions Text"
-            width={300}
-            height={100}
-            className="object-contain h-7 md:h-8 w-auto -ml-2"
+            width={280}
+            height={90}
+            className="object-contain h-6 md:h-7 w-auto -ml-2"
             priority
           />
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center space-x-8">
+        <nav className="hidden xl:flex items-center space-x-6">
           {navLinks.map((link) => {
             const isActive = pathname === link.path;
             return (
               <Link
                 key={link.name}
                 href={link.path}
-                className="relative text-sm font-medium font-heading transition-colors hover:text-accent-light"
+                className="relative text-xs lg:text-sm font-semibold font-heading transition-colors hover:text-accent"
               >
                 <span className={isActive ? "text-accent" : "text-text-primary"}>
                   {link.name}
@@ -80,14 +83,19 @@ export default function Header() {
           })}
         </nav>
 
-        {/* CTA Button */}
-        <div className="hidden md:block">
+        {/* CTA Buttons */}
+        <div className="hidden lg:flex items-center space-x-3">
+          <Link
+            href="/contact?type=quote"
+            className="group relative inline-flex items-center justify-center px-4 py-2 font-heading text-xs font-bold text-white transition-all duration-300 bg-accent rounded-full hover:bg-accent-light shadow-md shadow-accent/20"
+          >
+            <span>Get a Quote</span>
+          </Link>
           <Link
             href="/contact"
-            className="group relative inline-flex items-center justify-center px-6 py-2.5 font-heading text-sm font-bold text-white transition-all duration-300 bg-primary rounded-full hover:bg-primary-dark overflow-hidden"
+            className="group relative inline-flex items-center justify-center px-4 py-2 font-heading text-xs font-bold text-white transition-all duration-300 bg-primary rounded-full hover:bg-primary-dark shadow-md shadow-primary/20"
           >
-            <span className="relative z-10">Get in Touch</span>
-            <span className="absolute inset-0 rounded-full border-2 border-transparent group-hover:border-accent transition-colors duration-300"></span>
+            <span>Contact Us</span>
           </Link>
         </div>
 

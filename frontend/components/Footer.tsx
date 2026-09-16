@@ -29,26 +29,33 @@ export default function Footer() {
                 className="object-contain h-7 md:h-8 w-auto -ml-2"
               />
             </Link>
-            <p className="font-serif italic text-xl text-text-secondary">
-              &quot;your partner for business excellence&quot;
+            <p className="text-sm font-heading font-semibold text-text-primary">
+              Better Systems • Safer Workplaces • Sustainable Growth
             </p>
-            <div className="flex space-x-4">
+            <p className="font-serif italic text-sm text-text-secondary">
+              &quot;Your Partner for Industrial Excellence&quot;
+            </p>
+            <div className="pt-2 text-xs text-text-secondary space-y-1">
+              <p className="font-bold text-text-primary">Ghanshyambhai K Patel</p>
+              <p>Proprietor</p>
+            </div>
+            <div className="flex space-x-4 pt-2">
               <a href="#" className="text-text-secondary hover:text-accent transition-colors" aria-label="LinkedIn">
-                <FaLinkedin size={20} />
+                <FaLinkedin size={18} />
               </a>
               <a href="#" className="text-text-secondary hover:text-accent transition-colors" aria-label="Twitter">
-                <FaTwitter size={20} />
+                <FaTwitter size={18} />
               </a>
               <a href="#" className="text-text-secondary hover:text-accent transition-colors" aria-label="Instagram">
-                <FaInstagram size={20} />
+                <FaInstagram size={18} />
               </a>
             </div>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-heading font-bold text-lg mb-4 text-text-primary">Quick Links</h3>
-            <ul className="space-y-3">
+            <h3 className="font-heading font-bold text-sm tracking-wider uppercase mb-4 text-text-primary">Quick Links</h3>
+            <ul className="space-y-2.5 text-sm">
               <li>
                 <Link href="/" className="text-text-secondary hover:text-accent transition-colors">Home</Link>
               </li>
@@ -56,58 +63,86 @@ export default function Footer() {
                 <Link href="/about" className="text-text-secondary hover:text-accent transition-colors">About Us</Link>
               </li>
               <li>
-                <Link href="/services" className="text-text-secondary hover:text-accent transition-colors">Services</Link>
+                <Link href="/services" className="text-text-secondary hover:text-accent transition-colors">Our Services</Link>
               </li>
               <li>
-                <Link href="/portfolio" className="text-text-secondary hover:text-accent transition-colors">Portfolio</Link>
+                <Link href="/industries" className="text-text-secondary hover:text-accent transition-colors">Industries We Serve</Link>
               </li>
               <li>
-                <Link href="/contact" className="text-text-secondary hover:text-accent transition-colors">Contact</Link>
+                <Link href="/training" className="text-text-secondary hover:text-accent transition-colors">Training Programs</Link>
+              </li>
+              <li>
+                <Link href="/portfolio" className="text-text-secondary hover:text-accent transition-colors">Projects & Clients</Link>
+              </li>
+              <li>
+                <Link href="/resources" className="text-text-secondary hover:text-accent transition-colors">Resources & Downloads</Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-text-secondary hover:text-accent transition-colors">Contact Us / Get Quote</Link>
               </li>
             </ul>
           </div>
 
-          {/* Services */}
+          {/* 7 Services */}
           <div>
-            <h3 className="font-heading font-bold text-lg mb-4 text-text-primary">Services</h3>
-            <ul className="space-y-3">
+            <h3 className="font-heading font-bold text-sm tracking-wider uppercase mb-4 text-text-primary">Core Services</h3>
+            <ul className="space-y-2 text-xs md:text-sm">
               <li>
-                <Link href="/services#consulting" className="text-text-secondary hover:text-accent transition-colors">Business Consulting</Link>
+                <Link href="/services#iso" className="text-text-secondary hover:text-accent transition-colors">QMS & ISO Consultancy</Link>
               </li>
               <li>
-                <Link href="/services#iso" className="text-text-secondary hover:text-accent transition-colors">ISO Management</Link>
+                <Link href="/services#laboratory" className="text-text-secondary hover:text-accent transition-colors">Laboratory & NABL Accreditation</Link>
               </li>
               <li>
-                <Link href="/services#video" className="text-text-secondary hover:text-accent transition-colors">AI Video Ads</Link>
+                <Link href="/services#qhse" className="text-text-secondary hover:text-accent transition-colors">QHSE & Food Safety Training</Link>
               </li>
               <li>
-                <Link href="/services#web" className="text-text-secondary hover:text-accent transition-colors">Website Development</Link>
+                <Link href="/services#insurance" className="text-text-secondary hover:text-accent transition-colors">Industrial Insurance Solutions</Link>
+              </li>
+              <li>
+                <Link href="/services#six-sigma" className="text-text-secondary hover:text-accent transition-colors">Six Sigma Training (DMAIC)</Link>
+              </li>
+              <li>
+                <Link href="/services#marketing" className="text-text-secondary hover:text-accent transition-colors">Marketing & Business Creatives</Link>
+              </li>
+              <li>
+                <Link href="/services#export" className="text-text-secondary hover:text-accent transition-colors">Export & International Marketing</Link>
               </li>
             </ul>
           </div>
 
-          {/* Contact Info */}
+          {/* Contact Info (Office & Works) */}
           <div>
-            <h3 className="font-heading font-bold text-lg mb-4 text-text-primary">Contact Us</h3>
-            <ul className="space-y-4">
+            <h3 className="font-heading font-bold text-sm tracking-wider uppercase mb-4 text-text-primary">Contact Details</h3>
+            <ul className="space-y-4 text-xs md:text-sm">
               <li className="flex items-start space-x-3 text-text-secondary">
-                <MapPin size={20} className="text-accent flex-shrink-0 mt-1" />
-                <span>Global Headquarters<br />Available for remote engagements</span>
+                <MapPin size={18} className="text-accent flex-shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-bold text-text-primary block">Registered Office:</span>
+                  <span>26 Ravikiran Complex Banglows, Near Madhuram Party Plot, Zadeshwar Chokdi, Bharuch - 392011, Gujarat, India</span>
+                </div>
+              </li>
+              <li className="flex items-start space-x-3 text-text-secondary">
+                <MapPin size={18} className="text-primary flex-shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-bold text-text-primary block">Works Address:</span>
+                  <span>Green Park Farm, Bhersam Sayakha Road, Navi Vasahat, Saykha GIDC, Ta Vagra, Dist: Bharuch, Gujarat</span>
+                </div>
               </li>
               <li className="flex items-center space-x-3 text-text-secondary">
-                <Phone size={20} className="text-accent flex-shrink-0" />
-                <a href="tel:+919925534751" className="hover:text-accent transition-colors">+91 99255 34751</a>
+                <Phone size={18} className="text-accent flex-shrink-0" />
+                <a href="tel:+919925534751" className="hover:text-accent font-semibold transition-colors">+91 99255 34751</a>
               </li>
               <li className="flex items-center space-x-3 text-text-secondary">
-                <Mail size={20} className="text-accent flex-shrink-0" />
-                <a href="mailto:info@axarcreative.com" className="hover:text-accent transition-colors">info@axarcreative.com</a>
+                <Mail size={18} className="text-accent flex-shrink-0" />
+                <a href="mailto:patelgk4257@gmail.com" className="hover:text-accent transition-colors">patelgk4257@gmail.com</a>
               </li>
             </ul>
           </div>
           
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center text-sm text-text-secondary">
+        <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center text-xs md:text-sm text-text-secondary">
           <p>© {currentYear} Axar Creative Management Solutions. All rights reserved.</p>
           <div className="mt-4 md:mt-0 space-x-4">
             <Link href="/privacy" className="hover:text-accent transition-colors">Privacy Policy</Link>
