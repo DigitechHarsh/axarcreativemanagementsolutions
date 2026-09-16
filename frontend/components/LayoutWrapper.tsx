@@ -15,7 +15,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
   return (
     <>
       <Header />
-      <main className="flex-grow pt-20">{children}</main>
+      <main className="flex-grow">{children}</main>
       <Footer />
     </>
   );

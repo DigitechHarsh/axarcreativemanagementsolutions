@@ -98,7 +98,7 @@ export default function HeroCarousel() {
   const slide = carouselSlides[current];
 
   return (
-    <div className="relative w-full min-h-[560px] md:min-h-[600px] lg:min-h-[640px] overflow-hidden bg-[#f8fafc] flex items-center border-b border-[#e2e8f0]">
+    <div className="relative w-full min-h-[480px] md:min-h-[520px] lg:min-h-[560px] overflow-hidden bg-[#f8fafc] flex items-center border-b border-[#e2e8f0]">
       <AnimatePresence mode="wait">
         <motion.div
           key={current}
@@ -122,7 +122,7 @@ export default function HeroCarousel() {
           <div className="absolute inset-0 bg-gradient-to-r from-[#f8fafc] via-[#f8fafc]/95 to-[#f8fafc]/70 z-10" />
 
           {/* Slide Content Container */}
-          <div className="container mx-auto h-full relative z-20 flex flex-col justify-center items-start text-left px-6 md:px-12 py-14">
+          <div className="container mx-auto h-full relative z-20 flex flex-col justify-center items-start text-left px-6 md:px-12 py-10 md:py-12">
             <div className="max-w-3xl space-y-4">
               {/* Badge & Tagline */}
               <div className="flex flex-wrap items-center gap-2.5">
