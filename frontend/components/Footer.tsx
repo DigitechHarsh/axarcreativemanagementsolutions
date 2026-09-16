@@ -32,8 +32,8 @@ export default function Footer() {
               </div>
             </Link>
 
-            <p className="text-xs font-mono text-accent">
-              // Better Systems • Safer Workplaces • Sustainable Growth
+            <p className="text-xs text-accent font-medium">
+              Better Systems • Safer Workplaces • Sustainable Growth
             </p>
 
             <p className="text-xs text-text-secondary leading-relaxed max-w-sm">

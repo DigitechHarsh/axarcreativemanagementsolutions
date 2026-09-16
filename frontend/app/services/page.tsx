@@ -300,8 +300,8 @@ export default function ServicesPage() {
                   <h2 className="text-xl md:text-2xl font-heading font-bold text-white">
                     {currentService.title}
                   </h2>
-                  <p className="text-accent text-xs mt-0.5 font-mono">
-                    // {currentService.tagline}
+                  <p className="text-accent text-xs mt-0.5 font-medium">
+                    {currentService.tagline}
                   </p>
                 </div>
               </div>

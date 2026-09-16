@@ -134,8 +134,8 @@ export default function HeroCarousel() {
                   <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-accent" />
                   {slide.badge}
                 </span>
-                <span className="text-xs font-mono text-text-secondary hidden sm:inline-block">
-                  // {slide.tagline}
+                <span className="text-xs text-text-secondary hidden sm:inline-block">
+                  {slide.tagline}
                 </span>
               </div>
 

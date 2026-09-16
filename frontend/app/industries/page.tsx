@@ -190,8 +190,8 @@ export default function IndustriesPage() {
                   <h3 className="font-heading font-bold text-lg text-white mb-1">
                     {ind.title}
                   </h3>
-                  <p className="text-[11px] font-mono text-accent mb-3">
-                    // {ind.scope}
+                  <p className="text-[11px] text-accent mb-3">
+                    {ind.scope}
                   </p>
 
                   <p className="text-text-secondary text-xs leading-relaxed mb-5">
