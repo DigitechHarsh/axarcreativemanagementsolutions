@@ -100,13 +100,8 @@ export default function AboutPage() {
           <div className="grid lg:grid-cols-12 gap-8 items-center">
             {/* Left Card: Proprietor & Credential Badge */}
             <div className="lg:col-span-5 bg-[#f8fafc] border border-[#e2e8f0] p-6 md:p-7 rounded-2xl text-center space-y-4 shadow-xs">
-              <div className="w-32 h-32 mx-auto rounded-2xl overflow-hidden relative border-2 border-[#b3282d] shadow-sm group">
-                <Image
-                  src="/team/ghanshyam.jpeg"
-                  alt="Ghanshyambhai K Patel"
-                  fill
-                  className="object-cover object-top grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500 ease-in-out"
-                />
+              <div className="w-20 h-20 mx-auto rounded-2xl bg-[#fef2f2] border border-[#fecaca] flex items-center justify-center text-[#b3282d]">
+                <Award className="w-10 h-10" />
               </div>
 
               <div>
@@ -117,7 +112,7 @@ export default function AboutPage() {
                   Proprietor & Principal Consultant
                 </p>
                 <p className="text-xs text-[#64748b] mt-0.5">
-                  B.Sc. Tech • Certified Lead Auditor
+                  Axar Creative Management Solutions
                 </p>
               </div>
 
@@ -174,7 +169,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Core Team Members Section (Square Image Frame with B&W to Color Hover) */}
+      {/* Core Team Members Section (4 Core Team Grid with B&W to Color Hover) */}
       <section className="py-16 md:py-20 bg-[#f8fafc] border-b border-[#e2e8f0]">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-12">
@@ -197,7 +192,7 @@ export default function AboutPage() {
                 className="group bg-white border border-[#e2e8f0] hover:border-[#cbd5e1] hover:shadow-lg rounded-2xl p-5 flex flex-col justify-between transition-all duration-300"
               >
                 <div>
-                  {/* Square image frame with rounded corners & B&W -> Color Hover */}
+                  {/* Square image frame with rounded corners & clean B&W -> Color Hover */}
                   <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-[#f1f5f9] border border-[#e2e8f0] mb-4">
                     <Image
                       src={member.image}
@@ -205,11 +200,6 @@ export default function AboutPage() {
                       fill
                       className="object-cover object-top grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500 ease-in-out"
                     />
-                    <div className="absolute top-2.5 right-2.5">
-                      <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-white/90 backdrop-blur-xs text-[#0f172a] shadow-xs">
-                        {idx === 0 ? "Lead" : "Core"}
-                      </span>
-                    </div>
                   </div>
 
                   <h3 className="font-heading font-bold text-base text-[#0f172a] group-hover:text-[#b3282d] transition-colors">
