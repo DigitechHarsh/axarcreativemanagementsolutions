@@ -67,21 +67,21 @@ export default function Header() {
         <div className="container mx-auto px-4 lg:px-6 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="relative z-50 flex items-center group">
-            <div className="flex items-center space-x-1.5 md:space-x-2">
+            <div className="flex items-center">
               <Image
                 src="/logo.png"
                 alt="Axar Logo"
                 width={120}
                 height={120}
-                className="object-contain h-10 md:h-11 lg:h-12 w-auto transition-transform duration-200 group-hover:scale-105"
+                className="object-contain h-10 md:h-11 lg:h-12 w-auto transition-transform duration-200 group-hover:scale-105 shrink-0"
                 priority
               />
               <Image
                 src="/logotext.png"
                 alt="Axar Creative Management Solutions"
-                width={300}
+                width={320}
                 height={100}
-                className="object-contain h-8 md:h-9 lg:h-10 w-auto"
+                className="object-contain h-9 md:h-10 lg:h-11 w-auto -ml-1 md:-ml-2 shrink-0"
                 priority
               />
             </div>

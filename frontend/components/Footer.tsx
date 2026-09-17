@@ -20,14 +20,14 @@ export default function Footer() {
                   alt="Axar Logo"
                   width={120}
                   height={120}
-                  className="object-contain h-10 w-auto"
+                  className="object-contain h-10 w-auto shrink-0"
                 />
                 <Image
                   src="/logotext.png"
                   alt="Axar Creative Management Solutions"
-                  width={300}
+                  width={320}
                   height={100}
-                  className="object-contain h-8 w-auto ml-2"
+                  className="object-contain h-9 w-auto -ml-1 shrink-0"
                 />
               </div>
             </Link>
