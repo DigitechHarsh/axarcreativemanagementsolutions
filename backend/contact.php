@@ -6,6 +6,7 @@ ini_set('log_errors', 1);
 error_reporting(E_ALL);
 
 require_once 'config.php';
+require_once 'db_init.php';
 
 // Security & CORS Headers
 header("Access-Control-Allow-Origin: *");
@@ -87,6 +88,7 @@ try {
     ];
     
     $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
+    auto_init_database($pdo);
     
     $sql = "INSERT INTO contact_submissions 
             (full_name, email, phone, company_name, service_interested, message, ip_address, status) 
