@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import { useState, useEffect, useMemo, ChangeEvent, FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { 
@@ -21,7 +21,6 @@ import {
   AlertCircle, 
   Loader2,
   X,
-  Menu,
   Globe,
   RefreshCw,
   ShieldCheck,
@@ -29,12 +28,8 @@ import {
   Filter,
   Eye,
   Download,
-  Building2,
   Calendar,
-  Phone,
-  Mail,
-  MapPin,
-  Check
+  Sparkles
 } from "lucide-react";
 
 // ==========================================
@@ -116,7 +111,6 @@ const API_BASE = "https://acms.harshaicreations.com/api.php";
 export default function AdminDashboardPage() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [checkingAuth, setCheckingAuth] = useState<boolean>(true);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   // Login Form
   const [username, setUsername] = useState<string>("");
@@ -135,15 +129,31 @@ export default function AdminDashboardPage() {
   const [resources, setResources] = useState<ResourceItem[]>([]);
   const [dataLoading, setDataLoading] = useState<boolean>(false);
 
-  // Search & Filters
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  // Filter & Search states per tab
+  const [leadSearch, setLeadSearch] = useState<string>("");
   const [leadFilter, setLeadFilter] = useState<string>("all");
+
+  const [serviceSearch, setServiceSearch] = useState<string>("");
+  const [serviceCategoryFilter, setServiceCategoryFilter] = useState<string>("All");
+
+  const [industrySearch, setIndustrySearch] = useState<string>("");
+  const [industryCategoryFilter, setIndustryCategoryFilter] = useState<string>("All");
+
+  const [trainingSearch, setTrainingSearch] = useState<string>("");
+  const [trainingBadgeFilter, setTrainingBadgeFilter] = useState<string>("All");
+
+  const [projectSearch, setProjectSearch] = useState<string>("");
+  const [projectCategoryFilter, setProjectCategoryFilter] = useState<string>("All");
+
+  const [resourceSearch, setResourceSearch] = useState<string>("");
+  const [resourceCategoryFilter, setResourceCategoryFilter] = useState<string>("All");
 
   // Toast State
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
-  // Active Lead Details Modal
+  // Active Lead / Item Details Modal
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [previewItem, setPreviewItem] = useState<{ title: string; subtitle?: string; data: Record<string, string | number | undefined> } | null>(null);
 
   // Modals & Forms State
   const [isServiceModalOpen, setIsServiceModalOpen] = useState<boolean>(false);
@@ -454,7 +464,7 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // Training Program Save & Delete
+  // Training Save & Delete
   const handleSaveTraining = async (e: FormEvent) => {
     e.preventDefault();
     setSavingEntity(true);
@@ -583,6 +593,119 @@ export default function AdminDashboardPage() {
     }
   };
 
+  // ==========================================
+  // DYNAMIC CATEGORIES FOR FILTER TAGS
+  // ==========================================
+  const serviceCategories = useMemo(() => {
+    const list = Array.from(new Set(services.map(s => s.category?.trim()).filter(Boolean)));
+    return ["All", ...list];
+  }, [services]);
+
+  const industryCategories = useMemo(() => {
+    const list = Array.from(new Set(industries.map(i => i.category?.trim()).filter(Boolean)));
+    return ["All", ...list];
+  }, [industries]);
+
+  const trainingBadges = useMemo(() => {
+    const list = Array.from(new Set(trainingPrograms.map(t => t.badge?.trim()).filter(Boolean)));
+    return ["All", ...list];
+  }, [trainingPrograms]);
+
+  const projectCategories = useMemo(() => {
+    const list = Array.from(new Set(projects.map(p => p.category_name?.trim()).filter(Boolean)));
+    return ["All", ...list];
+  }, [projects]);
+
+  const resourceCategories = useMemo(() => {
+    const list = Array.from(new Set(resources.map(r => r.category?.trim()).filter(Boolean)));
+    return ["All", ...list];
+  }, [resources]);
+
+  // ==========================================
+  // FILTERED DATA SETS
+  // ==========================================
+  const filteredLeads = useMemo(() => {
+    return leads.filter(lead => {
+      const matchesFilter = leadFilter === "all" || lead.status === leadFilter;
+      const q = leadSearch.toLowerCase().trim();
+      const matchesSearch = !q || 
+        lead.full_name?.toLowerCase().includes(q) ||
+        lead.email?.toLowerCase().includes(q) ||
+        (lead.company_name && lead.company_name.toLowerCase().includes(q)) ||
+        (lead.service_interested && lead.service_interested.toLowerCase().includes(q)) ||
+        (lead.message && lead.message.toLowerCase().includes(q));
+      return matchesFilter && matchesSearch;
+    });
+  }, [leads, leadFilter, leadSearch]);
+
+  const filteredServices = useMemo(() => {
+    return services.filter(srv => {
+      const matchesCategory = serviceCategoryFilter === "All" || srv.category === serviceCategoryFilter;
+      const q = serviceSearch.toLowerCase().trim();
+      const matchesSearch = !q ||
+        srv.title?.toLowerCase().includes(q) ||
+        srv.category?.toLowerCase().includes(q) ||
+        srv.short_desc?.toLowerCase().includes(q) ||
+        (srv.details && srv.details.toLowerCase().includes(q));
+      return matchesCategory && matchesSearch;
+    });
+  }, [services, serviceCategoryFilter, serviceSearch]);
+
+  const filteredIndustries = useMemo(() => {
+    return industries.filter(ind => {
+      const matchesCategory = industryCategoryFilter === "All" || ind.category === industryCategoryFilter;
+      const q = industrySearch.toLowerCase().trim();
+      const matchesSearch = !q ||
+        ind.title?.toLowerCase().includes(q) ||
+        ind.category?.toLowerCase().includes(q) ||
+        ind.scope?.toLowerCase().includes(q) ||
+        ind.description?.toLowerCase().includes(q) ||
+        (ind.key_services && ind.key_services.toLowerCase().includes(q));
+      return matchesCategory && matchesSearch;
+    });
+  }, [industries, industryCategoryFilter, industrySearch]);
+
+  const filteredTrainingPrograms = useMemo(() => {
+    return trainingPrograms.filter(prog => {
+      const matchesBadge = trainingBadgeFilter === "All" || prog.badge === trainingBadgeFilter;
+      const q = trainingSearch.toLowerCase().trim();
+      const matchesSearch = !q ||
+        prog.title?.toLowerCase().includes(q) ||
+        prog.badge?.toLowerCase().includes(q) ||
+        prog.target_audience?.toLowerCase().includes(q) ||
+        prog.description?.toLowerCase().includes(q) ||
+        prog.duration?.toLowerCase().includes(q) ||
+        (prog.topics && prog.topics.toLowerCase().includes(q));
+      return matchesBadge && matchesSearch;
+    });
+  }, [trainingPrograms, trainingBadgeFilter, trainingSearch]);
+
+  const filteredProjects = useMemo(() => {
+    return projects.filter(proj => {
+      const matchesCategory = projectCategoryFilter === "All" || proj.category_name === projectCategoryFilter;
+      const q = projectSearch.toLowerCase().trim();
+      const matchesSearch = !q ||
+        proj.title?.toLowerCase().includes(q) ||
+        proj.category_name?.toLowerCase().includes(q) ||
+        proj.description?.toLowerCase().includes(q);
+      return matchesCategory && matchesSearch;
+    });
+  }, [projects, projectCategoryFilter, projectSearch]);
+
+  const filteredResources = useMemo(() => {
+    return resources.filter(res => {
+      const matchesCategory = resourceCategoryFilter === "All" || res.category === resourceCategoryFilter;
+      const q = resourceSearch.toLowerCase().trim();
+      const matchesSearch = !q ||
+        res.title?.toLowerCase().includes(q) ||
+        res.category?.toLowerCase().includes(q) ||
+        res.description?.toLowerCase().includes(q) ||
+        res.tags?.toLowerCase().includes(q) ||
+        res.file_format?.toLowerCase().includes(q);
+      return matchesCategory && matchesSearch;
+    });
+  }, [resources, resourceCategoryFilter, resourceSearch]);
+
   if (checkingAuth) {
     return (
       <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center">
@@ -667,17 +790,6 @@ export default function AdminDashboardPage() {
     );
   }
 
-  // Filtered Leads
-  const filteredLeads = leads.filter(lead => {
-    const matchesFilter = leadFilter === "all" || lead.status === leadFilter;
-    const matchesSearch = !searchQuery || 
-      lead.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      lead.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (lead.company_name && lead.company_name.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (lead.service_interested && lead.service_interested.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesFilter && matchesSearch;
-  });
-
   // ==========================================
   // ADMIN DASHBOARD SHELL
   // ==========================================
@@ -713,7 +825,7 @@ export default function AdminDashboardPage() {
           <button
             onClick={fetchAllData}
             disabled={dataLoading}
-            className="p-2 rounded-lg bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#e2e8f0] text-[#475569] text-xs font-medium flex items-center"
+            className="p-2 rounded-lg bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#e2e8f0] text-[#475569] text-xs font-medium flex items-center cursor-pointer"
             title="Refresh Data"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${dataLoading ? "animate-spin text-[#b3282d]" : ""}`} />
@@ -727,7 +839,7 @@ export default function AdminDashboardPage() {
           </Link>
           <button
             onClick={handleLogout}
-            className="px-3 py-1.5 rounded-lg bg-[#b3282d] hover:bg-[#8c1e22] text-white text-xs font-heading font-bold flex items-center transition-colors shadow-xs"
+            className="px-3 py-1.5 rounded-lg bg-[#b3282d] hover:bg-[#8c1e22] text-white text-xs font-heading font-bold flex items-center transition-colors shadow-xs cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5 mr-1" /> Sign Out
           </button>
@@ -773,12 +885,12 @@ export default function AdminDashboardPage() {
 
           <div className="p-3 bg-[#f8fafc] rounded-xl border border-[#e2e8f0] text-xs text-[#64748b] space-y-1">
             <span className="font-bold text-[#0f172a] block">Axar CMS Engine</span>
-            <p className="text-[11px]">Synced with MySQL & Cloudinary CDN</p>
+            <p className="text-[11px]">Tabular High-Density View</p>
           </div>
         </aside>
 
         {/* Dynamic Content Panel */}
-        <main className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
           {/* ========================================================================= */}
           {/* 1. OVERVIEW DASHBOARD */}
           {/* ========================================================================= */}
@@ -794,19 +906,23 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Stats Cards */}
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
                 {[
-                  { label: "New Leads", count: leads.filter(l => l.status === 'new').length, color: "text-[#b3282d]", bg: "bg-[#fef2f2]", border: "border-[#fecaca]" },
-                  { label: "Total Leads", count: leads.length, color: "text-[#0f172a]", bg: "bg-[#f8fafc]", border: "border-[#e2e8f0]" },
-                  { label: "Services", count: services.length, color: "text-[#0f172a]", bg: "bg-[#f8fafc]", border: "border-[#e2e8f0]" },
-                  { label: "Industries", count: industries.length, color: "text-[#0f172a]", bg: "bg-[#f8fafc]", border: "border-[#e2e8f0]" },
-                  { label: "Training", count: trainingPrograms.length, color: "text-[#0f172a]", bg: "bg-[#f8fafc]", border: "border-[#e2e8f0]" },
-                  { label: "Resources", count: resources.length, color: "text-[#0f172a]", bg: "bg-[#f8fafc]", border: "border-[#e2e8f0]" },
+                  { label: "New Leads", count: leads.filter(l => l.status === 'new').length, color: "text-[#b3282d]", bg: "bg-[#fef2f2]", border: "border-[#fecaca]", tab: "leads" },
+                  { label: "Total Leads", count: leads.length, color: "text-[#0f172a]", bg: "bg-white", border: "border-[#e2e8f0]", tab: "leads" },
+                  { label: "Services", count: services.length, color: "text-[#0f172a]", bg: "bg-white", border: "border-[#e2e8f0]", tab: "services" },
+                  { label: "Industries", count: industries.length, color: "text-[#0f172a]", bg: "bg-white", border: "border-[#e2e8f0]", tab: "industries" },
+                  { label: "Training", count: trainingPrograms.length, color: "text-[#0f172a]", bg: "bg-white", border: "border-[#e2e8f0]", tab: "training" },
+                  { label: "Resources", count: resources.length, color: "text-[#0f172a]", bg: "bg-white", border: "border-[#e2e8f0]", tab: "resources" },
                 ].map((stat, idx) => (
-                  <div key={idx} className={`${stat.bg} ${stat.border} border p-4 rounded-xl shadow-xs`}>
+                  <button
+                    key={idx}
+                    onClick={() => setActiveTab(stat.tab as any)}
+                    className={`${stat.bg} ${stat.border} border p-4 rounded-xl shadow-xs text-left hover:border-[#b3282d]/50 transition-all cursor-pointer`}
+                  >
                     <span className="text-[11px] font-bold text-[#64748b] block mb-1 uppercase tracking-wider">{stat.label}</span>
                     <span className={`text-2xl font-heading font-extrabold ${stat.color}`}>{stat.count}</span>
-                  </div>
+                  </button>
                 ))}
               </div>
 
@@ -819,7 +935,7 @@ export default function AdminDashboardPage() {
                     </h3>
                     <button 
                       onClick={() => setActiveTab("leads")} 
-                      className="text-xs font-bold text-[#b3282d] hover:underline"
+                      className="text-xs font-bold text-[#b3282d] hover:underline cursor-pointer"
                     >
                       View All Leads →
                     </button>
@@ -828,30 +944,45 @@ export default function AdminDashboardPage() {
                   {leads.length === 0 ? (
                     <p className="text-xs text-[#64748b] py-6 text-center">No inquiry records in database yet.</p>
                   ) : (
-                    <div className="divide-y divide-[#f1f5f9]">
-                      {leads.slice(0, 5).map((lead) => (
-                        <div key={lead.id} className="py-3 flex items-center justify-between text-xs">
-                          <div>
-                            <span className="font-bold text-[#0f172a] block">{lead.full_name}</span>
-                            <span className="text-[11px] text-[#64748b]">{lead.company_name || lead.email} • {lead.service_interested || "General"}</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                              lead.status === 'new' ? 'bg-red-50 text-red-700 border border-red-200' :
-                              lead.status === 'contacted' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
-                              'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            }`}>
-                              {lead.status}
-                            </span>
-                            <button
-                              onClick={() => setSelectedLead(lead)}
-                              className="p-1 rounded bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#e2e8f0]"
-                            >
-                              <Eye className="w-3.5 h-3.5 text-[#475569]" />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs">
+                        <thead className="bg-[#f8fafc] border-b border-[#e2e8f0] text-[#475569] uppercase font-bold text-[10px]">
+                          <tr>
+                            <th className="p-2.5">Client & Company</th>
+                            <th className="p-2.5">Service Interested</th>
+                            <th className="p-2.5">Status</th>
+                            <th className="p-2.5 text-right">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-[#f1f5f9]">
+                          {leads.slice(0, 5).map((lead) => (
+                            <tr key={lead.id} className="hover:bg-[#f8fafc] transition-colors">
+                              <td className="p-2.5">
+                                <span className="font-bold text-[#0f172a] block">{lead.full_name}</span>
+                                <span className="text-[11px] text-[#64748b]">{lead.company_name || lead.email}</span>
+                              </td>
+                              <td className="p-2.5 text-[#475569]">{lead.service_interested || "General"}</td>
+                              <td className="p-2.5">
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                                  lead.status === 'new' ? 'bg-red-50 text-red-700 border border-red-200' :
+                                  lead.status === 'contacted' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+                                  'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                }`}>
+                                  {lead.status}
+                                </span>
+                              </td>
+                              <td className="p-2.5 text-right">
+                                <button
+                                  onClick={() => setSelectedLead(lead)}
+                                  className="p-1 rounded bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#e2e8f0] text-[#475569] cursor-pointer"
+                                >
+                                  <Eye className="w-3.5 h-3.5" />
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   )}
                 </div>
@@ -863,25 +994,31 @@ export default function AdminDashboardPage() {
                   <div className="space-y-2 text-xs">
                     <button
                       onClick={() => { setServiceForm({ title: "", category: "Industrial Consultancy", short_desc: "", image_url: "", details: "", display_order: services.length + 1 }); setIsServiceModalOpen(true); }}
-                      className="w-full py-2 px-3 bg-[#f8fafc] hover:bg-[#b3282d] hover:text-white border border-[#e2e8f0] rounded-lg font-bold text-left transition-colors flex items-center justify-between"
+                      className="w-full py-2 px-3 bg-[#f8fafc] hover:bg-[#b3282d] hover:text-white border border-[#e2e8f0] rounded-lg font-bold text-left transition-colors flex items-center justify-between cursor-pointer"
                     >
                       <span>+ Add New Service</span> <Plus className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => { setIndustryForm({ title: "", category: "Heavy & Engineering", scope: "", description: "", key_services: "", image_url: "", display_order: industries.length + 1 }); setIsIndustryModalOpen(true); }}
-                      className="w-full py-2 px-3 bg-[#f8fafc] hover:bg-[#b3282d] hover:text-white border border-[#e2e8f0] rounded-lg font-bold text-left transition-colors flex items-center justify-between"
+                      className="w-full py-2 px-3 bg-[#f8fafc] hover:bg-[#b3282d] hover:text-white border border-[#e2e8f0] rounded-lg font-bold text-left transition-colors flex items-center justify-between cursor-pointer"
                     >
                       <span>+ Add Industry Sector</span> <Plus className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => { setTrainingForm({ title: "", badge: "Auditor Certification", target_audience: "", description: "", topics: "", duration: "2-5 Days", display_order: trainingPrograms.length + 1 }); setIsTrainingModalOpen(true); }}
-                      className="w-full py-2 px-3 bg-[#f8fafc] hover:bg-[#b3282d] hover:text-white border border-[#e2e8f0] rounded-lg font-bold text-left transition-colors flex items-center justify-between"
+                      className="w-full py-2 px-3 bg-[#f8fafc] hover:bg-[#b3282d] hover:text-white border border-[#e2e8f0] rounded-lg font-bold text-left transition-colors flex items-center justify-between cursor-pointer"
                     >
                       <span>+ Add Training Program</span> <Plus className="w-3.5 h-3.5" />
                     </button>
                     <button
+                      onClick={() => { setProjectForm({ service_id: null, title: "", category_name: "ISO & IMS Consultancy", description: "", image_url: "", project_url: "", tag_style: "bg-accent/20 text-accent border border-accent/30", featured: false, display_order: projects.length + 1 }); setIsProjectModalOpen(true); }}
+                      className="w-full py-2 px-3 bg-[#f8fafc] hover:bg-[#b3282d] hover:text-white border border-[#e2e8f0] rounded-lg font-bold text-left transition-colors flex items-center justify-between cursor-pointer"
+                    >
+                      <span>+ Add Project / Case Study</span> <Plus className="w-3.5 h-3.5" />
+                    </button>
+                    <button
                       onClick={() => { setResourceForm({ title: "", category: "QMS & Compliance", description: "", tags: "", file_format: "PDF Document", file_size: "1.5 MB", file_url: "", display_order: resources.length + 1 }); setIsResourceModalOpen(true); }}
-                      className="w-full py-2 px-3 bg-[#f8fafc] hover:bg-[#b3282d] hover:text-white border border-[#e2e8f0] rounded-lg font-bold text-left transition-colors flex items-center justify-between"
+                      className="w-full py-2 px-3 bg-[#f8fafc] hover:bg-[#b3282d] hover:text-white border border-[#e2e8f0] rounded-lg font-bold text-left transition-colors flex items-center justify-between cursor-pointer"
                     >
                       <span>+ Add Resource Guide</span> <Plus className="w-3.5 h-3.5" />
                     </button>
@@ -896,127 +1033,168 @@ export default function AdminDashboardPage() {
           {/* ========================================================================= */}
           {activeTab === "leads" && (
             <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-xl font-heading font-extrabold text-[#0f172a]">
-                    Contact Submissions & Quote Requests
+                    Contact Submissions & Quote Requests ({leads.length})
                   </h2>
                   <p className="text-xs text-[#64748b]">
-                    Manage incoming industrial leads, quote requests, and follow-up statuses.
+                    Manage incoming industrial leads, quote requests, and client communications.
                   </p>
                 </div>
+              </div>
 
-                {/* Filter & Search */}
-                <div className="flex items-center space-x-2">
-                  <div className="relative">
+              {/* Search & Dynamic Filter Tags Bar */}
+              <div className="bg-white border border-[#e2e8f0] rounded-xl p-3 shadow-xs space-y-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                  <div className="relative flex-1 max-w-md">
                     <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#94a3b8]" />
                     <input
                       type="text"
-                      placeholder="Search inquiries..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="bg-white border border-[#cbd5e1] rounded-lg pl-8 pr-3 py-1.5 text-xs text-[#0f172a] focus:outline-none focus:border-[#b3282d]"
+                      placeholder="Search inquiries by name, company, email, service..."
+                      value={leadSearch}
+                      onChange={(e) => setLeadSearch(e.target.value)}
+                      className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg pl-8 pr-8 py-1.5 text-xs text-[#0f172a] focus:outline-none focus:border-[#b3282d]"
                     />
+                    {leadSearch && (
+                      <button onClick={() => setLeadSearch("")} className="absolute right-2.5 top-2 text-[#94a3b8] hover:text-[#0f172a]">
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
-                  <select
-                    value={leadFilter}
-                    onChange={(e) => setLeadFilter(e.target.value)}
-                    className="bg-white border border-[#cbd5e1] rounded-lg px-2.5 py-1.5 text-xs text-[#0f172a] focus:outline-none focus:border-[#b3282d]"
-                  >
-                    <option value="all">All Statuses</option>
-                    <option value="new">New</option>
-                    <option value="contacted">Contacted</option>
-                    <option value="closed">Closed</option>
-                  </select>
+
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs text-[#64748b] font-medium whitespace-nowrap">
+                      Showing {filteredLeads.length} of {leads.length}
+                    </span>
+                    {(leadSearch || leadFilter !== "all") && (
+                      <button
+                        onClick={() => { setLeadSearch(""); setLeadFilter("all"); }}
+                        className="px-2.5 py-1 text-[11px] font-bold text-[#b3282d] bg-[#fef2f2] hover:bg-[#fee2e2] rounded border border-[#fecaca] cursor-pointer"
+                      >
+                        Reset
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Status Filter Badges */}
+                <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-[#f1f5f9]">
+                  <span className="text-[10px] font-bold text-[#94a3b8] uppercase tracking-wider mr-1">Status:</span>
+                  {[
+                    { key: "all", label: "All Leads", count: leads.length },
+                    { key: "new", label: "New", count: leads.filter(l => l.status === "new").length },
+                    { key: "contacted", label: "Contacted", count: leads.filter(l => l.status === "contacted").length },
+                    { key: "closed", label: "Closed", count: leads.filter(l => l.status === "closed").length },
+                  ].map(tab => (
+                    <button
+                      key={tab.key}
+                      onClick={() => setLeadFilter(tab.key)}
+                      className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${
+                        leadFilter === tab.key
+                          ? "bg-[#b3282d] text-white shadow-xs"
+                          : "bg-[#f8fafc] text-[#475569] border border-[#e2e8f0] hover:bg-[#f1f5f9]"
+                      }`}
+                    >
+                      <span>{tab.label}</span>
+                      <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${leadFilter === tab.key ? "bg-white/20 text-white" : "bg-[#e2e8f0] text-[#475569]"}`}>
+                        {tab.count}
+                      </span>
+                    </button>
+                  ))}
                 </div>
               </div>
 
               {filteredLeads.length === 0 ? (
                 <div className="bg-white border border-[#e2e8f0] rounded-xl p-12 text-center text-xs text-[#64748b]">
-                  No matching leads found.
+                  No matching leads found for current search/filter.
                 </div>
               ) : (
                 <div className="bg-white border border-[#e2e8f0] rounded-xl overflow-hidden shadow-xs">
-                  <table className="w-full text-left text-xs">
-                    <thead className="bg-[#f8fafc] border-b border-[#e2e8f0] text-[#475569] uppercase font-bold text-[10px]">
-                      <tr>
-                        <th className="p-3.5">Client & Company</th>
-                        <th className="p-3.5">Service Interested</th>
-                        <th className="p-3.5">Contact Details</th>
-                        <th className="p-3.5">Submitted</th>
-                        <th className="p-3.5">Status</th>
-                        <th className="p-3.5 text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#f1f5f9]">
-                      {filteredLeads.map((lead) => (
-                        <tr key={lead.id} className="hover:bg-[#f8fafc] transition-colors">
-                          <td className="p-3.5">
-                            <span className="font-bold text-[#0f172a] block">{lead.full_name}</span>
-                            <span className="text-[#64748b] text-[11px]">{lead.company_name || "Direct Individual"}</span>
-                          </td>
-                          <td className="p-3.5 max-w-[200px]">
-                            <span className="font-medium text-[#334155] line-clamp-1">{lead.service_interested || "General Inquiry"}</span>
-                          </td>
-                          <td className="p-3.5">
-                            <span className="text-[#0f172a] block font-mono text-[11px]">{lead.phone || "—"}</span>
-                            <span className="text-[#64748b] text-[11px]">{lead.email}</span>
-                          </td>
-                          <td className="p-3.5 text-[#64748b] text-[11px] whitespace-nowrap">
-                            {new Date(lead.submitted_at).toLocaleDateString()}
-                          </td>
-                          <td className="p-3.5">
-                            <select
-                              value={lead.status}
-                              onChange={(e) => handleLeadStatusChange(lead.id, e.target.value as any)}
-                              className={`px-2 py-1 rounded text-[10px] font-bold uppercase border cursor-pointer ${
-                                lead.status === 'new' ? 'bg-red-50 text-red-700 border-red-200' :
-                                lead.status === 'contacted' ? 'bg-amber-50 text-amber-700 border-amber-200' :
-                                'bg-emerald-50 text-emerald-700 border-emerald-200'
-                              }`}
-                            >
-                              <option value="new">New</option>
-                              <option value="contacted">Contacted</option>
-                              <option value="closed">Closed</option>
-                            </select>
-                          </td>
-                          <td className="p-3.5 text-right space-x-1.5 whitespace-nowrap">
-                            <button
-                              onClick={() => setSelectedLead(lead)}
-                              className="p-1.5 rounded bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#e2e8f0] text-[#475569]"
-                              title="View Full Scope Details"
-                            >
-                              <Eye className="w-3.5 h-3.5" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteLead(lead.id)}
-                              className="p-1.5 rounded bg-red-50 hover:bg-red-100 border border-red-200 text-red-700"
-                              title="Delete Lead"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </td>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-[#f8fafc] border-b border-[#e2e8f0] text-[#475569] uppercase font-bold text-[10px] tracking-wider">
+                        <tr>
+                          <th className="p-3 w-12 text-center">#</th>
+                          <th className="p-3">Client & Company</th>
+                          <th className="p-3">Service Interested</th>
+                          <th className="p-3">Contact Details</th>
+                          <th className="p-3">Submitted</th>
+                          <th className="p-3">Status</th>
+                          <th className="p-3 text-right">Actions</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-[#f1f5f9]">
+                        {filteredLeads.map((lead, idx) => (
+                          <tr key={lead.id} className="hover:bg-[#f8fafc] transition-colors">
+                            <td className="p-3 text-center text-[#94a3b8] font-mono text-[11px]">{idx + 1}</td>
+                            <td className="p-3">
+                              <span className="font-bold text-[#0f172a] block">{lead.full_name}</span>
+                              <span className="text-[#64748b] text-[11px]">{lead.company_name || "Direct Individual"}</span>
+                            </td>
+                            <td className="p-3 max-w-[200px]">
+                              <span className="font-medium text-[#334155] line-clamp-1">{lead.service_interested || "General Inquiry"}</span>
+                            </td>
+                            <td className="p-3">
+                              <span className="text-[#0f172a] block font-mono text-[11px]">{lead.phone || "—"}</span>
+                              <span className="text-[#64748b] text-[11px]">{lead.email}</span>
+                            </td>
+                            <td className="p-3 text-[#64748b] text-[11px] whitespace-nowrap">
+                              {new Date(lead.submitted_at).toLocaleDateString()}
+                            </td>
+                            <td className="p-3">
+                              <select
+                                value={lead.status}
+                                onChange={(e) => handleLeadStatusChange(lead.id, e.target.value as any)}
+                                className={`px-2 py-1 rounded text-[10px] font-bold uppercase border cursor-pointer ${
+                                  lead.status === 'new' ? 'bg-red-50 text-red-700 border-red-200' :
+                                  lead.status === 'contacted' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                                  'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                }`}
+                              >
+                                <option value="new">New</option>
+                                <option value="contacted">Contacted</option>
+                                <option value="closed">Closed</option>
+                              </select>
+                            </td>
+                            <td className="p-3 text-right space-x-1 whitespace-nowrap">
+                              <button
+                                onClick={() => setSelectedLead(lead)}
+                                className="p-1.5 rounded bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#e2e8f0] text-[#475569] cursor-pointer inline-flex items-center"
+                                title="View Details"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteLead(lead.id)}
+                                className="p-1.5 rounded bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 cursor-pointer inline-flex items-center"
+                                title="Delete Lead"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
             </div>
           )}
 
           {/* ========================================================================= */}
-          {/* 3. SERVICES MANAGEMENT */}
+          {/* 3. SERVICES MANAGEMENT (Tabular Form) */}
           {/* ========================================================================= */}
           {activeTab === "services" && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h2 className="text-xl font-heading font-extrabold text-[#0f172a]">
-                    Services (7 Official Industrial Pillars)
+                    Services Portfolio ({services.length})
                   </h2>
                   <p className="text-xs text-[#64748b]">
-                    Manage QMS/ISO, laboratory setup, QHSE training, industrial insurance, Six Sigma, and export marketing services.
+                    Manage QMS/ISO, laboratory setup, QHSE training, industrial insurance, Six Sigma, and export marketing.
                   </p>
                 </div>
                 <button
@@ -1024,58 +1202,148 @@ export default function AdminDashboardPage() {
                     setServiceForm({ title: "", category: "Industrial Consultancy", short_desc: "", image_url: "", details: "", display_order: services.length + 1 });
                     setIsServiceModalOpen(true);
                   }}
-                  className="px-3.5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white text-xs font-heading font-bold rounded-lg transition-colors flex items-center shadow-xs"
+                  className="px-3.5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white text-xs font-heading font-bold rounded-lg transition-colors flex items-center justify-center shadow-xs cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Service
                 </button>
               </div>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {services.map((srv) => (
-                  <div key={srv.id} className="bg-white border border-[#e2e8f0] rounded-xl p-5 shadow-xs flex flex-col justify-between space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#b3282d] bg-[#fef2f2] px-2 py-0.5 rounded border border-[#fecaca]">
-                          {srv.category}
-                        </span>
-                        <span className="text-[10px] text-[#94a3b8] font-mono">Order #{srv.display_order}</span>
-                      </div>
-                      <h3 className="font-heading font-bold text-sm text-[#0f172a]">{srv.title}</h3>
-                      <p className="text-xs text-[#475569] line-clamp-3 leading-relaxed">{srv.short_desc}</p>
-                    </div>
-
-                    <div className="pt-3 border-t border-[#f1f5f9] flex items-center justify-between text-xs">
-                      <span className="text-[11px] text-[#64748b]">ID #{srv.id}</span>
-                      <div className="space-x-1.5">
-                        <button
-                          onClick={() => { setServiceForm(srv); setIsServiceModalOpen(true); }}
-                          className="px-2.5 py-1 bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#cbd5e1] rounded font-medium text-[#0f172a]"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteService(srv.id)}
-                          className="px-2.5 py-1 bg-red-50 hover:bg-red-100 border border-red-200 rounded font-medium text-red-700"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
+              {/* Filter & Search Bar */}
+              <div className="bg-white border border-[#e2e8f0] rounded-xl p-3 shadow-xs space-y-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                  <div className="relative flex-1 max-w-md">
+                    <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#94a3b8]" />
+                    <input
+                      type="text"
+                      placeholder="Search services by title, category, scope..."
+                      value={serviceSearch}
+                      onChange={(e) => setServiceSearch(e.target.value)}
+                      className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg pl-8 pr-8 py-1.5 text-xs text-[#0f172a] focus:outline-none focus:border-[#b3282d]"
+                    />
+                    {serviceSearch && (
+                      <button onClick={() => setServiceSearch("")} className="absolute right-2.5 top-2 text-[#94a3b8] hover:text-[#0f172a]">
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
-                ))}
+
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs text-[#64748b] font-medium whitespace-nowrap">
+                      Showing {filteredServices.length} of {services.length}
+                    </span>
+                    {(serviceSearch || serviceCategoryFilter !== "All") && (
+                      <button
+                        onClick={() => { setServiceSearch(""); setServiceCategoryFilter("All"); }}
+                        className="px-2.5 py-1 text-[11px] font-bold text-[#b3282d] bg-[#fef2f2] hover:bg-[#fee2e2] rounded border border-[#fecaca] cursor-pointer"
+                      >
+                        Reset
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Dynamic Category Tags */}
+                <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-[#f1f5f9]">
+                  <span className="text-[10px] font-bold text-[#94a3b8] uppercase tracking-wider mr-1">Category:</span>
+                  {serviceCategories.map((cat) => {
+                    const count = cat === "All" ? services.length : services.filter(s => s.category?.trim() === cat).length;
+                    return (
+                      <button
+                        key={cat}
+                        onClick={() => setServiceCategoryFilter(cat)}
+                        className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${
+                          serviceCategoryFilter === cat
+                            ? "bg-[#b3282d] text-white shadow-xs"
+                            : "bg-[#f8fafc] text-[#475569] border border-[#e2e8f0] hover:bg-[#f1f5f9]"
+                        }`}
+                      >
+                        <span>{cat}</span>
+                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${serviceCategoryFilter === cat ? "bg-white/20 text-white" : "bg-[#e2e8f0] text-[#475569]"}`}>
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
+
+              {/* Data Table */}
+              {filteredServices.length === 0 ? (
+                <div className="bg-white border border-[#e2e8f0] rounded-xl p-12 text-center text-xs text-[#64748b]">
+                  No services matching your filter criteria.
+                </div>
+              ) : (
+                <div className="bg-white border border-[#e2e8f0] rounded-xl overflow-hidden shadow-xs">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-[#f8fafc] border-b border-[#e2e8f0] text-[#475569] uppercase font-bold text-[10px] tracking-wider">
+                        <tr>
+                          <th className="p-3 w-12 text-center">#</th>
+                          <th className="p-3">Service Name</th>
+                          <th className="p-3">Category</th>
+                          <th className="p-3">Summary</th>
+                          <th className="p-3 text-center">Order</th>
+                          <th className="p-3 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[#f1f5f9]">
+                        {filteredServices.map((srv, idx) => (
+                          <tr key={srv.id} className="hover:bg-[#f8fafc] transition-colors">
+                            <td className="p-3 text-center text-[#94a3b8] font-mono text-[11px]">{idx + 1}</td>
+                            <td className="p-3 font-semibold text-[#0f172a] max-w-[240px]">
+                              <span className="block font-bold">{srv.title}</span>
+                              {srv.details && (
+                                <span className="text-[11px] text-[#64748b]">
+                                  {srv.details.split("\n").filter(Boolean).length} scope items
+                                </span>
+                              )}
+                            </td>
+                            <td className="p-3 whitespace-nowrap">
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-[#b3282d] bg-[#fef2f2] px-2 py-0.5 rounded border border-[#fecaca]">
+                                {srv.category}
+                              </span>
+                            </td>
+                            <td className="p-3 text-[#475569] max-w-md">
+                              <p className="line-clamp-2 leading-relaxed text-[11px]">{srv.short_desc}</p>
+                            </td>
+                            <td className="p-3 text-center text-[#64748b] font-mono text-[11px]">
+                              #{srv.display_order}
+                            </td>
+                            <td className="p-3 text-right space-x-1 whitespace-nowrap">
+                              <button
+                                onClick={() => { setServiceForm(srv); setIsServiceModalOpen(true); }}
+                                className="px-2.5 py-1 bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#cbd5e1] rounded font-medium text-[#0f172a] cursor-pointer inline-flex items-center space-x-1"
+                              >
+                                <Edit className="w-3 h-3" />
+                                <span>Edit</span>
+                              </button>
+                              <button
+                                onClick={() => handleDeleteService(srv.id)}
+                                className="px-2.5 py-1 bg-red-50 hover:bg-red-100 border border-red-200 rounded font-medium text-red-700 cursor-pointer inline-flex items-center space-x-1"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                                <span>Delete</span>
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
           {/* ========================================================================= */}
-          {/* 4. INDUSTRIES WE SERVE */}
+          {/* 4. INDUSTRIES WE SERVE (Tabular Form) */}
           {/* ========================================================================= */}
           {activeTab === "industries" && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h2 className="text-xl font-heading font-extrabold text-[#0f172a]">
-                    Industries We Serve
+                    Industries We Serve ({industries.length})
                   </h2>
                   <p className="text-xs text-[#64748b]">
                     Manage sector verticals (Manufacturing, Chemical, Pharma, Testing Labs, Construction, Oil & Gas, etc.)
@@ -1086,59 +1354,144 @@ export default function AdminDashboardPage() {
                     setIndustryForm({ title: "", category: "Heavy & Engineering", scope: "", description: "", key_services: "", image_url: "", display_order: industries.length + 1 });
                     setIsIndustryModalOpen(true);
                   }}
-                  className="px-3.5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white text-xs font-heading font-bold rounded-lg transition-colors flex items-center shadow-xs"
+                  className="px-3.5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white text-xs font-heading font-bold rounded-lg transition-colors flex items-center justify-center shadow-xs cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Industry Sector
                 </button>
               </div>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {industries.map((ind) => (
-                  <div key={ind.id} className="bg-white border border-[#e2e8f0] rounded-xl p-5 shadow-xs flex flex-col justify-between space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#b3282d] bg-[#fef2f2] px-2 py-0.5 rounded border border-[#fecaca]">
-                          {ind.category}
-                        </span>
-                        <span className="text-[10px] text-[#94a3b8] font-mono">Order #{ind.display_order}</span>
-                      </div>
-                      <h3 className="font-heading font-bold text-sm text-[#0f172a]">{ind.title}</h3>
-                      <p className="text-[11px] text-[#b3282d] font-semibold">{ind.scope}</p>
-                      <p className="text-xs text-[#475569] line-clamp-3 leading-relaxed">{ind.description}</p>
-                    </div>
-
-                    <div className="pt-3 border-t border-[#f1f5f9] flex items-center justify-between text-xs">
-                      <span className="text-[11px] text-[#64748b]">ID #{ind.id}</span>
-                      <div className="space-x-1.5">
-                        <button
-                          onClick={() => { setIndustryForm(ind); setIsIndustryModalOpen(true); }}
-                          className="px-2.5 py-1 bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#cbd5e1] rounded font-medium text-[#0f172a]"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteIndustry(ind.id)}
-                          className="px-2.5 py-1 bg-red-50 hover:bg-red-100 border border-red-200 rounded font-medium text-red-700"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
+              {/* Filter & Search Bar */}
+              <div className="bg-white border border-[#e2e8f0] rounded-xl p-3 shadow-xs space-y-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                  <div className="relative flex-1 max-w-md">
+                    <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#94a3b8]" />
+                    <input
+                      type="text"
+                      placeholder="Search industries by sector title, category, scope..."
+                      value={industrySearch}
+                      onChange={(e) => setIndustrySearch(e.target.value)}
+                      className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg pl-8 pr-8 py-1.5 text-xs text-[#0f172a] focus:outline-none focus:border-[#b3282d]"
+                    />
+                    {industrySearch && (
+                      <button onClick={() => setIndustrySearch("")} className="absolute right-2.5 top-2 text-[#94a3b8] hover:text-[#0f172a]">
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
-                ))}
+
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs text-[#64748b] font-medium whitespace-nowrap">
+                      Showing {filteredIndustries.length} of {industries.length}
+                    </span>
+                    {(industrySearch || industryCategoryFilter !== "All") && (
+                      <button
+                        onClick={() => { setIndustrySearch(""); setIndustryCategoryFilter("All"); }}
+                        className="px-2.5 py-1 text-[11px] font-bold text-[#b3282d] bg-[#fef2f2] hover:bg-[#fee2e2] rounded border border-[#fecaca] cursor-pointer"
+                      >
+                        Reset
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Dynamic Category Tags */}
+                <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-[#f1f5f9]">
+                  <span className="text-[10px] font-bold text-[#94a3b8] uppercase tracking-wider mr-1">Category:</span>
+                  {industryCategories.map((cat) => {
+                    const count = cat === "All" ? industries.length : industries.filter(i => i.category?.trim() === cat).length;
+                    return (
+                      <button
+                        key={cat}
+                        onClick={() => setIndustryCategoryFilter(cat)}
+                        className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${
+                          industryCategoryFilter === cat
+                            ? "bg-[#b3282d] text-white shadow-xs"
+                            : "bg-[#f8fafc] text-[#475569] border border-[#e2e8f0] hover:bg-[#f1f5f9]"
+                        }`}
+                      >
+                        <span>{cat}</span>
+                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${industryCategoryFilter === cat ? "bg-white/20 text-white" : "bg-[#e2e8f0] text-[#475569]"}`}>
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
+
+              {/* Data Table */}
+              {filteredIndustries.length === 0 ? (
+                <div className="bg-white border border-[#e2e8f0] rounded-xl p-12 text-center text-xs text-[#64748b]">
+                  No industry sectors matching your filter criteria.
+                </div>
+              ) : (
+                <div className="bg-white border border-[#e2e8f0] rounded-xl overflow-hidden shadow-xs">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-[#f8fafc] border-b border-[#e2e8f0] text-[#475569] uppercase font-bold text-[10px] tracking-wider">
+                        <tr>
+                          <th className="p-3 w-12 text-center">#</th>
+                          <th className="p-3">Sector & Focus</th>
+                          <th className="p-3">Category</th>
+                          <th className="p-3">Scope & Description</th>
+                          <th className="p-3 text-center">Order</th>
+                          <th className="p-3 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[#f1f5f9]">
+                        {filteredIndustries.map((ind, idx) => (
+                          <tr key={ind.id} className="hover:bg-[#f8fafc] transition-colors">
+                            <td className="p-3 text-center text-[#94a3b8] font-mono text-[11px]">{idx + 1}</td>
+                            <td className="p-3 font-semibold text-[#0f172a] max-w-[240px]">
+                              <span className="block font-bold">{ind.title}</span>
+                              <span className="text-[11px] text-[#b3282d] font-medium">{ind.scope}</span>
+                            </td>
+                            <td className="p-3 whitespace-nowrap">
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-[#b3282d] bg-[#fef2f2] px-2 py-0.5 rounded border border-[#fecaca]">
+                                {ind.category}
+                              </span>
+                            </td>
+                            <td className="p-3 text-[#475569] max-w-md">
+                              <p className="line-clamp-2 leading-relaxed text-[11px]">{ind.description}</p>
+                            </td>
+                            <td className="p-3 text-center text-[#64748b] font-mono text-[11px]">
+                              #{ind.display_order}
+                            </td>
+                            <td className="p-3 text-right space-x-1 whitespace-nowrap">
+                              <button
+                                onClick={() => { setIndustryForm(ind); setIsIndustryModalOpen(true); }}
+                                className="px-2.5 py-1 bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#cbd5e1] rounded font-medium text-[#0f172a] cursor-pointer inline-flex items-center space-x-1"
+                              >
+                                <Edit className="w-3 h-3" />
+                                <span>Edit</span>
+                              </button>
+                              <button
+                                onClick={() => handleDeleteIndustry(ind.id)}
+                                className="px-2.5 py-1 bg-red-50 hover:bg-red-100 border border-red-200 rounded font-medium text-red-700 cursor-pointer inline-flex items-center space-x-1"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                                <span>Delete</span>
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
           {/* ========================================================================= */}
-          {/* 5. TRAINING PROGRAMS */}
+          {/* 5. TRAINING PROGRAMS (Tabular Form) */}
           {/* ========================================================================= */}
           {activeTab === "training" && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h2 className="text-xl font-heading font-extrabold text-[#0f172a]">
-                    Training Programs & Courses
+                    Training Programs & Courses ({trainingPrograms.length})
                   </h2>
                   <p className="text-xs text-[#64748b]">
                     Manage Lead Auditor, QHSE, Food Safety, and Lean Six Sigma curriculum and course modules.
@@ -1149,61 +1502,147 @@ export default function AdminDashboardPage() {
                     setTrainingForm({ title: "", badge: "Auditor Certification", target_audience: "", description: "", topics: "", duration: "2-5 Days", display_order: trainingPrograms.length + 1 });
                     setIsTrainingModalOpen(true);
                   }}
-                  className="px-3.5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white text-xs font-heading font-bold rounded-lg transition-colors flex items-center shadow-xs"
+                  className="px-3.5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white text-xs font-heading font-bold rounded-lg transition-colors flex items-center justify-center shadow-xs cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Training Program
                 </button>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-4">
-                {trainingPrograms.map((prog) => (
-                  <div key={prog.id} className="bg-white border border-[#e2e8f0] rounded-xl p-5 shadow-xs flex flex-col justify-between space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#b3282d] bg-[#fef2f2] px-2 py-0.5 rounded border border-[#fecaca]">
-                          {prog.badge}
-                        </span>
-                        <span className="text-[11px] font-bold text-[#64748b] flex items-center">
-                          <Calendar className="w-3 h-3 mr-1" /> {prog.duration}
-                        </span>
-                      </div>
-                      <h3 className="font-heading font-bold text-sm text-[#0f172a]">{prog.title}</h3>
-                      <p className="text-[11px] text-[#64748b] font-medium">Target: {prog.target_audience}</p>
-                      <p className="text-xs text-[#475569] line-clamp-3 leading-relaxed">{prog.description}</p>
-                    </div>
-
-                    <div className="pt-3 border-t border-[#f1f5f9] flex items-center justify-between text-xs">
-                      <span className="text-[11px] text-[#64748b]">ID #{prog.id}</span>
-                      <div className="space-x-1.5">
-                        <button
-                          onClick={() => { setTrainingForm(prog); setIsTrainingModalOpen(true); }}
-                          className="px-2.5 py-1 bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#cbd5e1] rounded font-medium text-[#0f172a]"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteTraining(prog.id)}
-                          className="px-2.5 py-1 bg-red-50 hover:bg-red-100 border border-red-200 rounded font-medium text-red-700"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
+              {/* Filter & Search Bar */}
+              <div className="bg-white border border-[#e2e8f0] rounded-xl p-3 shadow-xs space-y-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                  <div className="relative flex-1 max-w-md">
+                    <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#94a3b8]" />
+                    <input
+                      type="text"
+                      placeholder="Search training programs by title, tag, target audience..."
+                      value={trainingSearch}
+                      onChange={(e) => setTrainingSearch(e.target.value)}
+                      className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg pl-8 pr-8 py-1.5 text-xs text-[#0f172a] focus:outline-none focus:border-[#b3282d]"
+                    />
+                    {trainingSearch && (
+                      <button onClick={() => setTrainingSearch("")} className="absolute right-2.5 top-2 text-[#94a3b8] hover:text-[#0f172a]">
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
-                ))}
+
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs text-[#64748b] font-medium whitespace-nowrap">
+                      Showing {filteredTrainingPrograms.length} of {trainingPrograms.length}
+                    </span>
+                    {(trainingSearch || trainingBadgeFilter !== "All") && (
+                      <button
+                        onClick={() => { setTrainingSearch(""); setTrainingBadgeFilter("All"); }}
+                        className="px-2.5 py-1 text-[11px] font-bold text-[#b3282d] bg-[#fef2f2] hover:bg-[#fee2e2] rounded border border-[#fecaca] cursor-pointer"
+                      >
+                        Reset
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Dynamic Badge Filter Tags */}
+                <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-[#f1f5f9]">
+                  <span className="text-[10px] font-bold text-[#94a3b8] uppercase tracking-wider mr-1">Badge / Tag:</span>
+                  {trainingBadges.map((badge) => {
+                    const count = badge === "All" ? trainingPrograms.length : trainingPrograms.filter(t => t.badge?.trim() === badge).length;
+                    return (
+                      <button
+                        key={badge}
+                        onClick={() => setTrainingBadgeFilter(badge)}
+                        className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${
+                          trainingBadgeFilter === badge
+                            ? "bg-[#b3282d] text-white shadow-xs"
+                            : "bg-[#f8fafc] text-[#475569] border border-[#e2e8f0] hover:bg-[#f1f5f9]"
+                        }`}
+                      >
+                        <span>{badge}</span>
+                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${trainingBadgeFilter === badge ? "bg-white/20 text-white" : "bg-[#e2e8f0] text-[#475569]"}`}>
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
+
+              {/* Data Table */}
+              {filteredTrainingPrograms.length === 0 ? (
+                <div className="bg-white border border-[#e2e8f0] rounded-xl p-12 text-center text-xs text-[#64748b]">
+                  No training programs matching your search or filter.
+                </div>
+              ) : (
+                <div className="bg-white border border-[#e2e8f0] rounded-xl overflow-hidden shadow-xs">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-[#f8fafc] border-b border-[#e2e8f0] text-[#475569] uppercase font-bold text-[10px] tracking-wider">
+                        <tr>
+                          <th className="p-3 w-12 text-center">#</th>
+                          <th className="p-3">Course / Certification</th>
+                          <th className="p-3">Badge & Duration</th>
+                          <th className="p-3">Target Audience</th>
+                          <th className="p-3 text-center">Order</th>
+                          <th className="p-3 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[#f1f5f9]">
+                        {filteredTrainingPrograms.map((prog, idx) => (
+                          <tr key={prog.id} className="hover:bg-[#f8fafc] transition-colors">
+                            <td className="p-3 text-center text-[#94a3b8] font-mono text-[11px]">{idx + 1}</td>
+                            <td className="p-3 font-semibold text-[#0f172a] max-w-[240px]">
+                              <span className="block font-bold">{prog.title}</span>
+                              <p className="text-[11px] text-[#64748b] line-clamp-1">{prog.description}</p>
+                            </td>
+                            <td className="p-3 whitespace-nowrap">
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-[#b3282d] bg-[#fef2f2] px-2 py-0.5 rounded border border-[#fecaca] mr-2">
+                                {prog.badge}
+                              </span>
+                              <span className="text-[11px] text-[#475569] font-medium inline-flex items-center">
+                                <Calendar className="w-3 h-3 mr-1 text-[#64748b]" /> {prog.duration}
+                              </span>
+                            </td>
+                            <td className="p-3 text-[#475569] max-w-[200px]">
+                              <span className="line-clamp-1 text-[11px]">{prog.target_audience}</span>
+                            </td>
+                            <td className="p-3 text-center text-[#64748b] font-mono text-[11px]">
+                              #{prog.display_order}
+                            </td>
+                            <td className="p-3 text-right space-x-1 whitespace-nowrap">
+                              <button
+                                onClick={() => { setTrainingForm(prog); setIsTrainingModalOpen(true); }}
+                                className="px-2.5 py-1 bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#cbd5e1] rounded font-medium text-[#0f172a] cursor-pointer inline-flex items-center space-x-1"
+                              >
+                                <Edit className="w-3 h-3" />
+                                <span>Edit</span>
+                              </button>
+                              <button
+                                onClick={() => handleDeleteTraining(prog.id)}
+                                className="px-2.5 py-1 bg-red-50 hover:bg-red-100 border border-red-200 rounded font-medium text-red-700 cursor-pointer inline-flex items-center space-x-1"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                                <span>Delete</span>
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
           {/* ========================================================================= */}
-          {/* 6. PROJECTS & CLIENTS */}
+          {/* 6. PROJECTS & CLIENTS (Tabular Form) */}
           {/* ========================================================================= */}
           {activeTab === "projects" && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h2 className="text-xl font-heading font-extrabold text-[#0f172a]">
-                    Projects / Clients Portfolio
+                    Projects / Clients Portfolio ({projects.length})
                   </h2>
                   <p className="text-xs text-[#64748b]">
                     Manage implementation track record, multi-site certifications, NABL clearances, and plant risk audits.
@@ -1214,62 +1653,153 @@ export default function AdminDashboardPage() {
                     setProjectForm({ service_id: null, title: "", category_name: "ISO & IMS Consultancy", description: "", image_url: "", project_url: "", tag_style: "bg-accent/20 text-accent border border-accent/30", featured: false, display_order: projects.length + 1 });
                     setIsProjectModalOpen(true);
                   }}
-                  className="px-3.5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white text-xs font-heading font-bold rounded-lg transition-colors flex items-center shadow-xs"
+                  className="px-3.5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white text-xs font-heading font-bold rounded-lg transition-colors flex items-center justify-center shadow-xs cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Project
                 </button>
               </div>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {projects.map((proj) => (
-                  <div key={proj.id} className="bg-white border border-[#e2e8f0] rounded-xl p-5 shadow-xs flex flex-col justify-between space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#b3282d] bg-[#fef2f2] px-2 py-0.5 rounded border border-[#fecaca]">
-                          {proj.category_name}
-                        </span>
-                        {proj.featured && (
-                          <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
-                            Featured
-                          </span>
-                        )}
-                      </div>
-                      <h3 className="font-heading font-bold text-sm text-[#0f172a]">{proj.title}</h3>
-                      <p className="text-xs text-[#475569] line-clamp-3 leading-relaxed">{proj.description}</p>
-                    </div>
-
-                    <div className="pt-3 border-t border-[#f1f5f9] flex items-center justify-between text-xs">
-                      <span className="text-[11px] text-[#64748b]">ID #{proj.id}</span>
-                      <div className="space-x-1.5">
-                        <button
-                          onClick={() => { setProjectForm(proj); setIsProjectModalOpen(true); }}
-                          className="px-2.5 py-1 bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#cbd5e1] rounded font-medium text-[#0f172a]"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteProject(proj.id)}
-                          className="px-2.5 py-1 bg-red-50 hover:bg-red-100 border border-red-200 rounded font-medium text-red-700"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
+              {/* Filter & Search Bar */}
+              <div className="bg-white border border-[#e2e8f0] rounded-xl p-3 shadow-xs space-y-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                  <div className="relative flex-1 max-w-md">
+                    <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#94a3b8]" />
+                    <input
+                      type="text"
+                      placeholder="Search projects by title, category, description..."
+                      value={projectSearch}
+                      onChange={(e) => setProjectSearch(e.target.value)}
+                      className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg pl-8 pr-8 py-1.5 text-xs text-[#0f172a] focus:outline-none focus:border-[#b3282d]"
+                    />
+                    {projectSearch && (
+                      <button onClick={() => setProjectSearch("")} className="absolute right-2.5 top-2 text-[#94a3b8] hover:text-[#0f172a]">
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
-                ))}
+
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs text-[#64748b] font-medium whitespace-nowrap">
+                      Showing {filteredProjects.length} of {projects.length}
+                    </span>
+                    {(projectSearch || projectCategoryFilter !== "All") && (
+                      <button
+                        onClick={() => { setProjectSearch(""); setProjectCategoryFilter("All"); }}
+                        className="px-2.5 py-1 text-[11px] font-bold text-[#b3282d] bg-[#fef2f2] hover:bg-[#fee2e2] rounded border border-[#fecaca] cursor-pointer"
+                      >
+                        Reset
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Dynamic Category Tags */}
+                <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-[#f1f5f9]">
+                  <span className="text-[10px] font-bold text-[#94a3b8] uppercase tracking-wider mr-1">Category:</span>
+                  {projectCategories.map((cat) => {
+                    const count = cat === "All" ? projects.length : projects.filter(p => p.category_name?.trim() === cat).length;
+                    return (
+                      <button
+                        key={cat}
+                        onClick={() => setProjectCategoryFilter(cat)}
+                        className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${
+                          projectCategoryFilter === cat
+                            ? "bg-[#b3282d] text-white shadow-xs"
+                            : "bg-[#f8fafc] text-[#475569] border border-[#e2e8f0] hover:bg-[#f1f5f9]"
+                        }`}
+                      >
+                        <span>{cat}</span>
+                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${projectCategoryFilter === cat ? "bg-white/20 text-white" : "bg-[#e2e8f0] text-[#475569]"}`}>
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
+
+              {/* Data Table */}
+              {filteredProjects.length === 0 ? (
+                <div className="bg-white border border-[#e2e8f0] rounded-xl p-12 text-center text-xs text-[#64748b]">
+                  No projects matching your search or category filter.
+                </div>
+              ) : (
+                <div className="bg-white border border-[#e2e8f0] rounded-xl overflow-hidden shadow-xs">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-[#f8fafc] border-b border-[#e2e8f0] text-[#475569] uppercase font-bold text-[10px] tracking-wider">
+                        <tr>
+                          <th className="p-3 w-12 text-center">#</th>
+                          <th className="p-3">Project Title</th>
+                          <th className="p-3">Category</th>
+                          <th className="p-3">Featured</th>
+                          <th className="p-3">Description</th>
+                          <th className="p-3 text-center">Order</th>
+                          <th className="p-3 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[#f1f5f9]">
+                        {filteredProjects.map((proj, idx) => (
+                          <tr key={proj.id} className="hover:bg-[#f8fafc] transition-colors">
+                            <td className="p-3 text-center text-[#94a3b8] font-mono text-[11px]">{idx + 1}</td>
+                            <td className="p-3 font-semibold text-[#0f172a] max-w-[240px]">
+                              <span className="block font-bold">{proj.title}</span>
+                            </td>
+                            <td className="p-3 whitespace-nowrap">
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-[#b3282d] bg-[#fef2f2] px-2 py-0.5 rounded border border-[#fecaca]">
+                                {proj.category_name}
+                              </span>
+                            </td>
+                            <td className="p-3 whitespace-nowrap">
+                              {proj.featured ? (
+                                <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                                  Featured
+                                </span>
+                              ) : (
+                                <span className="text-[10px] text-[#94a3b8]">Standard</span>
+                              )}
+                            </td>
+                            <td className="p-3 text-[#475569] max-w-md">
+                              <p className="line-clamp-2 leading-relaxed text-[11px]">{proj.description}</p>
+                            </td>
+                            <td className="p-3 text-center text-[#64748b] font-mono text-[11px]">
+                              #{proj.display_order}
+                            </td>
+                            <td className="p-3 text-right space-x-1 whitespace-nowrap">
+                              <button
+                                onClick={() => { setProjectForm(proj); setIsProjectModalOpen(true); }}
+                                className="px-2.5 py-1 bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#cbd5e1] rounded font-medium text-[#0f172a] cursor-pointer inline-flex items-center space-x-1"
+                              >
+                                <Edit className="w-3 h-3" />
+                                <span>Edit</span>
+                              </button>
+                              <button
+                                onClick={() => handleDeleteProject(proj.id)}
+                                className="px-2.5 py-1 bg-red-50 hover:bg-red-100 border border-red-200 rounded font-medium text-red-700 cursor-pointer inline-flex items-center space-x-1"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                                <span>Delete</span>
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
           {/* ========================================================================= */}
-          {/* 7. RESOURCES & DOWNLOADS */}
+          {/* 7. RESOURCES & DOWNLOADS (Tabular Form) */}
           {/* ========================================================================= */}
           {activeTab === "resources" && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h2 className="text-xl font-heading font-extrabold text-[#0f172a]">
-                    Resources & Compliance Documentation
+                    Resources & Compliance Documentation ({resources.length})
                   </h2>
                   <p className="text-xs text-[#64748b]">
                     Manage implementation checklists, NABL blueprints, HIRA safety scorecards, and toolkits.
@@ -1280,47 +1810,136 @@ export default function AdminDashboardPage() {
                     setResourceForm({ title: "", category: "QMS & Compliance", description: "", tags: "", file_format: "PDF Document", file_size: "1.5 MB", file_url: "", display_order: resources.length + 1 });
                     setIsResourceModalOpen(true);
                   }}
-                  className="px-3.5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white text-xs font-heading font-bold rounded-lg transition-colors flex items-center shadow-xs"
+                  className="px-3.5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white text-xs font-heading font-bold rounded-lg transition-colors flex items-center justify-center shadow-xs cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Resource Item
                 </button>
               </div>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {resources.map((res) => (
-                  <div key={res.id} className="bg-white border border-[#e2e8f0] rounded-xl p-5 shadow-xs flex flex-col justify-between space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#b3282d] bg-[#fef2f2] px-2 py-0.5 rounded border border-[#fecaca]">
-                          {res.category}
-                        </span>
-                        <span className="text-[10px] text-[#64748b]">{res.file_format} • {res.file_size}</span>
-                      </div>
-                      <h3 className="font-heading font-bold text-sm text-[#0f172a]">{res.title}</h3>
-                      <p className="text-xs text-[#475569] line-clamp-3 leading-relaxed">{res.description}</p>
-                      <span className="text-[10px] font-mono text-[#64748b] block">{res.tags}</span>
-                    </div>
-
-                    <div className="pt-3 border-t border-[#f1f5f9] flex items-center justify-between text-xs">
-                      <span className="text-[11px] text-[#64748b]">ID #{res.id}</span>
-                      <div className="space-x-1.5">
-                        <button
-                          onClick={() => { setResourceForm(res); setIsResourceModalOpen(true); }}
-                          className="px-2.5 py-1 bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#cbd5e1] rounded font-medium text-[#0f172a]"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteResource(res.id)}
-                          className="px-2.5 py-1 bg-red-50 hover:bg-red-100 border border-red-200 rounded font-medium text-red-700"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
+              {/* Filter & Search Bar */}
+              <div className="bg-white border border-[#e2e8f0] rounded-xl p-3 shadow-xs space-y-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                  <div className="relative flex-1 max-w-md">
+                    <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#94a3b8]" />
+                    <input
+                      type="text"
+                      placeholder="Search resources by title, category, tags, format..."
+                      value={resourceSearch}
+                      onChange={(e) => setResourceSearch(e.target.value)}
+                      className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg pl-8 pr-8 py-1.5 text-xs text-[#0f172a] focus:outline-none focus:border-[#b3282d]"
+                    />
+                    {resourceSearch && (
+                      <button onClick={() => setResourceSearch("")} className="absolute right-2.5 top-2 text-[#94a3b8] hover:text-[#0f172a]">
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
-                ))}
+
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs text-[#64748b] font-medium whitespace-nowrap">
+                      Showing {filteredResources.length} of {resources.length}
+                    </span>
+                    {(resourceSearch || resourceCategoryFilter !== "All") && (
+                      <button
+                        onClick={() => { setResourceSearch(""); setResourceCategoryFilter("All"); }}
+                        className="px-2.5 py-1 text-[11px] font-bold text-[#b3282d] bg-[#fef2f2] hover:bg-[#fee2e2] rounded border border-[#fecaca] cursor-pointer"
+                      >
+                        Reset
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Dynamic Category Tags */}
+                <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-[#f1f5f9]">
+                  <span className="text-[10px] font-bold text-[#94a3b8] uppercase tracking-wider mr-1">Category:</span>
+                  {resourceCategories.map((cat) => {
+                    const count = cat === "All" ? resources.length : resources.filter(r => r.category?.trim() === cat).length;
+                    return (
+                      <button
+                        key={cat}
+                        onClick={() => setResourceCategoryFilter(cat)}
+                        className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer flex items-center space-x-1.5 ${
+                          resourceCategoryFilter === cat
+                            ? "bg-[#b3282d] text-white shadow-xs"
+                            : "bg-[#f8fafc] text-[#475569] border border-[#e2e8f0] hover:bg-[#f1f5f9]"
+                        }`}
+                      >
+                        <span>{cat}</span>
+                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${resourceCategoryFilter === cat ? "bg-white/20 text-white" : "bg-[#e2e8f0] text-[#475569]"}`}>
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
+
+              {/* Data Table */}
+              {filteredResources.length === 0 ? (
+                <div className="bg-white border border-[#e2e8f0] rounded-xl p-12 text-center text-xs text-[#64748b]">
+                  No resources matching your search or category filter.
+                </div>
+              ) : (
+                <div className="bg-white border border-[#e2e8f0] rounded-xl overflow-hidden shadow-xs">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-[#f8fafc] border-b border-[#e2e8f0] text-[#475569] uppercase font-bold text-[10px] tracking-wider">
+                        <tr>
+                          <th className="p-3 w-12 text-center">#</th>
+                          <th className="p-3">Resource Title</th>
+                          <th className="p-3">Category</th>
+                          <th className="p-3">Format / Size</th>
+                          <th className="p-3">Tags</th>
+                          <th className="p-3 text-center">Order</th>
+                          <th className="p-3 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[#f1f5f9]">
+                        {filteredResources.map((res, idx) => (
+                          <tr key={res.id} className="hover:bg-[#f8fafc] transition-colors">
+                            <td className="p-3 text-center text-[#94a3b8] font-mono text-[11px]">{idx + 1}</td>
+                            <td className="p-3 font-semibold text-[#0f172a] max-w-[240px]">
+                              <span className="block font-bold">{res.title}</span>
+                              <p className="text-[11px] text-[#64748b] line-clamp-1">{res.description}</p>
+                            </td>
+                            <td className="p-3 whitespace-nowrap">
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-[#b3282d] bg-[#fef2f2] px-2 py-0.5 rounded border border-[#fecaca]">
+                                {res.category}
+                              </span>
+                            </td>
+                            <td className="p-3 whitespace-nowrap text-[#64748b] text-[11px]">
+                              {res.file_format} • {res.file_size}
+                            </td>
+                            <td className="p-3 text-[#64748b] font-mono text-[10px] max-w-[180px]">
+                              <span className="line-clamp-1">{res.tags || "—"}</span>
+                            </td>
+                            <td className="p-3 text-center text-[#64748b] font-mono text-[11px]">
+                              #{res.display_order}
+                            </td>
+                            <td className="p-3 text-right space-x-1 whitespace-nowrap">
+                              <button
+                                onClick={() => { setResourceForm(res); setIsResourceModalOpen(true); }}
+                                className="px-2.5 py-1 bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#cbd5e1] rounded font-medium text-[#0f172a] cursor-pointer inline-flex items-center space-x-1"
+                              >
+                                <Edit className="w-3 h-3" />
+                                <span>Edit</span>
+                              </button>
+                              <button
+                                onClick={() => handleDeleteResource(res.id)}
+                                className="px-2.5 py-1 bg-red-50 hover:bg-red-100 border border-red-200 rounded font-medium text-red-700 cursor-pointer inline-flex items-center space-x-1"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                                <span>Delete</span>
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </main>
@@ -1337,7 +1956,7 @@ export default function AdminDashboardPage() {
                 <h3 className="text-base font-heading font-bold text-[#0f172a]">{selectedLead.full_name}</h3>
                 <p className="text-xs text-[#64748b]">{selectedLead.company_name || "Direct Individual Inquiry"}</p>
               </div>
-              <button onClick={() => setSelectedLead(null)} className="p-1 rounded text-[#64748b] hover:text-[#0f172a]">
+              <button onClick={() => setSelectedLead(null)} className="p-1 rounded text-[#64748b] hover:text-[#0f172a] cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1374,14 +1993,14 @@ export default function AdminDashboardPage() {
 
               <div className="text-[10px] text-[#94a3b8] flex items-center justify-between pt-1">
                 <span>Submitted: {new Date(selectedLead.submitted_at).toLocaleString()}</span>
-                <span className="font-mono">IP: {selectedLead.id}</span>
+                <span className="font-mono">ID: #{selectedLead.id}</span>
               </div>
             </div>
 
             <div className="flex items-center justify-end space-x-2 pt-3 border-t border-[#f1f5f9]">
               <button
                 onClick={() => setSelectedLead(null)}
-                className="px-4 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] text-xs font-bold rounded-lg"
+                className="px-4 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] text-xs font-bold rounded-lg cursor-pointer"
               >
                 Close
               </button>
@@ -1400,7 +2019,7 @@ export default function AdminDashboardPage() {
               <h3 className="text-base font-heading font-bold text-[#0f172a]">
                 {serviceForm.id ? "Edit Service" : "Add New Service"}
               </h3>
-              <button onClick={() => setIsServiceModalOpen(false)} className="p-1 text-[#64748b] hover:text-[#0f172a]">
+              <button onClick={() => setIsServiceModalOpen(false)} className="p-1 text-[#64748b] hover:text-[#0f172a] cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1481,14 +2100,14 @@ export default function AdminDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setIsServiceModalOpen(false)}
-                  className="px-4 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] font-bold rounded-lg"
+                  className="px-4 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] font-bold rounded-lg cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={savingEntity}
-                  className="px-5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white font-heading font-bold rounded-lg"
+                  className="px-5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white font-heading font-bold rounded-lg cursor-pointer"
                 >
                   {savingEntity ? "Saving..." : "Save Service"}
                 </button>
@@ -1508,7 +2127,7 @@ export default function AdminDashboardPage() {
               <h3 className="text-base font-heading font-bold text-[#0f172a]">
                 {industryForm.id ? "Edit Industry Sector" : "Add Industry Sector"}
               </h3>
-              <button onClick={() => setIsIndustryModalOpen(false)} className="p-1 text-[#64748b] hover:text-[#0f172a]">
+              <button onClick={() => setIsIndustryModalOpen(false)} className="p-1 text-[#64748b] hover:text-[#0f172a] cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1585,14 +2204,14 @@ export default function AdminDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setIsIndustryModalOpen(false)}
-                  className="px-4 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] font-bold rounded-lg"
+                  className="px-4 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] font-bold rounded-lg cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={savingEntity}
-                  className="px-5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white font-heading font-bold rounded-lg"
+                  className="px-5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white font-heading font-bold rounded-lg cursor-pointer"
                 >
                   {savingEntity ? "Saving..." : "Save Industry"}
                 </button>
@@ -1612,7 +2231,7 @@ export default function AdminDashboardPage() {
               <h3 className="text-base font-heading font-bold text-[#0f172a]">
                 {trainingForm.id ? "Edit Training Program" : "Add Training Program"}
               </h3>
-              <button onClick={() => setIsTrainingModalOpen(false)} className="p-1 text-[#64748b] hover:text-[#0f172a]">
+              <button onClick={() => setIsTrainingModalOpen(false)} className="p-1 text-[#64748b] hover:text-[#0f172a] cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1688,14 +2307,14 @@ export default function AdminDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setIsTrainingModalOpen(false)}
-                  className="px-4 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] font-bold rounded-lg"
+                  className="px-4 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] font-bold rounded-lg cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={savingEntity}
-                  className="px-5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white font-heading font-bold rounded-lg"
+                  className="px-5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white font-heading font-bold rounded-lg cursor-pointer"
                 >
                   {savingEntity ? "Saving..." : "Save Training"}
                 </button>
@@ -1715,7 +2334,7 @@ export default function AdminDashboardPage() {
               <h3 className="text-base font-heading font-bold text-[#0f172a]">
                 {projectForm.id ? "Edit Project" : "Add Project"}
               </h3>
-              <button onClick={() => setIsProjectModalOpen(false)} className="p-1 text-[#64748b] hover:text-[#0f172a]">
+              <button onClick={() => setIsProjectModalOpen(false)} className="p-1 text-[#64748b] hover:text-[#0f172a] cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1799,14 +2418,14 @@ export default function AdminDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setIsProjectModalOpen(false)}
-                  className="px-4 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] font-bold rounded-lg"
+                  className="px-4 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] font-bold rounded-lg cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={savingEntity}
-                  className="px-5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white font-heading font-bold rounded-lg"
+                  className="px-5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white font-heading font-bold rounded-lg cursor-pointer"
                 >
                   {savingEntity ? "Saving..." : "Save Project"}
                 </button>
@@ -1826,7 +2445,7 @@ export default function AdminDashboardPage() {
               <h3 className="text-base font-heading font-bold text-[#0f172a]">
                 {resourceForm.id ? "Edit Resource" : "Add Resource Guide"}
               </h3>
-              <button onClick={() => setIsResourceModalOpen(false)} className="p-1 text-[#64748b] hover:text-[#0f172a]">
+              <button onClick={() => setIsResourceModalOpen(false)} className="p-1 text-[#64748b] hover:text-[#0f172a] cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1903,14 +2522,14 @@ export default function AdminDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setIsResourceModalOpen(false)}
-                  className="px-4 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] font-bold rounded-lg"
+                  className="px-4 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] font-bold rounded-lg cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={savingEntity}
-                  className="px-5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white font-heading font-bold rounded-lg"
+                  className="px-5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white font-heading font-bold rounded-lg cursor-pointer"
                 >
                   {savingEntity ? "Saving..." : "Save Resource"}
                 </button>
