@@ -57,7 +57,35 @@ const RESOURCES = [
   }
 ];
 
+import { useState, useEffect } from "react";
+
 export default function ResourcesPage() {
+  const [resourceList, setResourceList] = useState(RESOURCES);
+
+  useEffect(() => {
+    const fetchResources = async () => {
+      try {
+        const res = await fetch("https://acms.harshaicreations.com/api.php?action=get_resources");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+            const mapped = data.data.map((item: any) => ({
+              icon: FileText,
+              title: item.title,
+              category: item.category || "QMS & Compliance",
+              desc: item.description,
+              tags: typeof item.tags === "string" ? item.tags.split(",").map((t: string) => t.trim()) : []
+            }));
+            setResourceList(mapped);
+          }
+        }
+      } catch (e) {
+        // Fallback to static default data
+      }
+    };
+    fetchResources();
+  }, []);
+
   return (
     <div className="relative overflow-hidden bg-white text-[#0f172a]">
       {/* Hero Header */}
@@ -81,7 +109,7 @@ export default function ResourcesPage() {
       <section className="py-14 bg-[#f8fafc]">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {RESOURCES.map((res, idx) => (
+            {resourceList.map((res, idx) => (
               <div
                 key={idx}
                 className="bg-white border border-[#e2e8f0] hover:border-[#cbd5e1] hover:shadow-md p-6 rounded-lg flex flex-col justify-between transition-all"

@@ -79,7 +79,7 @@ export default function Footer() {
                 <Link href="/about" className="text-[#475569] hover:text-[#0f172a] transition-colors">About Us</Link>
               </li>
               <li>
-                <Link href="/services" className="text-[#475569] hover:text-[#0f172a] transition-colors">Our Services</Link>
+                <Link href="/services" className="text-[#475569] hover:text-[#0f172a] transition-colors">Services</Link>
               </li>
               <li>
                 <Link href="/industries" className="text-[#475569] hover:text-[#0f172a] transition-colors">Industries We Serve</Link>
@@ -88,10 +88,10 @@ export default function Footer() {
                 <Link href="/training" className="text-[#475569] hover:text-[#0f172a] transition-colors">Training Programs</Link>
               </li>
               <li>
-                <Link href="/portfolio" className="text-[#475569] hover:text-[#0f172a] transition-colors">Projects & Clients</Link>
+                <Link href="/portfolio" className="text-[#475569] hover:text-[#0f172a] transition-colors">Projects / Clients</Link>
               </li>
               <li>
-                <Link href="/resources" className="text-[#475569] hover:text-[#0f172a] transition-colors">Resources & Guides</Link>
+                <Link href="/resources" className="text-[#475569] hover:text-[#0f172a] transition-colors">Resources</Link>
               </li>
               <li>
                 <Link href="/contact" className="text-[#475569] hover:text-[#0f172a] transition-colors">Contact Us</Link>

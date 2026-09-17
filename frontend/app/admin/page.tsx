@@ -8,6 +8,9 @@ import {
   Users, 
   Layers, 
   Briefcase, 
+  Factory,
+  GraduationCap,
+  FileText,
   Plus, 
   Edit, 
   Trash2, 
@@ -21,8 +24,22 @@ import {
   Menu,
   Globe,
   RefreshCw,
-  ShieldCheck
+  ShieldCheck,
+  Search,
+  Filter,
+  Eye,
+  Download,
+  Building2,
+  Calendar,
+  Phone,
+  Mail,
+  MapPin,
+  Check
 } from "lucide-react";
+
+// ==========================================
+// DATA INTERFACES
+// ==========================================
 
 interface Lead {
   id: number;
@@ -39,10 +56,32 @@ interface Lead {
 interface Service {
   id?: number;
   title: string;
-  category: "Business Consulting" | "Technical Expertise";
+  category: string;
   short_desc: string;
   image_url: string;
   details: string;
+  display_order: number;
+}
+
+interface Industry {
+  id?: number;
+  title: string;
+  category: string;
+  scope: string;
+  description: string;
+  key_services: string;
+  image_url: string;
+  display_order: number;
+}
+
+interface TrainingProgram {
+  id?: number;
+  title: string;
+  badge: string;
+  target_audience: string;
+  description: string;
+  topics: string;
+  duration: string;
   display_order: number;
 }
 
@@ -60,13 +99,23 @@ interface Project {
   display_order: number;
 }
 
+interface ResourceItem {
+  id?: number;
+  title: string;
+  category: string;
+  description: string;
+  tags: string;
+  file_format: string;
+  file_size: string;
+  file_url: string;
+  display_order: number;
+}
+
 const API_BASE = "https://acms.harshaicreations.com/api.php";
 
 export default function AdminDashboardPage() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [checkingAuth, setCheckingAuth] = useState<boolean>(true);
-
-  // Mobile Menu Drawer State
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   // Login Form
@@ -75,36 +124,65 @@ export default function AdminDashboardPage() {
   const [loginLoading, setLoginLoading] = useState<boolean>(false);
 
   // Active Tab
-  const [activeTab, setActiveTab] = useState<"dashboard" | "leads" | "services" | "projects">("dashboard");
+  const [activeTab, setActiveTab] = useState<"dashboard" | "leads" | "services" | "industries" | "training" | "projects" | "resources">("dashboard");
 
   // Data States
   const [leads, setLeads] = useState<Lead[]>([]);
   const [services, setServices] = useState<Service[]>([]);
+  const [industries, setIndustries] = useState<Industry[]>([]);
+  const [trainingPrograms, setTrainingPrograms] = useState<TrainingProgram[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [resources, setResources] = useState<ResourceItem[]>([]);
   const [dataLoading, setDataLoading] = useState<boolean>(false);
+
+  // Search & Filters
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [leadFilter, setLeadFilter] = useState<string>("all");
 
   // Toast State
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
-  // Service Modal State
+  // Active Lead Details Modal
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+
+  // Modals & Forms State
   const [isServiceModalOpen, setIsServiceModalOpen] = useState<boolean>(false);
   const [serviceForm, setServiceForm] = useState<Service>({
     title: "",
-    category: "Business Consulting",
+    category: "Industrial Consultancy",
     short_desc: "",
     image_url: "",
     details: "",
     display_order: 0
   });
-  const [serviceSaving, setServiceSaving] = useState<boolean>(false);
-  const [serviceUploading, setServiceUploading] = useState<boolean>(false);
 
-  // Project Modal State
+  const [isIndustryModalOpen, setIsIndustryModalOpen] = useState<boolean>(false);
+  const [industryForm, setIndustryForm] = useState<Industry>({
+    title: "",
+    category: "Heavy & Engineering",
+    scope: "",
+    description: "",
+    key_services: "",
+    image_url: "",
+    display_order: 0
+  });
+
+  const [isTrainingModalOpen, setIsTrainingModalOpen] = useState<boolean>(false);
+  const [trainingForm, setTrainingForm] = useState<TrainingProgram>({
+    title: "",
+    badge: "Auditor Certification",
+    target_audience: "",
+    description: "",
+    topics: "",
+    duration: "2-5 Days",
+    display_order: 0
+  });
+
   const [isProjectModalOpen, setIsProjectModalOpen] = useState<boolean>(false);
   const [projectForm, setProjectForm] = useState<Project>({
     service_id: null,
     title: "",
-    category_name: "Consulting Case Studies",
+    category_name: "ISO & IMS Consultancy",
     description: "",
     image_url: "",
     project_url: "",
@@ -112,15 +190,28 @@ export default function AdminDashboardPage() {
     featured: false,
     display_order: 0
   });
-  const [projectSaving, setProjectSaving] = useState<boolean>(false);
-  const [projectUploading, setProjectUploading] = useState<boolean>(false);
+
+  const [isResourceModalOpen, setIsResourceModalOpen] = useState<boolean>(false);
+  const [resourceForm, setResourceForm] = useState<ResourceItem>({
+    title: "",
+    category: "QMS & Compliance",
+    description: "",
+    tags: "",
+    file_format: "PDF Document",
+    file_size: "1.5 MB",
+    file_url: "",
+    display_order: 0
+  });
+
+  const [savingEntity, setSavingEntity] = useState<boolean>(false);
+  const [uploadingImage, setUploadingImage] = useState<boolean>(false);
 
   const showToast = (message: string, type: "success" | "error" = "success") => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 4000);
   };
 
-  // Check saved login session
+  // Check Auth
   useEffect(() => {
     const token = localStorage.getItem("axar_admin_token");
     if (token) {
@@ -129,7 +220,7 @@ export default function AdminDashboardPage() {
     setCheckingAuth(false);
   }, []);
 
-  // Fetch data when logged in
+  // Fetch all data when logged in
   useEffect(() => {
     if (isLoggedIn) {
       fetchAllData();
@@ -139,35 +230,47 @@ export default function AdminDashboardPage() {
   const fetchAllData = async () => {
     setDataLoading(true);
     try {
-      const [leadsRes, servicesRes, projectsRes] = await Promise.all([
+      const [leadsRes, servicesRes, industriesRes, trainingRes, projectsRes, resourcesRes] = await Promise.all([
         fetch(`${API_BASE}?action=get_leads`),
         fetch(`${API_BASE}?action=get_services`),
-        fetch(`${API_BASE}?action=get_projects`)
+        fetch(`${API_BASE}?action=get_industries`),
+        fetch(`${API_BASE}?action=get_training_programs`),
+        fetch(`${API_BASE}?action=get_projects`),
+        fetch(`${API_BASE}?action=get_resources`)
       ]);
 
-      const leadsData = await leadsRes.json();
-      const servicesData = await servicesRes.json();
-      const projectsData = await projectsRes.json();
-
-      if (leadsData.success) setLeads(leadsData.data || []);
-      if (servicesData.success) setServices(servicesData.data || []);
-      if (projectsData.success) {
-        setProjects(
-          (projectsData.data || []).map((p: Project & { featured: number | boolean }) => ({
-            ...p,
-            featured: Boolean(p.featured)
-          }))
-        );
+      if (leadsRes.ok) {
+        const d = await leadsRes.json();
+        if (d.success && Array.isArray(d.data)) setLeads(d.data);
+      }
+      if (servicesRes.ok) {
+        const d = await servicesRes.json();
+        if (d.success && Array.isArray(d.data)) setServices(d.data);
+      }
+      if (industriesRes.ok) {
+        const d = await industriesRes.json();
+        if (d.success && Array.isArray(d.data)) setIndustries(d.data);
+      }
+      if (trainingRes.ok) {
+        const d = await trainingRes.json();
+        if (d.success && Array.isArray(d.data)) setTrainingPrograms(d.data);
+      }
+      if (projectsRes.ok) {
+        const d = await projectsRes.json();
+        if (d.success && Array.isArray(d.data)) setProjects(d.data);
+      }
+      if (resourcesRes.ok) {
+        const d = await resourcesRes.json();
+        if (d.success && Array.isArray(d.data)) setResources(d.data);
       }
     } catch (err) {
-      console.error("Failed to load admin data:", err);
-      showToast("Failed to sync database data", "error");
+      console.error("Error fetching data:", err);
     } finally {
       setDataLoading(false);
     }
   };
 
-  // Handle Login
+  // Login Handler
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
     setLoginLoading(true);
@@ -181,30 +284,55 @@ export default function AdminDashboardPage() {
       if (data.success && data.token) {
         localStorage.setItem("axar_admin_token", data.token);
         setIsLoggedIn(true);
-        showToast("Welcome to Axar Admin Dashboard!");
+        showToast("Welcome back! Login successful.");
       } else {
-        showToast(data.error || "Invalid username or password", "error");
+        showToast(data.error || "Invalid username or password.", "error");
       }
     } catch (err) {
-      showToast("Network error. Could not connect to backend.", "error");
+      showToast("Unable to reach authentication server.", "error");
     } finally {
       setLoginLoading(false);
     }
   };
 
-  // Handle Logout
   const handleLogout = () => {
     localStorage.removeItem("axar_admin_token");
     setIsLoggedIn(false);
-    setUsername("");
-    setPassword("");
-    setIsMobileMenuOpen(false);
+    showToast("Signed out successfully.");
   };
 
-  // -------------------------------------------------------------
-  // LEADS ACTIONS
-  // -------------------------------------------------------------
-  const handleUpdateLeadStatus = async (id: number, status: "new" | "contacted" | "closed") => {
+  // Image Upload to Cloudinary
+  const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>, targetForm: "service" | "industry" | "project" | "resource") => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append("image", file);
+
+    setUploadingImage(true);
+    try {
+      const res = await fetch(`${API_BASE}?action=upload_image`, {
+        method: "POST",
+        body: formData
+      });
+      const data = await res.json();
+      if (data.success && data.url) {
+        if (targetForm === "service") setServiceForm(prev => ({ ...prev, image_url: data.url }));
+        if (targetForm === "industry") setIndustryForm(prev => ({ ...prev, image_url: data.url }));
+        if (targetForm === "project") setProjectForm(prev => ({ ...prev, image_url: data.url }));
+        if (targetForm === "resource") setResourceForm(prev => ({ ...prev, file_url: data.url }));
+        showToast("File uploaded successfully to Cloudinary!");
+      } else {
+        showToast(data.error || "Upload failed.", "error");
+      }
+    } catch (err) {
+      showToast("Error uploading file.", "error");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  // Leads Actions
+  const handleLeadStatusChange = async (id: number, status: "new" | "contacted" | "closed") => {
     try {
       const res = await fetch(`${API_BASE}?action=update_lead_status`, {
         method: "POST",
@@ -213,18 +341,16 @@ export default function AdminDashboardPage() {
       });
       const data = await res.json();
       if (data.success) {
-        setLeads(leads.map(l => l.id === id ? { ...l, status } : l));
-        showToast("Lead status updated successfully");
-      } else {
-        showToast(data.error || "Failed to update status", "error");
+        setLeads(prev => prev.map(l => l.id === id ? { ...l, status } : l));
+        showToast("Lead status updated.");
       }
     } catch (err) {
-      showToast("Network error while updating status", "error");
+      showToast("Failed to update status.", "error");
     }
   };
 
   const handleDeleteLead = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this lead?")) return;
+    if (!confirm("Are you sure you want to permanently delete this lead?")) return;
     try {
       const res = await fetch(`${API_BASE}?action=delete_lead`, {
         method: "POST",
@@ -233,53 +359,19 @@ export default function AdminDashboardPage() {
       });
       const data = await res.json();
       if (data.success) {
-        setLeads(leads.filter(l => l.id !== id));
-        showToast("Lead deleted successfully");
-      } else {
-        showToast(data.error || "Failed to delete lead", "error");
+        setLeads(prev => prev.filter(l => l.id !== id));
+        if (selectedLead?.id === id) setSelectedLead(null);
+        showToast("Lead removed.");
       }
     } catch (err) {
-      showToast("Network error while deleting lead", "error");
+      showToast("Failed to delete lead.", "error");
     }
   };
 
-  // -------------------------------------------------------------
-  // CLOUDINARY UPLOAD HANDLER
-  // -------------------------------------------------------------
-  const handleImageUpload = async (
-    file: File, 
-    onSuccess: (url: string) => void, 
-    setUploading: (val: boolean) => void
-  ) => {
-    setUploading(true);
-    const formData = new FormData();
-    formData.append("image", file);
-
-    try {
-      const res = await fetch(`${API_BASE}?action=upload_image`, {
-        method: "POST",
-        body: formData
-      });
-      const data = await res.json();
-      if (data.success && data.url) {
-        onSuccess(data.url);
-        showToast("Image uploaded to Cloudinary successfully!");
-      } else {
-        showToast(data.error || "Image upload failed", "error");
-      }
-    } catch (err) {
-      showToast("Network error uploading image", "error");
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  // -------------------------------------------------------------
-  // SERVICES ACTIONS
-  // -------------------------------------------------------------
+  // Service Save & Delete
   const handleSaveService = async (e: FormEvent) => {
     e.preventDefault();
-    setServiceSaving(true);
+    setSavingEntity(true);
     try {
       const res = await fetch(`${API_BASE}?action=save_service`, {
         method: "POST",
@@ -288,21 +380,21 @@ export default function AdminDashboardPage() {
       });
       const data = await res.json();
       if (data.success) {
-        showToast(serviceForm.id ? "Service updated!" : "Service created!");
+        showToast(serviceForm.id ? "Service updated successfully!" : "Service created successfully!");
         setIsServiceModalOpen(false);
         fetchAllData();
       } else {
-        showToast(data.error || "Failed to save service", "error");
+        showToast(data.error || "Failed to save service.", "error");
       }
     } catch (err) {
-      showToast("Network error saving service", "error");
+      showToast("Error saving service.", "error");
     } finally {
-      setServiceSaving(false);
+      setSavingEntity(false);
     }
   };
 
-  const handleDeleteService = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this service? Linked projects will become unlinked.")) return;
+  const handleDeleteService = async (id?: number) => {
+    if (!id || !confirm("Are you sure you want to delete this service?")) return;
     try {
       const res = await fetch(`${API_BASE}?action=delete_service`, {
         method: "POST",
@@ -311,22 +403,104 @@ export default function AdminDashboardPage() {
       });
       const data = await res.json();
       if (data.success) {
-        showToast("Service deleted");
-        fetchAllData();
-      } else {
-        showToast(data.error || "Failed to delete service", "error");
+        setServices(prev => prev.filter(s => s.id !== id));
+        showToast("Service deleted.");
       }
     } catch (err) {
-      showToast("Network error deleting service", "error");
+      showToast("Error deleting service.", "error");
     }
   };
 
-  // -------------------------------------------------------------
-  // PROJECTS ACTIONS
-  // -------------------------------------------------------------
+  // Industry Save & Delete
+  const handleSaveIndustry = async (e: FormEvent) => {
+    e.preventDefault();
+    setSavingEntity(true);
+    try {
+      const res = await fetch(`${API_BASE}?action=save_industry`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(industryForm)
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(industryForm.id ? "Industry updated!" : "Industry created!");
+        setIsIndustryModalOpen(false);
+        fetchAllData();
+      } else {
+        showToast(data.error || "Failed to save industry.", "error");
+      }
+    } catch (err) {
+      showToast("Error saving industry.", "error");
+    } finally {
+      setSavingEntity(false);
+    }
+  };
+
+  const handleDeleteIndustry = async (id?: number) => {
+    if (!id || !confirm("Are you sure you want to delete this industry sector?")) return;
+    try {
+      const res = await fetch(`${API_BASE}?action=delete_industry`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setIndustries(prev => prev.filter(item => item.id !== id));
+        showToast("Industry deleted.");
+      }
+    } catch (err) {
+      showToast("Error deleting industry.", "error");
+    }
+  };
+
+  // Training Program Save & Delete
+  const handleSaveTraining = async (e: FormEvent) => {
+    e.preventDefault();
+    setSavingEntity(true);
+    try {
+      const res = await fetch(`${API_BASE}?action=save_training_program`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(trainingForm)
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(trainingForm.id ? "Training program updated!" : "Training program created!");
+        setIsTrainingModalOpen(false);
+        fetchAllData();
+      } else {
+        showToast(data.error || "Failed to save training program.", "error");
+      }
+    } catch (err) {
+      showToast("Error saving training program.", "error");
+    } finally {
+      setSavingEntity(false);
+    }
+  };
+
+  const handleDeleteTraining = async (id?: number) => {
+    if (!id || !confirm("Are you sure you want to delete this training program?")) return;
+    try {
+      const res = await fetch(`${API_BASE}?action=delete_training_program`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTrainingPrograms(prev => prev.filter(item => item.id !== id));
+        showToast("Training program deleted.");
+      }
+    } catch (err) {
+      showToast("Error deleting training program.", "error");
+    }
+  };
+
+  // Project Save & Delete
   const handleSaveProject = async (e: FormEvent) => {
     e.preventDefault();
-    setProjectSaving(true);
+    setSavingEntity(true);
     try {
       const res = await fetch(`${API_BASE}?action=save_project`, {
         method: "POST",
@@ -339,17 +513,17 @@ export default function AdminDashboardPage() {
         setIsProjectModalOpen(false);
         fetchAllData();
       } else {
-        showToast(data.error || "Failed to save project", "error");
+        showToast(data.error || "Failed to save project.", "error");
       }
     } catch (err) {
-      showToast("Network error saving project", "error");
+      showToast("Error saving project.", "error");
     } finally {
-      setProjectSaving(false);
+      setSavingEntity(false);
     }
   };
 
-  const handleDeleteProject = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this project?")) return;
+  const handleDeleteProject = async (id?: number) => {
+    if (!id || !confirm("Are you sure you want to delete this project?")) return;
     try {
       const res = await fetch(`${API_BASE}?action=delete_project`, {
         method: "POST",
@@ -358,992 +532,965 @@ export default function AdminDashboardPage() {
       });
       const data = await res.json();
       if (data.success) {
-        showToast("Project deleted");
-        fetchAllData();
-      } else {
-        showToast(data.error || "Failed to delete project", "error");
+        setProjects(prev => prev.filter(item => item.id !== id));
+        showToast("Project deleted.");
       }
     } catch (err) {
-      showToast("Network error deleting project", "error");
+      showToast("Error deleting project.", "error");
     }
   };
 
-  // Switch tab & auto-close mobile drawer
-  const switchTab = (tab: "dashboard" | "leads" | "services" | "projects") => {
-    setActiveTab(tab);
-    setIsMobileMenuOpen(false);
+  // Resource Save & Delete
+  const handleSaveResource = async (e: FormEvent) => {
+    e.preventDefault();
+    setSavingEntity(true);
+    try {
+      const res = await fetch(`${API_BASE}?action=save_resource`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(resourceForm)
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(resourceForm.id ? "Resource updated!" : "Resource created!");
+        setIsResourceModalOpen(false);
+        fetchAllData();
+      } else {
+        showToast(data.error || "Failed to save resource.", "error");
+      }
+    } catch (err) {
+      showToast("Error saving resource.", "error");
+    } finally {
+      setSavingEntity(false);
+    }
   };
 
-  // Stats Breakdown for Dashboard
-  const newLeadsCount = leads.filter(l => l.status === "new").length;
-  const contactedLeadsCount = leads.filter(l => l.status === "contacted").length;
-  const closedLeadsCount = leads.filter(l => l.status === "closed").length;
+  const handleDeleteResource = async (id?: number) => {
+    if (!id || !confirm("Are you sure you want to delete this resource item?")) return;
+    try {
+      const res = await fetch(`${API_BASE}?action=delete_resource`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setResources(prev => prev.filter(item => item.id !== id));
+        showToast("Resource item deleted.");
+      }
+    } catch (err) {
+      showToast("Error deleting resource item.", "error");
+    }
+  };
 
   if (checkingAuth) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center text-gray-800">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center">
+        <div className="text-center space-y-3">
+          <Loader2 className="w-8 h-8 animate-spin text-[#b3282d] mx-auto" />
+          <p className="text-xs text-[#64748b]">Verifying corporate credentials...</p>
+        </div>
       </div>
     );
   }
 
-  // -------------------------------------------------------------
-  // RENDER: LOGIN SCREEN (Brand White Card on Soft Neutral Background)
-  // -------------------------------------------------------------
+  // ==========================================
+  // LOGIN SCREEN (Clean White Corporate)
+  // ==========================================
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 flex items-center justify-center p-4 relative">
-        {/* Toast */}
-        {toast && (
-          <div className={`fixed top-6 right-6 z-50 flex items-center px-4 py-3 rounded-xl shadow-2xl text-sm font-medium ${toast.type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}>
-            {toast.type === 'success' ? <CheckCircle2 className="w-4 h-4 mr-2" /> : <AlertCircle className="w-4 h-4 mr-2" />}
-            {toast.message}
-          </div>
-        )}
-
-        <div className="bg-white border border-gray-200 p-8 sm:p-10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.08)] w-full max-w-md relative z-10">
-          {/* Logo Section */}
-          <div className="flex flex-col items-center text-center mb-8">
-            <div className="flex items-center justify-center mb-4 p-2">
-              <Image
-                src="/logo.png"
-                alt="Axar Logo"
-                width={48}
-                height={48}
-                className="object-contain h-10 w-auto"
-                priority
-              />
-              <Image
-                src="/logotext.png"
-                alt="Axar Creative Management Solutions"
-                width={160}
-                height={40}
-                className="object-contain h-7 w-auto -ml-1"
-                priority
-              />
+      <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-2xl border border-[#e2e8f0] shadow-xl p-8 space-y-6">
+          <div className="text-center space-y-2">
+            <div className="w-12 h-12 rounded-xl bg-[#fef2f2] border border-[#fecaca] flex items-center justify-center text-[#b3282d] mx-auto">
+              <ShieldCheck className="w-6 h-6" />
             </div>
-            <div className="inline-block px-3 py-1 bg-red-50 text-primary font-bold text-xs rounded-full uppercase tracking-wider mb-2 border border-red-100">
-              Admin Portal
-            </div>
-            <p className="text-gray-500 text-xs mt-1">Sign in to manage services, portfolio & leads</p>
+            <h1 className="text-2xl font-heading font-extrabold text-[#0f172a]">
+              Axar Management Portal
+            </h1>
+            <p className="text-xs text-[#64748b]">
+              Secure administration desk for leads, services, industries, and resources.
+            </p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-5">
+          <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Username</label>
+              <label className="block text-xs font-bold text-[#475569] uppercase tracking-wider mb-1">
+                Admin Username
+              </label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="admin"
                 required
-                className="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 focus:bg-white focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm transition-all"
+                placeholder="admin"
+                className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3.5 py-2.5 text-xs text-[#0f172a] focus:outline-none focus:border-[#b3282d]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Password</label>
+              <label className="block text-xs font-bold text-[#475569] uppercase tracking-wider mb-1">
+                Password
+              </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
                 required
-                className="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-gray-800 placeholder-gray-400 focus:bg-white focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm transition-all"
+                placeholder="••••••••"
+                className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3.5 py-2.5 text-xs text-[#0f172a] focus:outline-none focus:border-[#b3282d]"
               />
             </div>
 
             <button
               type="submit"
               disabled={loginLoading}
-              className="w-full bg-primary hover:bg-red-800 text-white font-heading font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-primary/30 transition-all flex items-center justify-center text-sm disabled:opacity-60 cursor-pointer"
+              className="w-full py-2.5 bg-[#b3282d] hover:bg-[#8c1e22] text-white text-xs font-heading font-bold rounded-lg transition-colors flex items-center justify-center disabled:opacity-50 shadow-xs cursor-pointer"
             >
-              {loginLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign In to Dashboard"}
+              {loginLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Verifying...
+                </>
+              ) : (
+                "Authenticate & Sign In"
+              )}
             </button>
           </form>
+
+          <div className="text-center pt-2 border-t border-[#f1f5f9]">
+            <Link href="/" className="text-xs text-[#64748b] hover:text-[#b3282d] transition-colors flex items-center justify-center">
+              ← Return to Public Website
+            </Link>
+          </div>
         </div>
       </div>
     );
   }
 
-  // -------------------------------------------------------------
-  // RENDER: MAIN ADMIN DASHBOARD (Mobile + Tablet Responsive White Theme)
-  // -------------------------------------------------------------
+  // Filtered Leads
+  const filteredLeads = leads.filter(lead => {
+    const matchesFilter = leadFilter === "all" || lead.status === leadFilter;
+    const matchesSearch = !searchQuery || 
+      lead.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      lead.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (lead.company_name && lead.company_name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (lead.service_interested && lead.service_interested.toLowerCase().includes(searchQuery.toLowerCase()));
+    return matchesFilter && matchesSearch;
+  });
+
+  // ==========================================
+  // ADMIN DASHBOARD SHELL
+  // ==========================================
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-gray-800 font-sans flex flex-col md:flex-row">
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col">
       {/* Toast Notification */}
       {toast && (
-        <div className={`fixed top-6 right-6 z-50 flex items-center px-4 py-3 rounded-xl shadow-2xl text-sm font-medium ${toast.type === 'success' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'}`}>
-          {toast.type === 'success' ? <CheckCircle2 className="w-4 h-4 mr-2 shrink-0" /> : <AlertCircle className="w-4 h-4 mr-2 shrink-0" />}
-          {toast.message}
+        <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg border text-xs flex items-center space-x-2 animate-in slide-in-from-top-2 duration-200 ${
+          toast.type === "success" 
+            ? "bg-emerald-50 border-emerald-200 text-emerald-800" 
+            : "bg-red-50 border-red-200 text-red-800"
+        }`}>
+          {toast.type === "success" ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+          <span>{toast.message}</span>
         </div>
       )}
 
-      {/* ----------------------------------------------------------- */}
-      {/* MOBILE / TABLET TOP HEADER BAR (< md) */}
-      {/* ----------------------------------------------------------- */}
-      <div className="md:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-40 shadow-sm">
-        <div className="flex items-center">
-          <Image
-            src="/logo.png"
-            alt="Axar Mark"
-            width={34}
-            height={34}
-            className="object-contain h-8 w-auto"
-            priority
-          />
-          <Image
-            src="/logotext.png"
-            alt="Axar Creative Solutions"
-            width={120}
-            height={28}
-            className="object-contain h-5 w-auto -ml-1"
-            priority
-          />
-        </div>
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-2 text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
-          aria-label="Toggle menu"
-        >
-          {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
-      </div>
-
-      {/* Mobile Backdrop Overlay */}
-      {isMobileMenuOpen && (
-        <div 
-          onClick={() => setIsMobileMenuOpen(false)} 
-          className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 md:hidden"
-        />
-      )}
-
-      {/* ----------------------------------------------------------- */}
-      {/* VERTICAL SIDEBAR (Desktop Fixed / Mobile Slide-Over Drawer) */}
-      {/* ----------------------------------------------------------- */}
-      <aside className={`
-        fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-200 flex flex-col transition-transform duration-300 ease-in-out shadow-xl md:shadow-sm
-        md:static md:translate-x-0 md:w-64 lg:w-72 md:sticky md:top-0 md:h-screen md:shrink-0
-        ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-      `}>
-        {/* Brand Header */}
-        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-          <div className="flex items-center">
-            <Image
-              src="/logo.png"
-              alt="Axar Mark"
-              width={38}
-              height={38}
-              className="object-contain h-9 w-auto"
-              priority
-            />
-            <Image
-              src="/logotext.png"
-              alt="Axar Creative Solutions"
-              width={130}
-              height={32}
-              className="object-contain h-6 w-auto -ml-1"
-              priority
-            />
-          </div>
-          <button
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="md:hidden text-gray-400 hover:text-gray-700 p-1"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Sidebar Nav Items */}
-        <div className="p-4 flex-1 space-y-1.5 overflow-y-auto">
-          <div className="px-3 py-2 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
-            Menu
-          </div>
-
-          {/* 1. Dashboard Tab */}
-          <button
-            onClick={() => switchTab("dashboard")}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-              activeTab === "dashboard"
-                ? "bg-primary text-white shadow-md shadow-primary/25"
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-            }`}
-          >
-            <div className="flex items-center">
-              <LayoutDashboard className="w-4 h-4 mr-3 shrink-0" />
-              <span>Dashboard</span>
-            </div>
-          </button>
-
-          {/* 2. Leads Tab */}
-          <button
-            onClick={() => switchTab("leads")}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-              activeTab === "leads"
-                ? "bg-primary text-white shadow-md shadow-primary/25"
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-            }`}
-          >
-            <div className="flex items-center">
-              <Users className="w-4 h-4 mr-3 shrink-0" />
-              <span>Contact Leads</span>
-            </div>
-            {leads.length > 0 && (
-              <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
-                activeTab === "leads" ? "bg-white/20 text-white" : "bg-red-50 text-primary border border-red-100"
-              }`}>
-                {leads.length}
-              </span>
-            )}
-          </button>
-
-          {/* 3. Manage Services Tab */}
-          <button
-            onClick={() => switchTab("services")}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-              activeTab === "services"
-                ? "bg-primary text-white shadow-md shadow-primary/25"
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-            }`}
-          >
-            <div className="flex items-center">
-              <Layers className="w-4 h-4 mr-3 shrink-0" />
-              <span>Manage Services</span>
-            </div>
-            <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
-              activeTab === "services" ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
-            }`}>
-              {services.length}
+      {/* Top Navbar */}
+      <header className="bg-white border-b border-[#e2e8f0] sticky top-0 z-40 px-6 py-3 flex items-center justify-between shadow-xs">
+        <div className="flex items-center space-x-4">
+          <Link href="/" className="flex items-center space-x-2">
+            <Image src="/logo.png" alt="Axar Logo" width={40} height={40} className="h-8 w-auto" />
+            <span className="font-heading font-extrabold text-sm text-[#0f172a] hidden sm:inline">
+              Axar Admin Portal
             </span>
-          </button>
-
-          {/* 4. Manage Projects Tab */}
-          <button
-            onClick={() => switchTab("projects")}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-              activeTab === "projects"
-                ? "bg-primary text-white shadow-md shadow-primary/25"
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-            }`}
-          >
-            <div className="flex items-center">
-              <Briefcase className="w-4 h-4 mr-3 shrink-0" />
-              <span>Manage Projects</span>
-            </div>
-            <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
-              activeTab === "projects" ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
-            }`}>
-              {projects.length}
-            </span>
-          </button>
+          </Link>
+          <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-[#fef2f2] text-[#b3282d] border border-[#fecaca]">
+            Production CMS
+          </span>
         </div>
 
-        {/* Sidebar Footer Actions */}
-        <div className="p-4 border-t border-gray-100 space-y-2 bg-gray-50/60">
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={fetchAllData}
+            disabled={dataLoading}
+            className="p-2 rounded-lg bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#e2e8f0] text-[#475569] text-xs font-medium flex items-center"
+            title="Refresh Data"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${dataLoading ? "animate-spin text-[#b3282d]" : ""}`} />
+          </button>
           <Link
             href="/"
             target="_blank"
-            className="w-full flex items-center justify-center px-4 py-2.5 rounded-xl text-xs font-bold text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm"
+            className="hidden md:flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#e2e8f0] text-[#475569] hover:text-[#0f172a] text-xs font-medium"
           >
-            <Globe className="w-3.5 h-3.5 mr-2 text-primary" /> View Live Website <ExternalLink className="w-3 h-3 ml-1.5 opacity-60" />
+            <Globe className="w-3.5 h-3.5 mr-1 text-[#b3282d]" /> Live Site
           </Link>
-
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center px-4 py-2.5 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+            className="px-3 py-1.5 rounded-lg bg-[#b3282d] hover:bg-[#8c1e22] text-white text-xs font-heading font-bold flex items-center transition-colors shadow-xs"
           >
-            <LogOut className="w-3.5 h-3.5 mr-2" /> Logout
+            <LogOut className="w-3.5 h-3.5 mr-1" /> Sign Out
           </button>
         </div>
-      </aside>
+      </header>
 
-      {/* ----------------------------------------------------------- */}
-      {/* MAIN CONTENT AREA */}
-      {/* ----------------------------------------------------------- */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Desktop Header */}
-        <header className="hidden md:flex bg-white border-b border-gray-200 px-6 py-4 items-center justify-between sticky top-0 z-20 shadow-xs">
-          <div>
-            <h1 className="text-xl font-heading font-bold text-gray-900 capitalize">
-              {activeTab === "dashboard" && "Dashboard Overview"}
-              {activeTab === "leads" && "Contact Submissions"}
-              {activeTab === "services" && "Services Management"}
-              {activeTab === "projects" && "Portfolio & Projects"}
-            </h1>
-            <p className="text-xs text-gray-500 mt-0.5">Axar Creative Management Solutions Control Panel</p>
+      {/* Main App Layout */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Sidebar Navigation */}
+        <aside className="w-64 bg-white border-r border-[#e2e8f0] hidden lg:flex flex-col justify-between p-4 space-y-6">
+          <div className="space-y-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#94a3b8] px-3 mb-2 block">
+              Management Modules
+            </span>
+
+            {[
+              { id: "dashboard", label: "Overview Dashboard", icon: LayoutDashboard },
+              { id: "leads", label: `Inquiries & Quotes (${leads.filter(l => l.status === 'new').length} New)`, icon: Users },
+              { id: "services", label: `Services (${services.length})`, icon: Layers },
+              { id: "industries", label: `Industries We Serve (${industries.length})`, icon: Factory },
+              { id: "training", label: `Training Programs (${trainingPrograms.length})`, icon: GraduationCap },
+              { id: "projects", label: `Projects / Clients (${projects.length})`, icon: Briefcase },
+              { id: "resources", label: `Resources (${resources.length})`, icon: FileText },
+            ].map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-lg text-xs font-heading font-semibold transition-colors cursor-pointer ${
+                    isActive
+                      ? "bg-[#fef2f2] text-[#b3282d] border border-[#fecaca] shadow-xs"
+                      : "text-[#475569] hover:bg-[#f8fafc] hover:text-[#0f172a]"
+                  }`}
+                >
+                  <Icon className={`w-4 h-4 ${isActive ? "text-[#b3282d]" : "text-[#64748b]"}`} />
+                  <span className="truncate">{tab.label}</span>
+                </button>
+              );
+            })}
           </div>
 
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={fetchAllData}
-              disabled={dataLoading}
-              className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
-              title="Refresh Data"
-            >
-              <RefreshCw className={`w-4 h-4 ${dataLoading ? "animate-spin text-primary" : ""}`} />
-            </button>
-            <div className="hidden sm:flex items-center px-3 py-1.5 bg-gray-100 rounded-full text-xs font-semibold text-gray-700">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
-              Live Sync
-            </div>
+          <div className="p-3 bg-[#f8fafc] rounded-xl border border-[#e2e8f0] text-xs text-[#64748b] space-y-1">
+            <span className="font-bold text-[#0f172a] block">Axar CMS Engine</span>
+            <p className="text-[11px]">Synced with MySQL & Cloudinary CDN</p>
           </div>
-        </header>
+        </aside>
 
-        {/* Content Body */}
-        <main className="p-4 sm:p-6 md:p-8 flex-1 overflow-y-auto">
-          {dataLoading && leads.length === 0 && (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 animate-spin text-primary mr-3" />
-              <span className="text-gray-500 font-medium">Loading control panel data...</span>
-            </div>
-          )}
-
-          {/* ========================================================= */}
-          {/* TAB 1: DASHBOARD OVERVIEW */}
-          {/* ========================================================= */}
+        {/* Dynamic Content Panel */}
+        <main className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6">
+          {/* ========================================================================= */}
+          {/* 1. OVERVIEW DASHBOARD */}
+          {/* ========================================================================= */}
           {activeTab === "dashboard" && (
-            <div className="space-y-6 sm:space-y-8">
-              {/* Stat Metric Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-                {/* 1. Total Leads */}
-                <div 
-                  onClick={() => switchTab("leads")}
-                  className="bg-white p-5 sm:p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-primary/40 hover:shadow-md transition-all cursor-pointer group"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Leads</span>
-                    <div className="p-2.5 rounded-xl bg-red-50 text-primary group-hover:scale-110 transition-transform">
-                      <Users className="w-5 h-5" />
-                    </div>
-                  </div>
-                  <div className="text-3xl font-heading font-bold text-gray-900 mb-1">{leads.length}</div>
-                  <div className="flex items-center text-xs">
-                    <span className="inline-flex items-center font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full mr-2">
-                      {newLeadsCount} New
-                    </span>
-                    <span className="text-gray-500">{contactedLeadsCount} Contacted</span>
-                  </div>
-                </div>
-
-                {/* 2. Total Services */}
-                <div 
-                  onClick={() => switchTab("services")}
-                  className="bg-white p-5 sm:p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-primary/40 hover:shadow-md transition-all cursor-pointer group"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Active Services</span>
-                    <div className="p-2.5 rounded-xl bg-amber-50 text-amber-600 group-hover:scale-110 transition-transform">
-                      <Layers className="w-5 h-5" />
-                    </div>
-                  </div>
-                  <div className="text-3xl font-heading font-bold text-gray-900 mb-1">{services.length}</div>
-                  <div className="text-xs text-gray-500 font-medium">Consulting & Technical divisions</div>
-                </div>
-
-                {/* 3. Portfolio Projects */}
-                <div 
-                  onClick={() => switchTab("projects")}
-                  className="bg-white p-5 sm:p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-primary/40 hover:shadow-md transition-all cursor-pointer group"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Portfolio Items</span>
-                    <div className="p-2.5 rounded-xl bg-purple-50 text-purple-600 group-hover:scale-110 transition-transform">
-                      <Briefcase className="w-5 h-5" />
-                    </div>
-                  </div>
-                  <div className="text-3xl font-heading font-bold text-gray-900 mb-1">{projects.length}</div>
-                  <div className="text-xs text-emerald-600 font-semibold">
-                    {projects.filter(p => p.featured).length} Featured on Home
-                  </div>
-                </div>
-
-                {/* 4. Closed Deals */}
-                <div className="bg-white p-5 sm:p-6 rounded-2xl border border-gray-200 shadow-sm">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Resolved Leads</span>
-                    <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600">
-                      <ShieldCheck className="w-5 h-5" />
-                    </div>
-                  </div>
-                  <div className="text-3xl font-heading font-bold text-gray-900 mb-1">{closedLeadsCount}</div>
-                  <div className="text-xs text-gray-500 font-medium">Successfully processed inquiries</div>
-                </div>
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-xl font-heading font-extrabold text-[#0f172a]">
+                  Operations & Content Overview
+                </h2>
+                <p className="text-xs text-[#64748b]">
+                  Real-time status of client inquiries, service offerings, industry verticals, and training programs.
+                </p>
               </div>
 
-              {/* Quick Actions Bar */}
-              <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white p-5 sm:p-6 rounded-2xl shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div>
-                  <h3 className="text-lg font-heading font-bold mb-1">Quick Content Actions</h3>
-                  <p className="text-gray-300 text-xs">Create new services or portfolio showcases directly from here.</p>
-                </div>
-                <div className="flex items-center space-x-3 w-full sm:w-auto">
-                  <button
-                    onClick={() => {
-                      setServiceForm({
-                        title: "",
-                        category: "Business Consulting",
-                        short_desc: "",
-                        image_url: "",
-                        details: "",
-                        display_order: services.length + 1
-                      });
-                      setIsServiceModalOpen(true);
-                    }}
-                    className="flex-1 sm:flex-initial bg-primary hover:bg-red-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition-all flex items-center justify-center cursor-pointer"
-                  >
-                    <Plus className="w-4 h-4 mr-1.5" /> Add Service
-                  </button>
-                  <button
-                    onClick={() => {
-                      setProjectForm({
-                        service_id: services.length > 0 ? (services[0].id || null) : null,
-                        title: "",
-                        category_name: "Consulting Case Studies",
-                        description: "",
-                        image_url: "",
-                        project_url: "",
-                        tag_style: "bg-accent/20 text-accent border border-accent/30",
-                        featured: false,
-                        display_order: projects.length + 1
-                      });
-                      setIsProjectModalOpen(true);
-                    }}
-                    className="flex-1 sm:flex-initial bg-white hover:bg-gray-100 text-gray-900 text-xs font-bold px-4 py-2.5 rounded-xl shadow transition-all flex items-center justify-center cursor-pointer"
-                  >
-                    <Plus className="w-4 h-4 mr-1.5" /> Add Project
-                  </button>
-                </div>
+              {/* Stats Cards */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                {[
+                  { label: "New Leads", count: leads.filter(l => l.status === 'new').length, color: "text-[#b3282d]", bg: "bg-[#fef2f2]", border: "border-[#fecaca]" },
+                  { label: "Total Leads", count: leads.length, color: "text-[#0f172a]", bg: "bg-[#f8fafc]", border: "border-[#e2e8f0]" },
+                  { label: "Services", count: services.length, color: "text-[#0f172a]", bg: "bg-[#f8fafc]", border: "border-[#e2e8f0]" },
+                  { label: "Industries", count: industries.length, color: "text-[#0f172a]", bg: "bg-[#f8fafc]", border: "border-[#e2e8f0]" },
+                  { label: "Training", count: trainingPrograms.length, color: "text-[#0f172a]", bg: "bg-[#f8fafc]", border: "border-[#e2e8f0]" },
+                  { label: "Resources", count: resources.length, color: "text-[#0f172a]", bg: "bg-[#f8fafc]", border: "border-[#e2e8f0]" },
+                ].map((stat, idx) => (
+                  <div key={idx} className={`${stat.bg} ${stat.border} border p-4 rounded-xl shadow-xs`}>
+                    <span className="text-[11px] font-bold text-[#64748b] block mb-1 uppercase tracking-wider">{stat.label}</span>
+                    <span className={`text-2xl font-heading font-extrabold ${stat.color}`}>{stat.count}</span>
+                  </div>
+                ))}
               </div>
 
-              {/* Recent Inquiries Preview */}
-              <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                <div className="p-5 sm:p-6 border-b border-gray-100 flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-heading font-bold text-gray-900">Recent Inquiries</h3>
-                    <p className="text-xs text-gray-500 mt-0.5">Latest leads submitted from website contact forms.</p>
+              {/* Quick Actions & Recent Inquiries */}
+              <div className="grid lg:grid-cols-12 gap-6">
+                <div className="lg:col-span-8 bg-white border border-[#e2e8f0] rounded-xl p-5 shadow-xs space-y-4">
+                  <div className="flex items-center justify-between border-b border-[#f1f5f9] pb-3">
+                    <h3 className="font-heading font-bold text-sm text-[#0f172a] flex items-center">
+                      <Users className="w-4 h-4 mr-2 text-[#b3282d]" /> Recent Submissions
+                    </h3>
+                    <button 
+                      onClick={() => setActiveTab("leads")} 
+                      className="text-xs font-bold text-[#b3282d] hover:underline"
+                    >
+                      View All Leads →
+                    </button>
                   </div>
-                  <button
-                    onClick={() => switchTab("leads")}
-                    className="text-xs font-bold text-primary hover:text-red-700 cursor-pointer"
-                  >
-                    View All Leads &rarr;
-                  </button>
+
+                  {leads.length === 0 ? (
+                    <p className="text-xs text-[#64748b] py-6 text-center">No inquiry records in database yet.</p>
+                  ) : (
+                    <div className="divide-y divide-[#f1f5f9]">
+                      {leads.slice(0, 5).map((lead) => (
+                        <div key={lead.id} className="py-3 flex items-center justify-between text-xs">
+                          <div>
+                            <span className="font-bold text-[#0f172a] block">{lead.full_name}</span>
+                            <span className="text-[11px] text-[#64748b]">{lead.company_name || lead.email} • {lead.service_interested || "General"}</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                              lead.status === 'new' ? 'bg-red-50 text-red-700 border border-red-200' :
+                              lead.status === 'contacted' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+                              'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            }`}>
+                              {lead.status}
+                            </span>
+                            <button
+                              onClick={() => setSelectedLead(lead)}
+                              className="p-1 rounded bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#e2e8f0]"
+                            >
+                              <Eye className="w-3.5 h-3.5 text-[#475569]" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse text-sm min-w-[500px]">
-                    <thead>
-                      <tr className="bg-gray-50 border-b border-gray-100 text-gray-500 text-xs uppercase tracking-wider">
-                        <th className="p-4 font-semibold">Date</th>
-                        <th className="p-4 font-semibold">Contact</th>
-                        <th className="p-4 font-semibold">Service</th>
-                        <th className="p-4 font-semibold">Message</th>
-                        <th className="p-4 font-semibold">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                      {leads.length === 0 ? (
-                        <tr>
-                          <td colSpan={5} className="p-8 text-center text-gray-400 text-sm">No recent leads found.</td>
-                        </tr>
-                      ) : (
-                        leads.slice(0, 5).map((sub) => (
-                          <tr key={sub.id} className="hover:bg-gray-50/60 transition-colors">
-                            <td className="p-4 whitespace-nowrap text-gray-500 text-xs align-top">
-                              <div className="font-semibold text-gray-700">{new Date(sub.submitted_at).toLocaleDateString()}</div>
-                              <div className="text-gray-400">{new Date(sub.submitted_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-                            </td>
-                            <td className="p-4 align-top">
-                              <div className="font-bold text-gray-900">{sub.full_name}</div>
-                              <div className="text-xs text-gray-500"><a href={`mailto:${sub.email}`} className="hover:text-primary">{sub.email}</a></div>
-                            </td>
-                            <td className="p-4 align-top whitespace-nowrap">
-                              <span className="inline-block bg-red-50 text-primary border border-red-100 px-2.5 py-0.5 rounded-full text-xs font-semibold">
-                                {sub.service_interested || "General"}
-                              </span>
-                            </td>
-                            <td className="p-4 align-top max-w-xs">
-                              <p className="text-gray-600 text-xs line-clamp-2">{sub.message}</p>
-                            </td>
-                            <td className="p-4 align-top whitespace-nowrap">
-                              <select
-                                value={sub.status}
-                                onChange={(e) => handleUpdateLeadStatus(sub.id, e.target.value as "new" | "contacted" | "closed")}
-                                className={`text-xs font-bold rounded-full px-3 py-1 border outline-none cursor-pointer ${
-                                  sub.status === 'new' 
-                                    ? 'text-blue-700 border-blue-200 bg-blue-50' 
-                                    : sub.status === 'contacted' 
-                                    ? 'text-amber-700 border-amber-200 bg-amber-50' 
-                                    : 'text-emerald-700 border-emerald-200 bg-emerald-50'
-                                }`}
-                              >
-                                <option value="new">New</option>
-                                <option value="contacted">Contacted</option>
-                                <option value="closed">Closed</option>
-                              </select>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
+                <div className="lg:col-span-4 bg-white border border-[#e2e8f0] rounded-xl p-5 shadow-xs space-y-3">
+                  <h3 className="font-heading font-bold text-sm text-[#0f172a] border-b border-[#f1f5f9] pb-3">
+                    Quick Management
+                  </h3>
+                  <div className="space-y-2 text-xs">
+                    <button
+                      onClick={() => { setServiceForm({ title: "", category: "Industrial Consultancy", short_desc: "", image_url: "", details: "", display_order: services.length + 1 }); setIsServiceModalOpen(true); }}
+                      className="w-full py-2 px-3 bg-[#f8fafc] hover:bg-[#b3282d] hover:text-white border border-[#e2e8f0] rounded-lg font-bold text-left transition-colors flex items-center justify-between"
+                    >
+                      <span>+ Add New Service</span> <Plus className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => { setIndustryForm({ title: "", category: "Heavy & Engineering", scope: "", description: "", key_services: "", image_url: "", display_order: industries.length + 1 }); setIsIndustryModalOpen(true); }}
+                      className="w-full py-2 px-3 bg-[#f8fafc] hover:bg-[#b3282d] hover:text-white border border-[#e2e8f0] rounded-lg font-bold text-left transition-colors flex items-center justify-between"
+                    >
+                      <span>+ Add Industry Sector</span> <Plus className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => { setTrainingForm({ title: "", badge: "Auditor Certification", target_audience: "", description: "", topics: "", duration: "2-5 Days", display_order: trainingPrograms.length + 1 }); setIsTrainingModalOpen(true); }}
+                      className="w-full py-2 px-3 bg-[#f8fafc] hover:bg-[#b3282d] hover:text-white border border-[#e2e8f0] rounded-lg font-bold text-left transition-colors flex items-center justify-between"
+                    >
+                      <span>+ Add Training Program</span> <Plus className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => { setResourceForm({ title: "", category: "QMS & Compliance", description: "", tags: "", file_format: "PDF Document", file_size: "1.5 MB", file_url: "", display_order: resources.length + 1 }); setIsResourceModalOpen(true); }}
+                      className="w-full py-2 px-3 bg-[#f8fafc] hover:bg-[#b3282d] hover:text-white border border-[#e2e8f0] rounded-lg font-bold text-left transition-colors flex items-center justify-between"
+                    >
+                      <span>+ Add Resource Guide</span> <Plus className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* ========================================================= */}
-          {/* TAB 2: LEADS VIEW */}
-          {/* ========================================================= */}
+          {/* ========================================================================= */}
+          {/* 2. LEADS / INQUIRIES & QUOTES */}
+          {/* ========================================================================= */}
           {activeTab === "leads" && (
-            <div>
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-xl font-heading font-bold text-gray-900">All Contact Leads ({leads.length})</h2>
-                  <p className="text-gray-500 text-xs mt-0.5">Manage and track client inquiries submitted via website forms.</p>
+                  <h2 className="text-xl font-heading font-extrabold text-[#0f172a]">
+                    Contact Submissions & Quote Requests
+                  </h2>
+                  <p className="text-xs text-[#64748b]">
+                    Manage incoming industrial leads, quote requests, and follow-up statuses.
+                  </p>
+                </div>
+
+                {/* Filter & Search */}
+                <div className="flex items-center space-x-2">
+                  <div className="relative">
+                    <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#94a3b8]" />
+                    <input
+                      type="text"
+                      placeholder="Search inquiries..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="bg-white border border-[#cbd5e1] rounded-lg pl-8 pr-3 py-1.5 text-xs text-[#0f172a] focus:outline-none focus:border-[#b3282d]"
+                    />
+                  </div>
+                  <select
+                    value={leadFilter}
+                    onChange={(e) => setLeadFilter(e.target.value)}
+                    className="bg-white border border-[#cbd5e1] rounded-lg px-2.5 py-1.5 text-xs text-[#0f172a] focus:outline-none focus:border-[#b3282d]"
+                  >
+                    <option value="all">All Statuses</option>
+                    <option value="new">New</option>
+                    <option value="contacted">Contacted</option>
+                    <option value="closed">Closed</option>
+                  </select>
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse text-sm min-w-[650px]">
-                    <thead>
-                      <tr className="bg-gray-50 border-b border-gray-200 text-gray-600 text-xs uppercase tracking-wider">
-                        <th className="p-4 font-semibold">Date</th>
-                        <th className="p-4 font-semibold">Contact Details</th>
-                        <th className="p-4 font-semibold">Service</th>
-                        <th className="p-4 font-semibold">Message</th>
-                        <th className="p-4 font-semibold">Status</th>
-                        <th className="p-4 font-semibold text-right">Actions</th>
+              {filteredLeads.length === 0 ? (
+                <div className="bg-white border border-[#e2e8f0] rounded-xl p-12 text-center text-xs text-[#64748b]">
+                  No matching leads found.
+                </div>
+              ) : (
+                <div className="bg-white border border-[#e2e8f0] rounded-xl overflow-hidden shadow-xs">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-[#f8fafc] border-b border-[#e2e8f0] text-[#475569] uppercase font-bold text-[10px]">
+                      <tr>
+                        <th className="p-3.5">Client & Company</th>
+                        <th className="p-3.5">Service Interested</th>
+                        <th className="p-3.5">Contact Details</th>
+                        <th className="p-3.5">Submitted</th>
+                        <th className="p-3.5">Status</th>
+                        <th className="p-3.5 text-right">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
-                      {leads.length === 0 ? (
-                        <tr>
-                          <td colSpan={6} className="p-12 text-center text-gray-400">No contact submissions found.</td>
+                    <tbody className="divide-y divide-[#f1f5f9]">
+                      {filteredLeads.map((lead) => (
+                        <tr key={lead.id} className="hover:bg-[#f8fafc] transition-colors">
+                          <td className="p-3.5">
+                            <span className="font-bold text-[#0f172a] block">{lead.full_name}</span>
+                            <span className="text-[#64748b] text-[11px]">{lead.company_name || "Direct Individual"}</span>
+                          </td>
+                          <td className="p-3.5 max-w-[200px]">
+                            <span className="font-medium text-[#334155] line-clamp-1">{lead.service_interested || "General Inquiry"}</span>
+                          </td>
+                          <td className="p-3.5">
+                            <span className="text-[#0f172a] block font-mono text-[11px]">{lead.phone || "—"}</span>
+                            <span className="text-[#64748b] text-[11px]">{lead.email}</span>
+                          </td>
+                          <td className="p-3.5 text-[#64748b] text-[11px] whitespace-nowrap">
+                            {new Date(lead.submitted_at).toLocaleDateString()}
+                          </td>
+                          <td className="p-3.5">
+                            <select
+                              value={lead.status}
+                              onChange={(e) => handleLeadStatusChange(lead.id, e.target.value as any)}
+                              className={`px-2 py-1 rounded text-[10px] font-bold uppercase border cursor-pointer ${
+                                lead.status === 'new' ? 'bg-red-50 text-red-700 border-red-200' :
+                                lead.status === 'contacted' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                                'bg-emerald-50 text-emerald-700 border-emerald-200'
+                              }`}
+                            >
+                              <option value="new">New</option>
+                              <option value="contacted">Contacted</option>
+                              <option value="closed">Closed</option>
+                            </select>
+                          </td>
+                          <td className="p-3.5 text-right space-x-1.5 whitespace-nowrap">
+                            <button
+                              onClick={() => setSelectedLead(lead)}
+                              className="p-1.5 rounded bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#e2e8f0] text-[#475569]"
+                              title="View Full Scope Details"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteLead(lead.id)}
+                              className="p-1.5 rounded bg-red-50 hover:bg-red-100 border border-red-200 text-red-700"
+                              title="Delete Lead"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </td>
                         </tr>
-                      ) : (
-                        leads.map((sub) => (
-                          <tr key={sub.id} className="hover:bg-gray-50/70 transition-colors">
-                            <td className="p-4 whitespace-nowrap text-gray-500 text-xs align-top">
-                              <div className="font-bold text-gray-800">{new Date(sub.submitted_at).toLocaleDateString()}</div>
-                              <div className="text-gray-400">{new Date(sub.submitted_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-                            </td>
-                            <td className="p-4 align-top">
-                              <div className="font-bold text-gray-900">{sub.full_name}</div>
-                              <div className="text-xs text-gray-600 mt-0.5"><a href={`mailto:${sub.email}`} className="hover:text-primary underline">{sub.email}</a></div>
-                              {sub.phone && <div className="text-xs text-gray-600 mt-0.5"><a href={`tel:${sub.phone}`} className="hover:text-primary">{sub.phone}</a></div>}
-                              {sub.company_name && (
-                                <span className="inline-block mt-1.5 px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded border border-gray-200 font-medium">
-                                  {sub.company_name}
-                                </span>
-                              )}
-                            </td>
-                            <td className="p-4 align-top whitespace-nowrap">
-                              <span className="inline-block bg-red-50 text-primary border border-red-100 px-2.5 py-1 rounded-full text-xs font-semibold">
-                                {sub.service_interested || "General"}
-                              </span>
-                            </td>
-                            <td className="p-4 align-top max-w-sm">
-                              <p className="text-gray-700 whitespace-pre-wrap leading-relaxed text-xs">{sub.message}</p>
-                            </td>
-                            <td className="p-4 align-top whitespace-nowrap">
-                              <select
-                                value={sub.status}
-                                onChange={(e) => handleUpdateLeadStatus(sub.id, e.target.value as "new" | "contacted" | "closed")}
-                                className={`text-xs font-bold rounded-full px-3 py-1 border outline-none cursor-pointer ${
-                                  sub.status === 'new' 
-                                    ? 'text-blue-700 border-blue-200 bg-blue-50' 
-                                    : sub.status === 'contacted' 
-                                    ? 'text-amber-700 border-amber-200 bg-amber-50' 
-                                    : 'text-emerald-700 border-emerald-200 bg-emerald-50'
-                                }`}
-                              >
-                                <option value="new">New</option>
-                                <option value="contacted">Contacted</option>
-                                <option value="closed">Closed</option>
-                              </select>
-                            </td>
-                            <td className="p-4 align-top text-right whitespace-nowrap">
-                              <button
-                                onClick={() => handleDeleteLead(sub.id)}
-                                className="text-gray-400 hover:text-red-600 transition-colors p-1.5 rounded hover:bg-red-50 cursor-pointer"
-                                title="Delete Lead"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </td>
-                          </tr>
-                        ))
-                      )}
+                      ))}
                     </tbody>
                   </table>
                 </div>
-              </div>
+              )}
             </div>
           )}
 
-          {/* ========================================================= */}
-          {/* TAB 3: MANAGE SERVICES VIEW */}
-          {/* ========================================================= */}
+          {/* ========================================================================= */}
+          {/* 3. SERVICES MANAGEMENT */}
+          {/* ========================================================================= */}
           {activeTab === "services" && (
-            <div>
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-heading font-bold text-gray-900">Manage Services ({services.length})</h2>
-                  <p className="text-gray-500 text-xs mt-0.5">Add, update, or remove business consulting and technical services.</p>
+                  <h2 className="text-xl font-heading font-extrabold text-[#0f172a]">
+                    Services (7 Official Industrial Pillars)
+                  </h2>
+                  <p className="text-xs text-[#64748b]">
+                    Manage QMS/ISO, laboratory setup, QHSE training, industrial insurance, Six Sigma, and export marketing services.
+                  </p>
                 </div>
                 <button
                   onClick={() => {
-                    setServiceForm({
-                      title: "",
-                      category: "Business Consulting",
-                      short_desc: "",
-                      image_url: "",
-                      details: "",
-                      display_order: services.length + 1
-                    });
+                    setServiceForm({ title: "", category: "Industrial Consultancy", short_desc: "", image_url: "", details: "", display_order: services.length + 1 });
                     setIsServiceModalOpen(true);
                   }}
-                  className="bg-primary hover:bg-red-800 text-white font-heading font-bold px-4 py-2.5 rounded-xl shadow-md shadow-primary/20 flex items-center text-xs transition-all cursor-pointer"
+                  className="px-3.5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white text-xs font-heading font-bold rounded-lg transition-colors flex items-center shadow-xs"
                 >
-                  <Plus className="w-4 h-4 mr-1.5" /> Add New Service
+                  <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Service
                 </button>
               </div>
 
-              <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse text-sm min-w-[700px]">
-                    <thead>
-                      <tr className="bg-gray-50 border-b border-gray-200 text-gray-600 text-xs uppercase tracking-wider">
-                        <th className="p-4 font-semibold">Order</th>
-                        <th className="p-4 font-semibold">Service Details</th>
-                        <th className="p-4 font-semibold">Category</th>
-                        <th className="p-4 font-semibold">Short Description</th>
-                        <th className="p-4 font-semibold">Image</th>
-                        <th className="p-4 font-semibold text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                      {services.length === 0 ? (
-                        <tr>
-                          <td colSpan={6} className="p-12 text-center text-gray-400">No services found. Click &quot;Add New Service&quot; to create one.</td>
-                        </tr>
-                      ) : (
-                        services.map((srv) => (
-                          <tr key={srv.id} className="hover:bg-gray-50/70 transition-colors">
-                            <td className="p-4 font-mono text-xs text-gray-400 align-top">#{srv.display_order}</td>
-                            <td className="p-4 align-top">
-                              <div className="font-bold text-gray-900 text-base">{srv.title}</div>
-                              {srv.details && (
-                                <div className="text-xs text-gray-500 mt-1 line-clamp-2 max-w-xs whitespace-pre-wrap">
-                                  {srv.details}
-                                </div>
-                              )}
-                            </td>
-                            <td className="p-4 align-top whitespace-nowrap">
-                              <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${
-                                srv.category === 'Business Consulting'
-                                  ? 'bg-amber-50 text-amber-800 border border-amber-200'
-                                  : 'bg-purple-50 text-purple-800 border border-purple-200'
-                              }`}>
-                                {srv.category}
-                              </span>
-                            </td>
-                            <td className="p-4 align-top text-gray-600 max-w-sm text-xs leading-relaxed">
-                              {srv.short_desc}
-                            </td>
-                            <td className="p-4 align-top whitespace-nowrap">
-                              {srv.image_url ? (
-                                <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
-                                  <Image src={srv.image_url} alt={srv.title} fill className="object-cover" />
-                                </div>
-                              ) : (
-                                <span className="text-xs text-gray-400">Default</span>
-                              )}
-                            </td>
-                            <td className="p-4 align-top text-right whitespace-nowrap">
-                              <button
-                                onClick={() => {
-                                  setServiceForm(srv);
-                                  setIsServiceModalOpen(true);
-                                }}
-                                className="text-blue-600 hover:text-blue-800 p-1.5 mr-1 transition-colors inline-block rounded hover:bg-blue-50 cursor-pointer"
-                                title="Edit Service"
-                              >
-                                <Edit className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => srv.id && handleDeleteService(srv.id)}
-                                className="text-gray-400 hover:text-red-600 p-1.5 transition-colors inline-block rounded hover:bg-red-50 cursor-pointer"
-                                title="Delete Service"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {services.map((srv) => (
+                  <div key={srv.id} className="bg-white border border-[#e2e8f0] rounded-xl p-5 shadow-xs flex flex-col justify-between space-y-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#b3282d] bg-[#fef2f2] px-2 py-0.5 rounded border border-[#fecaca]">
+                          {srv.category}
+                        </span>
+                        <span className="text-[10px] text-[#94a3b8] font-mono">Order #{srv.display_order}</span>
+                      </div>
+                      <h3 className="font-heading font-bold text-sm text-[#0f172a]">{srv.title}</h3>
+                      <p className="text-xs text-[#475569] line-clamp-3 leading-relaxed">{srv.short_desc}</p>
+                    </div>
+
+                    <div className="pt-3 border-t border-[#f1f5f9] flex items-center justify-between text-xs">
+                      <span className="text-[11px] text-[#64748b]">ID #{srv.id}</span>
+                      <div className="space-x-1.5">
+                        <button
+                          onClick={() => { setServiceForm(srv); setIsServiceModalOpen(true); }}
+                          className="px-2.5 py-1 bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#cbd5e1] rounded font-medium text-[#0f172a]"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteService(srv.id)}
+                          className="px-2.5 py-1 bg-red-50 hover:bg-red-100 border border-red-200 rounded font-medium text-red-700"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
 
-          {/* ========================================================= */}
-          {/* TAB 4: MANAGE PROJECTS VIEW */}
-          {/* ========================================================= */}
-          {activeTab === "projects" && (
-            <div>
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          {/* ========================================================================= */}
+          {/* 4. INDUSTRIES WE SERVE */}
+          {/* ========================================================================= */}
+          {activeTab === "industries" && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-heading font-bold text-gray-900">Manage Projects (Portfolio) ({projects.length})</h2>
-                  <p className="text-gray-500 text-xs mt-0.5">Showcase client case studies, videos, and websites linked to your services.</p>
+                  <h2 className="text-xl font-heading font-extrabold text-[#0f172a]">
+                    Industries We Serve
+                  </h2>
+                  <p className="text-xs text-[#64748b]">
+                    Manage sector verticals (Manufacturing, Chemical, Pharma, Testing Labs, Construction, Oil & Gas, etc.)
+                  </p>
                 </div>
                 <button
                   onClick={() => {
-                    setProjectForm({
-                      service_id: services.length > 0 ? (services[0].id || null) : null,
-                      title: "",
-                      category_name: "Consulting Case Studies",
-                      description: "",
-                      image_url: "",
-                      project_url: "",
-                      tag_style: "bg-accent/20 text-accent border border-accent/30",
-                      featured: false,
-                      display_order: projects.length + 1
-                    });
-                    setIsProjectModalOpen(true);
+                    setIndustryForm({ title: "", category: "Heavy & Engineering", scope: "", description: "", key_services: "", image_url: "", display_order: industries.length + 1 });
+                    setIsIndustryModalOpen(true);
                   }}
-                  className="bg-primary hover:bg-red-800 text-white font-heading font-bold px-4 py-2.5 rounded-xl shadow-md shadow-primary/20 flex items-center text-xs transition-all cursor-pointer"
+                  className="px-3.5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white text-xs font-heading font-bold rounded-lg transition-colors flex items-center shadow-xs"
                 >
-                  <Plus className="w-4 h-4 mr-1.5" /> Add New Project
+                  <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Industry Sector
                 </button>
               </div>
 
-              <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse text-sm min-w-[750px]">
-                    <thead>
-                      <tr className="bg-gray-50 border-b border-gray-200 text-gray-600 text-xs uppercase tracking-wider">
-                        <th className="p-4 font-semibold">Order</th>
-                        <th className="p-4 font-semibold">Project Title</th>
-                        <th className="p-4 font-semibold">Linked Service</th>
-                        <th className="p-4 font-semibold">Category Tag</th>
-                        <th className="p-4 font-semibold">Description</th>
-                        <th className="p-4 font-semibold">Image</th>
-                        <th className="p-4 font-semibold">Featured</th>
-                        <th className="p-4 font-semibold text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                      {projects.length === 0 ? (
-                        <tr>
-                          <td colSpan={8} className="p-12 text-center text-gray-400">No projects found. Click &quot;Add New Project&quot; to create one.</td>
-                        </tr>
-                      ) : (
-                        projects.map((proj) => (
-                          <tr key={proj.id} className="hover:bg-gray-50/70 transition-colors">
-                            <td className="p-4 font-mono text-xs text-gray-400 align-top">#{proj.display_order}</td>
-                            <td className="p-4 align-top">
-                              <div className="font-bold text-gray-900 text-base">{proj.title}</div>
-                              {proj.project_url && (
-                                <a href={proj.project_url} target="_blank" rel="noreferrer" className="text-xs text-primary hover:underline mt-0.5 inline-flex items-center font-medium">
-                                  Live Link <ExternalLink className="w-3 h-3 ml-1" />
-                                </a>
-                              )}
-                            </td>
-                            <td className="p-4 align-top whitespace-nowrap">
-                              {proj.service_title ? (
-                                <span className="inline-block px-2.5 py-1 rounded-full text-xs font-semibold bg-red-50 text-primary border border-red-100">
-                                  {proj.service_title}
-                                </span>
-                              ) : (
-                                <span className="text-xs text-gray-400 italic">None (General)</span>
-                              )}
-                            </td>
-                            <td className="p-4 align-top whitespace-nowrap">
-                              <span className="inline-block px-2.5 py-0.5 rounded text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                                {proj.category_name}
-                              </span>
-                            </td>
-                            <td className="p-4 align-top text-gray-600 max-w-sm text-xs leading-relaxed">
-                              {proj.description}
-                            </td>
-                            <td className="p-4 align-top whitespace-nowrap">
-                              {proj.image_url ? (
-                                <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
-                                  <Image src={proj.image_url} alt={proj.title} fill className="object-cover" />
-                                </div>
-                              ) : (
-                                <span className="text-xs text-gray-400">Default</span>
-                              )}
-                            </td>
-                            <td className="p-4 align-top whitespace-nowrap">
-                              {proj.featured ? (
-                                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                  ★ Home
-                                </span>
-                              ) : (
-                                <span className="text-gray-400 text-xs">-</span>
-                              )}
-                            </td>
-                            <td className="p-4 align-top text-right whitespace-nowrap">
-                              <button
-                                onClick={() => {
-                                  setProjectForm(proj);
-                                  setIsProjectModalOpen(true);
-                                }}
-                                className="text-blue-600 hover:text-blue-800 p-1.5 mr-1 transition-colors inline-block rounded hover:bg-blue-50 cursor-pointer"
-                                title="Edit Project"
-                              >
-                                <Edit className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => proj.id && handleDeleteProject(proj.id)}
-                                className="text-gray-400 hover:text-red-600 p-1.5 transition-colors inline-block rounded hover:bg-red-50 cursor-pointer"
-                                title="Delete Project"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {industries.map((ind) => (
+                  <div key={ind.id} className="bg-white border border-[#e2e8f0] rounded-xl p-5 shadow-xs flex flex-col justify-between space-y-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#b3282d] bg-[#fef2f2] px-2 py-0.5 rounded border border-[#fecaca]">
+                          {ind.category}
+                        </span>
+                        <span className="text-[10px] text-[#94a3b8] font-mono">Order #{ind.display_order}</span>
+                      </div>
+                      <h3 className="font-heading font-bold text-sm text-[#0f172a]">{ind.title}</h3>
+                      <p className="text-[11px] text-[#b3282d] font-semibold">{ind.scope}</p>
+                      <p className="text-xs text-[#475569] line-clamp-3 leading-relaxed">{ind.description}</p>
+                    </div>
+
+                    <div className="pt-3 border-t border-[#f1f5f9] flex items-center justify-between text-xs">
+                      <span className="text-[11px] text-[#64748b]">ID #{ind.id}</span>
+                      <div className="space-x-1.5">
+                        <button
+                          onClick={() => { setIndustryForm(ind); setIsIndustryModalOpen(true); }}
+                          className="px-2.5 py-1 bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#cbd5e1] rounded font-medium text-[#0f172a]"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteIndustry(ind.id)}
+                          className="px-2.5 py-1 bg-red-50 hover:bg-red-100 border border-red-200 rounded font-medium text-red-700"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* 5. TRAINING PROGRAMS */}
+          {/* ========================================================================= */}
+          {activeTab === "training" && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-heading font-extrabold text-[#0f172a]">
+                    Training Programs & Courses
+                  </h2>
+                  <p className="text-xs text-[#64748b]">
+                    Manage Lead Auditor, QHSE, Food Safety, and Lean Six Sigma curriculum and course modules.
+                  </p>
                 </div>
+                <button
+                  onClick={() => {
+                    setTrainingForm({ title: "", badge: "Auditor Certification", target_audience: "", description: "", topics: "", duration: "2-5 Days", display_order: trainingPrograms.length + 1 });
+                    setIsTrainingModalOpen(true);
+                  }}
+                  className="px-3.5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white text-xs font-heading font-bold rounded-lg transition-colors flex items-center shadow-xs"
+                >
+                  <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Training Program
+                </button>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                {trainingPrograms.map((prog) => (
+                  <div key={prog.id} className="bg-white border border-[#e2e8f0] rounded-xl p-5 shadow-xs flex flex-col justify-between space-y-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#b3282d] bg-[#fef2f2] px-2 py-0.5 rounded border border-[#fecaca]">
+                          {prog.badge}
+                        </span>
+                        <span className="text-[11px] font-bold text-[#64748b] flex items-center">
+                          <Calendar className="w-3 h-3 mr-1" /> {prog.duration}
+                        </span>
+                      </div>
+                      <h3 className="font-heading font-bold text-sm text-[#0f172a]">{prog.title}</h3>
+                      <p className="text-[11px] text-[#64748b] font-medium">Target: {prog.target_audience}</p>
+                      <p className="text-xs text-[#475569] line-clamp-3 leading-relaxed">{prog.description}</p>
+                    </div>
+
+                    <div className="pt-3 border-t border-[#f1f5f9] flex items-center justify-between text-xs">
+                      <span className="text-[11px] text-[#64748b]">ID #{prog.id}</span>
+                      <div className="space-x-1.5">
+                        <button
+                          onClick={() => { setTrainingForm(prog); setIsTrainingModalOpen(true); }}
+                          className="px-2.5 py-1 bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#cbd5e1] rounded font-medium text-[#0f172a]"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTraining(prog.id)}
+                          className="px-2.5 py-1 bg-red-50 hover:bg-red-100 border border-red-200 rounded font-medium text-red-700"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* 6. PROJECTS & CLIENTS */}
+          {/* ========================================================================= */}
+          {activeTab === "projects" && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-heading font-extrabold text-[#0f172a]">
+                    Projects / Clients Portfolio
+                  </h2>
+                  <p className="text-xs text-[#64748b]">
+                    Manage implementation track record, multi-site certifications, NABL clearances, and plant risk audits.
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setProjectForm({ service_id: null, title: "", category_name: "ISO & IMS Consultancy", description: "", image_url: "", project_url: "", tag_style: "bg-accent/20 text-accent border border-accent/30", featured: false, display_order: projects.length + 1 });
+                    setIsProjectModalOpen(true);
+                  }}
+                  className="px-3.5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white text-xs font-heading font-bold rounded-lg transition-colors flex items-center shadow-xs"
+                >
+                  <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Project
+                </button>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {projects.map((proj) => (
+                  <div key={proj.id} className="bg-white border border-[#e2e8f0] rounded-xl p-5 shadow-xs flex flex-col justify-between space-y-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#b3282d] bg-[#fef2f2] px-2 py-0.5 rounded border border-[#fecaca]">
+                          {proj.category_name}
+                        </span>
+                        {proj.featured && (
+                          <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+                            Featured
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="font-heading font-bold text-sm text-[#0f172a]">{proj.title}</h3>
+                      <p className="text-xs text-[#475569] line-clamp-3 leading-relaxed">{proj.description}</p>
+                    </div>
+
+                    <div className="pt-3 border-t border-[#f1f5f9] flex items-center justify-between text-xs">
+                      <span className="text-[11px] text-[#64748b]">ID #{proj.id}</span>
+                      <div className="space-x-1.5">
+                        <button
+                          onClick={() => { setProjectForm(proj); setIsProjectModalOpen(true); }}
+                          className="px-2.5 py-1 bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#cbd5e1] rounded font-medium text-[#0f172a]"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteProject(proj.id)}
+                          className="px-2.5 py-1 bg-red-50 hover:bg-red-100 border border-red-200 rounded font-medium text-red-700"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* 7. RESOURCES & DOWNLOADS */}
+          {/* ========================================================================= */}
+          {activeTab === "resources" && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-heading font-extrabold text-[#0f172a]">
+                    Resources & Compliance Documentation
+                  </h2>
+                  <p className="text-xs text-[#64748b]">
+                    Manage implementation checklists, NABL blueprints, HIRA safety scorecards, and toolkits.
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setResourceForm({ title: "", category: "QMS & Compliance", description: "", tags: "", file_format: "PDF Document", file_size: "1.5 MB", file_url: "", display_order: resources.length + 1 });
+                    setIsResourceModalOpen(true);
+                  }}
+                  className="px-3.5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white text-xs font-heading font-bold rounded-lg transition-colors flex items-center shadow-xs"
+                >
+                  <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Resource Item
+                </button>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {resources.map((res) => (
+                  <div key={res.id} className="bg-white border border-[#e2e8f0] rounded-xl p-5 shadow-xs flex flex-col justify-between space-y-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#b3282d] bg-[#fef2f2] px-2 py-0.5 rounded border border-[#fecaca]">
+                          {res.category}
+                        </span>
+                        <span className="text-[10px] text-[#64748b]">{res.file_format} • {res.file_size}</span>
+                      </div>
+                      <h3 className="font-heading font-bold text-sm text-[#0f172a]">{res.title}</h3>
+                      <p className="text-xs text-[#475569] line-clamp-3 leading-relaxed">{res.description}</p>
+                      <span className="text-[10px] font-mono text-[#64748b] block">{res.tags}</span>
+                    </div>
+
+                    <div className="pt-3 border-t border-[#f1f5f9] flex items-center justify-between text-xs">
+                      <span className="text-[11px] text-[#64748b]">ID #{res.id}</span>
+                      <div className="space-x-1.5">
+                        <button
+                          onClick={() => { setResourceForm(res); setIsResourceModalOpen(true); }}
+                          className="px-2.5 py-1 bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#cbd5e1] rounded font-medium text-[#0f172a]"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteResource(res.id)}
+                          className="px-2.5 py-1 bg-red-50 hover:bg-red-100 border border-red-200 rounded font-medium text-red-700"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
         </main>
       </div>
 
-      {/* ----------------------------------------------------------- */}
-      {/* MODAL: ADD / EDIT SERVICE */}
-      {/* ----------------------------------------------------------- */}
-      {isServiceModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white border border-gray-200 rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden max-h-[90vh] flex flex-col my-auto">
-            <div className="bg-gray-50 px-6 py-4 flex justify-between items-center border-b border-gray-200 shrink-0">
-              <h3 className="text-lg font-heading font-bold text-gray-900">
-                {serviceForm.id ? "Edit Service" : "Add New Service"}
-              </h3>
-              <button onClick={() => setIsServiceModalOpen(false)} className="text-gray-400 hover:text-gray-700 cursor-pointer">
+      {/* ========================================================================= */}
+      {/* MODAL: LEAD DETAILS */}
+      {/* ========================================================================= */}
+      {selectedLead && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 border border-[#e2e8f0] shadow-2xl space-y-4">
+            <div className="flex items-start justify-between border-b border-[#f1f5f9] pb-3">
+              <div>
+                <h3 className="text-base font-heading font-bold text-[#0f172a]">{selectedLead.full_name}</h3>
+                <p className="text-xs text-[#64748b]">{selectedLead.company_name || "Direct Individual Inquiry"}</p>
+              </div>
+              <button onClick={() => setSelectedLead(null)} className="p-1 rounded text-[#64748b] hover:text-[#0f172a]">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveService} className="p-6 space-y-4 overflow-y-auto flex-1">
+            <div className="space-y-3 text-xs text-[#475569]">
+              <div className="grid grid-cols-2 gap-3 bg-[#f8fafc] p-3 rounded-lg border border-[#e2e8f0]">
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-[#94a3b8] block">Corporate Email</span>
+                  <a href={`mailto:${selectedLead.email}`} className="font-bold text-[#b3282d] hover:underline truncate block">
+                    {selectedLead.email}
+                  </a>
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-[#94a3b8] block">Phone / WhatsApp</span>
+                  <a href={`tel:${selectedLead.phone}`} className="font-bold text-[#0f172a] hover:underline block">
+                    {selectedLead.phone || "—"}
+                  </a>
+                </div>
+              </div>
+
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Service Title *</label>
+                <span className="text-[10px] uppercase font-bold text-[#94a3b8] block mb-1">Service Interested</span>
+                <p className="font-bold text-[#0f172a] bg-[#f8fafc] p-2 rounded border border-[#e2e8f0]">
+                  {selectedLead.service_interested || "General Industrial Inquiry"}
+                </p>
+              </div>
+
+              <div>
+                <span className="text-[10px] uppercase font-bold text-[#94a3b8] block mb-1">Scope & Message</span>
+                <p className="bg-[#f8fafc] p-3 rounded border border-[#e2e8f0] whitespace-pre-wrap leading-relaxed text-[#334155]">
+                  {selectedLead.message}
+                </p>
+              </div>
+
+              <div className="text-[10px] text-[#94a3b8] flex items-center justify-between pt-1">
+                <span>Submitted: {new Date(selectedLead.submitted_at).toLocaleString()}</span>
+                <span className="font-mono">IP: {selectedLead.id}</span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end space-x-2 pt-3 border-t border-[#f1f5f9]">
+              <button
+                onClick={() => setSelectedLead(null)}
+                className="px-4 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] text-xs font-bold rounded-lg"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: SERVICE CREATE/EDIT */}
+      {/* ========================================================================= */}
+      {isServiceModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 border border-[#e2e8f0] shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#f1f5f9] pb-3">
+              <h3 className="text-base font-heading font-bold text-[#0f172a]">
+                {serviceForm.id ? "Edit Service" : "Add New Service"}
+              </h3>
+              <button onClick={() => setIsServiceModalOpen(false)} className="p-1 text-[#64748b] hover:text-[#0f172a]">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveService} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Service Title *</label>
                 <input
                   type="text"
-                  required
                   value={serviceForm.title}
                   onChange={(e) => setServiceForm({ ...serviceForm, title: e.target.value })}
-                  placeholder="e.g. ISO Management Systems"
-                  className="w-full bg-white border border-gray-300 rounded-xl p-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  required
+                  placeholder="e.g. QMS & ISO Consultancy"
+                  className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a] focus:outline-none focus:border-[#b3282d]"
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Category *</label>
-                  <select
+                  <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Category</label>
+                  <input
+                    type="text"
                     value={serviceForm.category}
-                    onChange={(e) => setServiceForm({ ...serviceForm, category: e.target.value as "Business Consulting" | "Technical Expertise" })}
-                    className="w-full bg-white border border-gray-300 rounded-xl p-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                  >
-                    <option value="Business Consulting">Business Consulting</option>
-                    <option value="Technical Expertise">Technical Expertise</option>
-                  </select>
+                    onChange={(e) => setServiceForm({ ...serviceForm, category: e.target.value })}
+                    className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
+                  />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Display Order</label>
+                  <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Display Order</label>
                   <input
                     type="number"
                     value={serviceForm.display_order}
                     onChange={(e) => setServiceForm({ ...serviceForm, display_order: parseInt(e.target.value) || 0 })}
-                    className="w-full bg-white border border-gray-300 rounded-xl p-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Short Description *</label>
+                <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Short Summary *</label>
                 <textarea
-                  rows={2}
-                  required
                   value={serviceForm.short_desc}
                   onChange={(e) => setServiceForm({ ...serviceForm, short_desc: e.target.value })}
-                  placeholder="Brief summary of service..."
-                  className="w-full bg-white border border-gray-300 rounded-xl p-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  required
+                  rows={2}
+                  className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
                 />
               </div>
 
-              {/* Cloudinary Image Upload */}
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Service Image</label>
-                <div className="flex items-center space-x-3 mb-2">
-                  <label className="cursor-pointer inline-flex items-center px-3.5 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-300 rounded-xl text-xs font-semibold text-gray-700 transition-colors shadow-sm">
-                    {serviceUploading ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin text-primary" /> : <UploadCloud className="w-4 h-4 mr-1.5 text-primary" />}
-                    {serviceUploading ? "Uploading to Cloudinary..." : "Upload File (Cloudinary)"}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                        if (e.target.files && e.target.files[0]) {
-                          handleImageUpload(e.target.files[0], (url) => setServiceForm({ ...serviceForm, image_url: url }), setServiceUploading);
-                        }
-                      }}
-                    />
-                  </label>
-                </div>
-                <div className="flex items-center space-x-3">
+                <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Details / Scope (One per line)</label>
+                <textarea
+                  value={serviceForm.details}
+                  onChange={(e) => setServiceForm({ ...serviceForm, details: e.target.value })}
+                  rows={4}
+                  className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Image URL or Cloudinary Upload</label>
+                <div className="flex items-center space-x-2">
                   <input
                     type="text"
                     value={serviceForm.image_url}
                     onChange={(e) => setServiceForm({ ...serviceForm, image_url: e.target.value })}
-                    placeholder="Or enter image URL directly..."
-                    className="flex-1 bg-white border border-gray-300 rounded-xl p-2.5 text-xs text-gray-800 focus:outline-none focus:border-primary"
+                    placeholder="/images/example.jpg or https://..."
+                    className="flex-1 bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
                   />
-                  {serviceForm.image_url && (
-                    <div className="relative w-10 h-10 rounded-lg overflow-hidden border border-gray-300 shrink-0">
-                      <Image src={serviceForm.image_url} alt="Preview" fill className="object-cover" />
-                    </div>
-                  )}
+                  <label className="px-3 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] border border-[#cbd5e1] rounded-lg font-bold cursor-pointer text-[#475569]">
+                    <UploadCloud className="w-4 h-4" />
+                    <input type="file" onChange={(e) => handleImageUpload(e, "service")} className="hidden" accept="image/*" />
+                  </label>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Detailed Highlights (1 per line)</label>
-                <textarea
-                  rows={3}
-                  value={serviceForm.details}
-                  onChange={(e) => setServiceForm({ ...serviceForm, details: e.target.value })}
-                  placeholder="Point 1&#10;Point 2&#10;Point 3"
-                  className="w-full bg-white border border-gray-300 rounded-xl p-3 text-xs text-gray-800 focus:outline-none focus:border-primary font-mono"
-                />
-              </div>
-
-              <div className="flex justify-end space-x-3 pt-3 border-t border-gray-100">
+              <div className="flex items-center justify-end space-x-2 pt-3 border-t border-[#f1f5f9]">
                 <button
                   type="button"
                   onClick={() => setIsServiceModalOpen(false)}
-                  className="px-4 py-2.5 text-sm text-gray-600 hover:text-gray-900 rounded-xl font-medium cursor-pointer"
+                  className="px-4 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] font-bold rounded-lg"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  disabled={serviceSaving || serviceUploading}
-                  className="px-5 py-2.5 text-sm bg-primary hover:bg-red-800 text-white rounded-xl font-bold shadow-md shadow-primary/25 flex items-center disabled:opacity-50 cursor-pointer"
+                  disabled={savingEntity}
+                  className="px-5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white font-heading font-bold rounded-lg"
                 >
-                  {serviceSaving ? <Loader2 className="w-4 h-4 animate-spin mr-1.5" /> : null}
-                  Save Service
+                  {savingEntity ? "Saving..." : "Save Service"}
                 </button>
               </div>
             </form>
@@ -1351,162 +1498,421 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* ----------------------------------------------------------- */}
-      {/* MODAL: ADD / EDIT PROJECT (With Service Dropdown) */}
-      {/* ----------------------------------------------------------- */}
-      {isProjectModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white border border-gray-200 rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden max-h-[90vh] flex flex-col my-auto">
-            <div className="bg-gray-50 px-6 py-4 flex justify-between items-center border-b border-gray-200 shrink-0">
-              <h3 className="text-lg font-heading font-bold text-gray-900">
-                {projectForm.id ? "Edit Project" : "Add New Project"}
+      {/* ========================================================================= */}
+      {/* MODAL: INDUSTRY CREATE/EDIT */}
+      {/* ========================================================================= */}
+      {isIndustryModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 border border-[#e2e8f0] shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#f1f5f9] pb-3">
+              <h3 className="text-base font-heading font-bold text-[#0f172a]">
+                {industryForm.id ? "Edit Industry Sector" : "Add Industry Sector"}
               </h3>
-              <button onClick={() => setIsProjectModalOpen(false)} className="text-gray-400 hover:text-gray-700 cursor-pointer">
+              <button onClick={() => setIsIndustryModalOpen(false)} className="p-1 text-[#64748b] hover:text-[#0f172a]">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveProject} className="p-6 space-y-4 overflow-y-auto flex-1">
-              {/* Service Dropdown */}
+            <form onSubmit={handleSaveIndustry} className="space-y-3.5 text-xs">
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
-                  Belongs to Service (Dropdown) *
-                </label>
-                <select
-                  value={projectForm.service_id ?? ""}
-                  onChange={(e) => setProjectForm({ ...projectForm, service_id: e.target.value ? parseInt(e.target.value) : null })}
-                  className="w-full bg-white border border-gray-300 rounded-xl p-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                >
-                  <option value="">-- General / No Service Linked --</option>
-                  {services.map((srv) => (
-                    <option key={srv.id} value={srv.id}>
-                      {srv.title} ({srv.category})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Project Title *</label>
+                <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Industry Title *</label>
                 <input
                   type="text"
+                  value={industryForm.title}
+                  onChange={(e) => setIndustryForm({ ...industryForm, title: e.target.value })}
                   required
-                  value={projectForm.title}
-                  onChange={(e) => setProjectForm({ ...projectForm, title: e.target.value })}
-                  placeholder="e.g. Global Supply Chain Overhaul"
-                  className="w-full bg-white border border-gray-300 rounded-xl p-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  placeholder="e.g. Chemical & Petrochemical"
+                  className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Category Filter Tag *</label>
+                  <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Category</label>
                   <input
                     type="text"
-                    required
-                    value={projectForm.category_name}
-                    onChange={(e) => setProjectForm({ ...projectForm, category_name: e.target.value })}
-                    placeholder="e.g. Consulting Case Studies"
-                    className="w-full bg-white border border-gray-300 rounded-xl p-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    value={industryForm.category}
+                    onChange={(e) => setIndustryForm({ ...industryForm, category: e.target.value })}
+                    className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Display Order</label>
+                  <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Display Order</label>
                   <input
                     type="number"
-                    value={projectForm.display_order}
-                    onChange={(e) => setProjectForm({ ...projectForm, display_order: parseInt(e.target.value) || 0 })}
-                    className="w-full bg-white border border-gray-300 rounded-xl p-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    value={industryForm.display_order}
+                    onChange={(e) => setIndustryForm({ ...industryForm, display_order: parseInt(e.target.value) || 0 })}
+                    className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Project Description *</label>
-                <textarea
-                  rows={3}
-                  required
-                  value={projectForm.description}
-                  onChange={(e) => setProjectForm({ ...projectForm, description: e.target.value })}
-                  placeholder="Outcome, metrics and impact of this project..."
-                  className="w-full bg-white border border-gray-300 rounded-xl p-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                />
-              </div>
-
-              {/* Cloudinary Image Upload */}
-              <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Project Image</label>
-                <div className="flex items-center space-x-3 mb-2">
-                  <label className="cursor-pointer inline-flex items-center px-3.5 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-300 rounded-xl text-xs font-semibold text-gray-700 transition-colors shadow-sm">
-                    {projectUploading ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin text-primary" /> : <UploadCloud className="w-4 h-4 mr-1.5 text-primary" />}
-                    {projectUploading ? "Uploading to Cloudinary..." : "Upload File (Cloudinary)"}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                        if (e.target.files && e.target.files[0]) {
-                          handleImageUpload(e.target.files[0], (url) => setProjectForm({ ...projectForm, image_url: url }), setProjectUploading);
-                        }
-                      }}
-                    />
-                  </label>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <input
-                    type="text"
-                    value={projectForm.image_url}
-                    onChange={(e) => setProjectForm({ ...projectForm, image_url: e.target.value })}
-                    placeholder="Or enter image URL directly..."
-                    className="flex-1 bg-white border border-gray-300 rounded-xl p-2.5 text-xs text-gray-800 focus:outline-none focus:border-primary"
-                  />
-                  {projectForm.image_url && (
-                    <div className="relative w-10 h-10 rounded-lg overflow-hidden border border-gray-300 shrink-0">
-                      <Image src={projectForm.image_url} alt="Preview" fill className="object-cover" />
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Project Live URL</label>
+                <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Scope Line *</label>
                 <input
                   type="text"
-                  value={projectForm.project_url}
-                  onChange={(e) => setProjectForm({ ...projectForm, project_url: e.target.value })}
-                  placeholder="https://example.com"
-                  className="w-full bg-white border border-gray-300 rounded-xl p-3 text-sm text-gray-800 focus:outline-none focus:border-primary"
+                  value={industryForm.scope}
+                  onChange={(e) => setIndustryForm({ ...industryForm, scope: e.target.value })}
+                  required
+                  placeholder="e.g. Specialty Chemicals, Polymers & Bulk Reagents"
+                  className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
                 />
               </div>
 
-              <div className="flex items-center space-x-2 pt-1">
-                <input
-                  type="checkbox"
-                  id="project_featured_chk"
-                  checked={projectForm.featured}
-                  onChange={(e) => setProjectForm({ ...projectForm, featured: e.target.checked })}
-                  className="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary cursor-pointer"
+              <div>
+                <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Description *</label>
+                <textarea
+                  value={industryForm.description}
+                  onChange={(e) => setIndustryForm({ ...industryForm, description: e.target.value })}
+                  required
+                  rows={3}
+                  className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
                 />
-                <label htmlFor="project_featured_chk" className="text-xs text-gray-700 font-bold cursor-pointer">
-                  Feature on Homepage (Preview Section)
-                </label>
               </div>
 
-              <div className="flex justify-end space-x-3 pt-3 border-t border-gray-100">
+              <div>
+                <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Key Services (One per line)</label>
+                <textarea
+                  value={industryForm.key_services}
+                  onChange={(e) => setIndustryForm({ ...industryForm, key_services: e.target.value })}
+                  rows={3}
+                  placeholder="HIRA & Process Safety Audits&#10;ISO 45001 & ISO 14001 Certification"
+                  className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
+                />
+              </div>
+
+              <div className="flex items-center justify-end space-x-2 pt-3 border-t border-[#f1f5f9]">
                 <button
                   type="button"
-                  onClick={() => setIsProjectModalOpen(false)}
-                  className="px-4 py-2.5 text-sm text-gray-600 hover:text-gray-900 rounded-xl font-medium cursor-pointer"
+                  onClick={() => setIsIndustryModalOpen(false)}
+                  className="px-4 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] font-bold rounded-lg"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  disabled={projectSaving || projectUploading}
-                  className="px-5 py-2.5 text-sm bg-primary hover:bg-red-800 text-white rounded-xl font-bold shadow-md shadow-primary/25 flex items-center disabled:opacity-50 cursor-pointer"
+                  disabled={savingEntity}
+                  className="px-5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white font-heading font-bold rounded-lg"
                 >
-                  {projectSaving ? <Loader2 className="w-4 h-4 animate-spin mr-1.5" /> : null}
-                  Save Project
+                  {savingEntity ? "Saving..." : "Save Industry"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: TRAINING PROGRAM CREATE/EDIT */}
+      {/* ========================================================================= */}
+      {isTrainingModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 border border-[#e2e8f0] shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#f1f5f9] pb-3">
+              <h3 className="text-base font-heading font-bold text-[#0f172a]">
+                {trainingForm.id ? "Edit Training Program" : "Add Training Program"}
+              </h3>
+              <button onClick={() => setIsTrainingModalOpen(false)} className="p-1 text-[#64748b] hover:text-[#0f172a]">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveTraining} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Program Title *</label>
+                <input
+                  type="text"
+                  value={trainingForm.title}
+                  onChange={(e) => setTrainingForm({ ...trainingForm, title: e.target.value })}
+                  required
+                  placeholder="e.g. Lead Auditor & Internal Auditor Training"
+                  className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Badge / Tag</label>
+                  <input
+                    type="text"
+                    value={trainingForm.badge}
+                    onChange={(e) => setTrainingForm({ ...trainingForm, badge: e.target.value })}
+                    className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Duration</label>
+                  <input
+                    type="text"
+                    value={trainingForm.duration}
+                    onChange={(e) => setTrainingForm({ ...trainingForm, duration: e.target.value })}
+                    className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Target Audience *</label>
+                <input
+                  type="text"
+                  value={trainingForm.target_audience}
+                  onChange={(e) => setTrainingForm({ ...trainingForm, target_audience: e.target.value })}
+                  required
+                  placeholder="Plant Managers, EHS Officers, Engineers..."
+                  className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Description *</label>
+                <textarea
+                  value={trainingForm.description}
+                  onChange={(e) => setTrainingForm({ ...trainingForm, description: e.target.value })}
+                  required
+                  rows={3}
+                  className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Curriculum Topics (One per line)</label>
+                <textarea
+                  value={trainingForm.topics}
+                  onChange={(e) => setTrainingForm({ ...trainingForm, topics: e.target.value })}
+                  rows={4}
+                  className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
+                />
+              </div>
+
+              <div className="flex items-center justify-end space-x-2 pt-3 border-t border-[#f1f5f9]">
+                <button
+                  type="button"
+                  onClick={() => setIsTrainingModalOpen(false)}
+                  className="px-4 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] font-bold rounded-lg"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingEntity}
+                  className="px-5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white font-heading font-bold rounded-lg"
+                >
+                  {savingEntity ? "Saving..." : "Save Training"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: PROJECT CREATE/EDIT */}
+      {/* ========================================================================= */}
+      {isProjectModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 border border-[#e2e8f0] shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#f1f5f9] pb-3">
+              <h3 className="text-base font-heading font-bold text-[#0f172a]">
+                {projectForm.id ? "Edit Project" : "Add Project"}
+              </h3>
+              <button onClick={() => setIsProjectModalOpen(false)} className="p-1 text-[#64748b] hover:text-[#0f172a]">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveProject} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Project Title *</label>
+                <input
+                  type="text"
+                  value={projectForm.title}
+                  onChange={(e) => setProjectForm({ ...projectForm, title: e.target.value })}
+                  required
+                  placeholder="e.g. Multi-Site IMS Certification (ISO 9001, 14001, 45001)"
+                  className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Category Name</label>
+                  <input
+                    type="text"
+                    value={projectForm.category_name}
+                    onChange={(e) => setProjectForm({ ...projectForm, category_name: e.target.value })}
+                    className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Display Order</label>
+                  <input
+                    type="number"
+                    value={projectForm.display_order}
+                    onChange={(e) => setProjectForm({ ...projectForm, display_order: parseInt(e.target.value) || 0 })}
+                    className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Description *</label>
+                <textarea
+                  value={projectForm.description}
+                  onChange={(e) => setProjectForm({ ...projectForm, description: e.target.value })}
+                  required
+                  rows={3}
+                  className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Image URL</label>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="text"
+                    value={projectForm.image_url}
+                    onChange={(e) => setProjectForm({ ...projectForm, image_url: e.target.value })}
+                    placeholder="https://..."
+                    className="flex-1 bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
+                  />
+                  <label className="px-3 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] border border-[#cbd5e1] rounded-lg font-bold cursor-pointer text-[#475569]">
+                    <UploadCloud className="w-4 h-4" />
+                    <input type="file" onChange={(e) => handleImageUpload(e, "project")} className="hidden" accept="image/*" />
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-2 pt-1">
+                <input
+                  type="checkbox"
+                  id="featured"
+                  checked={projectForm.featured}
+                  onChange={(e) => setProjectForm({ ...projectForm, featured: e.target.checked })}
+                  className="rounded text-[#b3282d] focus:ring-[#b3282d]"
+                />
+                <label htmlFor="featured" className="font-bold text-[#0f172a] cursor-pointer">
+                  Featured Case Study (Highlight on Homepage)
+                </label>
+              </div>
+
+              <div className="flex items-center justify-end space-x-2 pt-3 border-t border-[#f1f5f9]">
+                <button
+                  type="button"
+                  onClick={() => setIsProjectModalOpen(false)}
+                  className="px-4 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] font-bold rounded-lg"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingEntity}
+                  className="px-5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white font-heading font-bold rounded-lg"
+                >
+                  {savingEntity ? "Saving..." : "Save Project"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: RESOURCE CREATE/EDIT */}
+      {/* ========================================================================= */}
+      {isResourceModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 border border-[#e2e8f0] shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#f1f5f9] pb-3">
+              <h3 className="text-base font-heading font-bold text-[#0f172a]">
+                {resourceForm.id ? "Edit Resource" : "Add Resource Guide"}
+              </h3>
+              <button onClick={() => setIsResourceModalOpen(false)} className="p-1 text-[#64748b] hover:text-[#0f172a]">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveResource} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Resource Title *</label>
+                <input
+                  type="text"
+                  value={resourceForm.title}
+                  onChange={(e) => setResourceForm({ ...resourceForm, title: e.target.value })}
+                  required
+                  placeholder="e.g. ISO Management Systems Implementation Checklist"
+                  className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Category</label>
+                  <input
+                    type="text"
+                    value={resourceForm.category}
+                    onChange={(e) => setResourceForm({ ...resourceForm, category: e.target.value })}
+                    className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">File Format / Size</label>
+                  <input
+                    type="text"
+                    value={resourceForm.file_size}
+                    onChange={(e) => setResourceForm({ ...resourceForm, file_size: e.target.value })}
+                    placeholder="e.g. PDF • 1.8 MB"
+                    className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Description *</label>
+                <textarea
+                  value={resourceForm.description}
+                  onChange={(e) => setResourceForm({ ...resourceForm, description: e.target.value })}
+                  required
+                  rows={3}
+                  className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Tags (Comma-separated)</label>
+                <input
+                  type="text"
+                  value={resourceForm.tags}
+                  onChange={(e) => setResourceForm({ ...resourceForm, tags: e.target.value })}
+                  placeholder="ISO 9001, ISO 14001, Checklist"
+                  className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#475569] uppercase tracking-wider mb-1">Download / File URL</label>
+                <input
+                  type="text"
+                  value={resourceForm.file_url}
+                  onChange={(e) => setResourceForm({ ...resourceForm, file_url: e.target.value })}
+                  placeholder="https://... or /downloads/..."
+                  className="w-full bg-[#f8fafc] border border-[#cbd5e1] rounded-lg px-3 py-2 text-[#0f172a]"
+                />
+              </div>
+
+              <div className="flex items-center justify-end space-x-2 pt-3 border-t border-[#f1f5f9]">
+                <button
+                  type="button"
+                  onClick={() => setIsResourceModalOpen(false)}
+                  className="px-4 py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#475569] font-bold rounded-lg"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingEntity}
+                  className="px-5 py-2 bg-[#b3282d] hover:bg-[#8c1e22] text-white font-heading font-bold rounded-lg"
+                >
+                  {savingEntity ? "Saving..." : "Save Resource"}
                 </button>
               </div>
             </form>

@@ -1,6 +1,6 @@
 <?php
 // Unified REST API for Admin & Frontend Operations
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=UTF-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
@@ -44,8 +44,7 @@ if ($action === 'login') {
     $password = trim($body['password'] ?? $_POST['password'] ?? '');
 
     if ($username === ADMIN_USER && $password === ADMIN_PASS) {
-        // Simple token for frontend session validation
-        $token = hash('sha256', ADMIN_USER . ADMIN_PASS . 'axar_secret_salt');
+        $token = hash('sha256', ADMIN_USER . ADMIN_PASS . 'axar_secret_salt_2026');
         echo json_encode([
             'success' => true,
             'token' => $token,
@@ -148,7 +147,107 @@ if ($action === 'delete_service') {
 }
 
 // -------------------------------------------------------------
-// 4. PROJECTS: GET, SAVE (CREATE/UPDATE), DELETE
+// 4. INDUSTRIES WE SERVE: GET, SAVE, DELETE
+// -------------------------------------------------------------
+if ($action === 'get_industries') {
+    $stmt = $pdo->query("SELECT * FROM industries ORDER BY display_order ASC, id ASC");
+    $industries = $stmt->fetchAll();
+    echo json_encode(['success' => true, 'data' => $industries]);
+    exit;
+}
+
+if ($action === 'save_industry') {
+    $id = !empty($body['id']) ? intval($body['id']) : (!empty($_POST['id']) ? intval($_POST['id']) : null);
+    $title = trim($body['title'] ?? $_POST['title'] ?? '');
+    $category = trim($body['category'] ?? $_POST['category'] ?? 'Heavy & Engineering');
+    $scope = trim($body['scope'] ?? $_POST['scope'] ?? '');
+    $description = trim($body['description'] ?? $_POST['description'] ?? '');
+    $key_services = trim($body['key_services'] ?? $_POST['key_services'] ?? '');
+    $image_url = trim($body['image_url'] ?? $_POST['image_url'] ?? '');
+    $display_order = intval($body['display_order'] ?? $_POST['display_order'] ?? 0);
+
+    if (!empty($title) && !empty($description)) {
+        if ($id) {
+            $stmt = $pdo->prepare("UPDATE industries SET title = ?, category = ?, scope = ?, description = ?, key_services = ?, image_url = ?, display_order = ? WHERE id = ?");
+            $stmt->execute([$title, $category, $scope, $description, $key_services, $image_url, $display_order, $id]);
+            echo json_encode(['success' => true, 'message' => 'Industry updated successfully']);
+        } else {
+            $stmt = $pdo->prepare("INSERT INTO industries (title, category, scope, description, key_services, image_url, display_order) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$title, $category, $scope, $description, $key_services, $image_url, $display_order]);
+            echo json_encode(['success' => true, 'message' => 'Industry created successfully']);
+        }
+    } else {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Title and description are required']);
+    }
+    exit;
+}
+
+if ($action === 'delete_industry') {
+    $id = intval($body['id'] ?? $_POST['id'] ?? 0);
+    if ($id > 0) {
+        $stmt = $pdo->prepare("DELETE FROM industries WHERE id = ?");
+        $stmt->execute([$id]);
+        echo json_encode(['success' => true, 'message' => 'Industry deleted']);
+    } else {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Invalid industry ID']);
+    }
+    exit;
+}
+
+// -------------------------------------------------------------
+// 5. TRAINING PROGRAMS: GET, SAVE, DELETE
+// -------------------------------------------------------------
+if ($action === 'get_training_programs') {
+    $stmt = $pdo->query("SELECT * FROM training_programs ORDER BY display_order ASC, id ASC");
+    $programs = $stmt->fetchAll();
+    echo json_encode(['success' => true, 'data' => $programs]);
+    exit;
+}
+
+if ($action === 'save_training_program') {
+    $id = !empty($body['id']) ? intval($body['id']) : (!empty($_POST['id']) ? intval($_POST['id']) : null);
+    $title = trim($body['title'] ?? $_POST['title'] ?? '');
+    $badge = trim($body['badge'] ?? $_POST['badge'] ?? 'Auditor Certification');
+    $target_audience = trim($body['target_audience'] ?? $_POST['target_audience'] ?? '');
+    $description = trim($body['description'] ?? $_POST['description'] ?? '');
+    $topics = trim($body['topics'] ?? $_POST['topics'] ?? '');
+    $duration = trim($body['duration'] ?? $_POST['duration'] ?? '2-5 Days');
+    $display_order = intval($body['display_order'] ?? $_POST['display_order'] ?? 0);
+
+    if (!empty($title) && !empty($description)) {
+        if ($id) {
+            $stmt = $pdo->prepare("UPDATE training_programs SET title = ?, badge = ?, target_audience = ?, description = ?, topics = ?, duration = ?, display_order = ? WHERE id = ?");
+            $stmt->execute([$title, $badge, $target_audience, $description, $topics, $duration, $display_order, $id]);
+            echo json_encode(['success' => true, 'message' => 'Training program updated successfully']);
+        } else {
+            $stmt = $pdo->prepare("INSERT INTO training_programs (title, badge, target_audience, description, topics, duration, display_order) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$title, $badge, $target_audience, $description, $topics, $duration, $display_order]);
+            echo json_encode(['success' => true, 'message' => 'Training program created successfully']);
+        }
+    } else {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Title and description are required']);
+    }
+    exit;
+}
+
+if ($action === 'delete_training_program') {
+    $id = intval($body['id'] ?? $_POST['id'] ?? 0);
+    if ($id > 0) {
+        $stmt = $pdo->prepare("DELETE FROM training_programs WHERE id = ?");
+        $stmt->execute([$id]);
+        echo json_encode(['success' => true, 'message' => 'Training program deleted']);
+    } else {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Invalid training program ID']);
+    }
+    exit;
+}
+
+// -------------------------------------------------------------
+// 6. PROJECTS & CLIENTS: GET, SAVE, DELETE
 // -------------------------------------------------------------
 if ($action === 'get_projects') {
     $stmt = $pdo->query("
@@ -212,7 +311,58 @@ if ($action === 'delete_project') {
 }
 
 // -------------------------------------------------------------
-// 5. CLOUDINARY DIRECT UPLOAD
+// 7. RESOURCES & GUIDES: GET, SAVE, DELETE
+// -------------------------------------------------------------
+if ($action === 'get_resources') {
+    $stmt = $pdo->query("SELECT * FROM resources ORDER BY display_order ASC, id ASC");
+    $resources = $stmt->fetchAll();
+    echo json_encode(['success' => true, 'data' => $resources]);
+    exit;
+}
+
+if ($action === 'save_resource') {
+    $id = !empty($body['id']) ? intval($body['id']) : (!empty($_POST['id']) ? intval($_POST['id']) : null);
+    $title = trim($body['title'] ?? $_POST['title'] ?? '');
+    $category = trim($body['category'] ?? $_POST['category'] ?? 'QMS & Compliance');
+    $description = trim($body['description'] ?? $_POST['description'] ?? '');
+    $tags = trim($body['tags'] ?? $_POST['tags'] ?? '');
+    $file_format = trim($body['file_format'] ?? $_POST['file_format'] ?? 'PDF Document');
+    $file_size = trim($body['file_size'] ?? $_POST['file_size'] ?? '1.5 MB');
+    $file_url = trim($body['file_url'] ?? $_POST['file_url'] ?? '');
+    $display_order = intval($body['display_order'] ?? $_POST['display_order'] ?? 0);
+
+    if (!empty($title) && !empty($description)) {
+        if ($id) {
+            $stmt = $pdo->prepare("UPDATE resources SET title = ?, category = ?, description = ?, tags = ?, file_format = ?, file_size = ?, file_url = ?, display_order = ? WHERE id = ?");
+            $stmt->execute([$title, $category, $description, $tags, $file_format, $file_size, $file_url, $display_order, $id]);
+            echo json_encode(['success' => true, 'message' => 'Resource updated successfully']);
+        } else {
+            $stmt = $pdo->prepare("INSERT INTO resources (title, category, description, tags, file_format, file_size, file_url, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$title, $category, $description, $tags, $file_format, $file_size, $file_url, $display_order]);
+            echo json_encode(['success' => true, 'message' => 'Resource created successfully']);
+        }
+    } else {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Title and description are required']);
+    }
+    exit;
+}
+
+if ($action === 'delete_resource') {
+    $id = intval($body['id'] ?? $_POST['id'] ?? 0);
+    if ($id > 0) {
+        $stmt = $pdo->prepare("DELETE FROM resources WHERE id = ?");
+        $stmt->execute([$id]);
+        echo json_encode(['success' => true, 'message' => 'Resource deleted']);
+    } else {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Invalid resource ID']);
+    }
+    exit;
+}
+
+// -------------------------------------------------------------
+// 8. CLOUDINARY DIRECT UPLOAD
 // -------------------------------------------------------------
 if ($action === 'upload_image') {
     if (!isset($_FILES['image'])) {
@@ -235,7 +385,6 @@ if ($action === 'upload_image') {
 
     $timestamp = time();
     $folder = 'axar_creative';
-    // Cloudinary signature requires signing parameters in alphabetical order
     $params_to_sign = "folder=" . $folder . "&timestamp=" . $timestamp;
     $signature = sha1($params_to_sign . CLOUDINARY_API_SECRET);
 

@@ -89,7 +89,36 @@ const TRAINING_STREAMS = [
   }
 ];
 
+import { useState, useEffect } from "react";
+
 export default function TrainingPage() {
+  const [trainingList, setTrainingList] = useState(TRAINING_STREAMS);
+
+  useEffect(() => {
+    const fetchTraining = async () => {
+      try {
+        const res = await fetch("https://acms.harshaicreations.com/api.php?action=get_training_programs");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+            const mapped = data.data.map((item: any) => ({
+              id: item.id ? `training-${item.id}` : "custom",
+              icon: Award,
+              title: item.title,
+              target: item.target_audience || "",
+              badge: item.badge || "Auditor Certification",
+              desc: item.description,
+              topics: typeof item.topics === "string" ? item.topics.split("\n").filter(Boolean) : []
+            }));
+            setTrainingList(mapped);
+          }
+        }
+      } catch (e) {
+        // Fallback to static default data
+      }
+    };
+    fetchTraining();
+  }, []);
   return (
     <div className="relative overflow-hidden bg-white text-[#0f172a]">
       {/* Hero Header */}
@@ -140,7 +169,7 @@ export default function TrainingPage() {
       {/* Training Programs Grid */}
       <section className="py-14 bg-[#f8fafc]">
         <div className="container mx-auto px-6 max-w-6xl space-y-6">
-          {TRAINING_STREAMS.map((stream) => (
+          {trainingList.map((stream) => (
             <div
               key={stream.id}
               id={stream.id}

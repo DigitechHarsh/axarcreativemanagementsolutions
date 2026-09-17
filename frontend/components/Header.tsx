@@ -11,11 +11,11 @@ const navLinks = [
   { name: "Home", path: "/" },
   { name: "About Us", path: "/about" },
   { name: "Services", path: "/services" },
-  { name: "Industries", path: "/industries" },
-  { name: "Training", path: "/training" },
-  { name: "Projects", path: "/portfolio" },
+  { name: "Industries We Serve", path: "/industries" },
+  { name: "Training Programs", path: "/training" },
+  { name: "Projects / Clients", path: "/portfolio" },
   { name: "Resources", path: "/resources" },
-  { name: "Contact", path: "/contact" },
+  { name: "Contact Us", path: "/contact" },
 ];
 
 export default function Header() {
@@ -66,7 +66,7 @@ export default function Header() {
       }`}>
         <div className="container mx-auto px-4 lg:px-6 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="relative z-50 flex items-center group">
+          <Link href="/" className="relative z-50 flex items-center group shrink-0">
             <div className="flex items-center">
               <Image
                 src="/logo.png"
@@ -88,14 +88,34 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden xl:flex items-center space-x-1">
+          <nav className="hidden 2xl:flex items-center space-x-1">
             {navLinks.map((link) => {
               const isActive = pathname === link.path;
               return (
                 <Link
                   key={link.name}
                   href={link.path}
-                  className={`px-3 py-1.5 rounded-md text-[13.5px] lg:text-[14px] font-heading font-medium tracking-normal transition-all duration-150 ${
+                  className={`px-2.5 py-1.5 rounded-md text-[13px] 2xl:text-[13.5px] font-heading font-medium tracking-normal transition-all duration-150 whitespace-nowrap ${
+                    isActive
+                      ? "text-[#b3282d] font-bold bg-[#fef2f2] border border-[#fecaca]"
+                      : "text-[#334155] hover:text-[#b3282d] hover:bg-[#f8fafc] border border-transparent"
+                  }`}
+                >
+                  <span>{link.name}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Fallback for XL screens (slight compact layout) */}
+          <nav className="hidden xl:flex 2xl:hidden items-center space-x-0.5">
+            {navLinks.map((link) => {
+              const isActive = pathname === link.path;
+              return (
+                <Link
+                  key={link.name}
+                  href={link.path}
+                  className={`px-2 py-1.5 rounded-md text-[12px] font-heading font-medium tracking-tight transition-all duration-150 whitespace-nowrap ${
                     isActive
                       ? "text-[#b3282d] font-bold bg-[#fef2f2] border border-[#fecaca]"
                       : "text-[#334155] hover:text-[#b3282d] hover:bg-[#f8fafc] border border-transparent"
@@ -108,17 +128,17 @@ export default function Header() {
           </nav>
 
           {/* CTA Buttons */}
-          <div className="hidden lg:flex items-center space-x-2.5">
+          <div className="hidden lg:flex items-center space-x-2 shrink-0">
             <Link
               href="/contact?type=quote"
-              className="inline-flex items-center justify-center px-4 py-2 font-heading text-xs font-bold text-white transition-all duration-200 bg-[#b3282d] rounded-md hover:bg-[#8c1e22] shadow-sm active:translate-y-0.5"
+              className="inline-flex items-center justify-center px-3.5 py-2 font-heading text-xs font-bold text-white transition-all duration-200 bg-[#b3282d] rounded-md hover:bg-[#8c1e22] shadow-sm active:translate-y-0.5 whitespace-nowrap"
             >
               <span>Get a Quote</span>
               <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
             </Link>
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center px-4 py-2 font-heading text-xs font-bold text-[#0f172a] transition-all duration-200 bg-white border border-[#cbd5e1] rounded-md hover:bg-[#f8fafc] hover:border-[#94a3b8] active:translate-y-0.5"
+              className="inline-flex items-center justify-center px-3.5 py-2 font-heading text-xs font-bold text-[#0f172a] transition-all duration-200 bg-white border border-[#cbd5e1] rounded-md hover:bg-[#f8fafc] hover:border-[#94a3b8] active:translate-y-0.5 whitespace-nowrap"
             >
               <span>Contact Us</span>
             </Link>

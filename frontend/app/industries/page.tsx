@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { 
   Factory, 
@@ -121,12 +121,38 @@ const INDUSTRIES_DETAILED = [
 
 export default function IndustriesPage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [industryList, setIndustryList] = useState(INDUSTRIES_DETAILED);
 
-  const categories = ["All", "Heavy & Engineering", "Process & Chemicals", "Life Sciences", "Infrastructure", "Trade & Services"];
+  useEffect(() => {
+    const fetchIndustries = async () => {
+      try {
+        const res = await fetch("https://acms.harshaicreations.com/api.php?action=get_industries");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+            const mapped = data.data.map((item: any) => ({
+              icon: Factory,
+              title: item.title,
+              category: item.category || "Heavy & Engineering",
+              scope: item.scope || "",
+              desc: item.description,
+              keyServices: typeof item.key_services === "string" ? item.key_services.split("\n").filter(Boolean) : []
+            }));
+            setIndustryList(mapped);
+          }
+        }
+      } catch (e) {
+        // Fallback to static default data
+      }
+    };
+    fetchIndustries();
+  }, []);
+
+  const categories = ["All", ...Array.from(new Set(industryList.map(i => i.category)))];
 
   const filtered = selectedCategory === "All" 
-    ? INDUSTRIES_DETAILED 
-    : INDUSTRIES_DETAILED.filter(i => i.category === selectedCategory);
+    ? industryList 
+    : industryList.filter(i => i.category === selectedCategory);
 
   return (
     <div className="relative overflow-hidden bg-white text-[#0f172a]">
