@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { 
@@ -16,45 +17,103 @@ import {
   ArrowRight, 
   Building,
   CheckCircle2,
-  Users
+  Users,
+  X,
+  GraduationCap,
+  Briefcase,
+  BadgeCheck,
+  ExternalLink
 } from "lucide-react";
 
-const TEAM_MEMBERS = [
+interface TeamMember {
+  name: string;
+  role: string;
+  subRole?: string;
+  qualification: string;
+  experience: string;
+  image: string;
+  bio: string;
+  fullBio: string;
+  credentials?: string[];
+  imsCompetency?: string;
+  auditExposure?: string;
+  specialties: string[];
+}
+
+const TEAM_MEMBERS: TeamMember[] = [
   {
-    name: "Ghanshyambhai K Patel",
-    role: "Proprietor & Principal Consultant",
+    name: "Ghanshyam Patel",
+    role: "ISO 20001 IT information & ISO 27001 IT security Expert",
+    subRole: "Proprietor & Principal Consultant",
     qualification: "B.Sc. Tech • Certified Lead Auditor",
-    experience: "30+ Years Industrial Experience",
+    experience: "30+ Years Industrial & IT Consulting Experience",
     image: "/team/ghanshyam.jpeg",
-    bio: "Pioneering leader in industrial management systems, petrochemical & chemical quality frameworks, NABL laboratory readiness, and corporate governance across Gujarat.",
-    specialties: ["ISO 9001 / 14001 / 45001 / IMS", "NABL Lab Accreditation", "Six Sigma DMAIC Implementation"]
+    bio: "Specializing in ISO 20000-1 IT Information Management, ISO 27001 IT Security frameworks, and Integrated Management Systems across Gujarat and national industries.",
+    fullBio: "Ghanshyambhai K. Patel is the Proprietor and Principal Consultant at Axar Creative Management Solutions. With over three decades of industrial leadership, he guides enterprises in implementing robust Information Security (ISO 27001), IT Service Management (ISO 20000-1), Integrated Management Systems (ISO 9001/14001/45001), and Six Sigma methodologies.",
+    credentials: [
+      "Certified Lead Auditor for ISO 9001 / 14001 / 45001",
+      "ISO 27001 IT Security Management Systems Specialist",
+      "ISO 20000-1 IT Service Management Consultant",
+      "B.Sc. Technology Graduate with 30+ Years Industry Leadership"
+    ],
+    specialties: ["ISO 20001 IT Information", "ISO 27001 IT Security", "IMS (9001/14001/45001)"]
   },
   {
-    name: "Narendra Patel",
-    role: "Senior Technical & Safety Consultant",
-    qualification: "Industrial Safety & Compliance Specialist",
-    experience: "Senior QHSE Consultant",
+    name: "Narendra J. Patel, CSP",
+    role: "QHSE expert and lead auditor for ISO certification",
+    subRole: "Certified Safety Professional (CSP®) • Associate Safety Professional (ASP®)",
+    qualification: "CSP®, ASP®, MBA (Safety Management), NEBOSH IGC, B.Sc. Chemistry",
+    experience: "21+ Years Progressive Experience (Kuwait & India)",
     image: "/team/narenda.jpeg",
-    bio: "Expert in shop-floor occupational health and safety, Hazard Identification (HIRA), incident investigation, and environmental compliance audits for heavy manufacturing.",
-    specialties: ["HIRA & Workplace Safety Audits", "Incident Investigation & CAPA", "Statutory Compliance & EHS Systems"]
+    bio: "Seasoned HSE professional with 21+ years experience in Kuwait & India across petrochemical, heavy chemical, petroleum coke, and construction environments.",
+    fullBio: "Narendra J. Patel, CSP is a seasoned Health, Safety & Environment (HSE) professional with more than 21 years of progressive experience, including extensive experience in Kuwait and India across petrochemical, heavy chemical, petroleum coke processing/manufacturing, and construction environments. For the past 10+ years, he has been leading HSE departmental functions, with responsibility for HSE management systems, operational safety, compliance, workforce engagement, audits, risk management, incident prevention, emergency preparedness, and continual improvement.",
+    credentials: [
+      "Certified Safety Professional (CSP®) - Board of Certified Safety Professionals (BCSP, USA)",
+      "Associate Safety Professional (ASP®)",
+      "Certified PHA–HAZOP Leader",
+      "MBA in Safety Management",
+      "NEBOSH International General Certificate (NEBOSH IGC)",
+      "B.Sc. in Chemistry",
+      "Diploma in Industrial Safety & Diploma in Fire & Safety",
+      "Diploma in Business Management"
+    ],
+    imsCompetency: "Possesses strong competency in ISO-based Integrated Management Systems (IMS) and is trained as an Internal Auditor for ISO 9001 (QMS), ISO 14001 (EMS), and ISO 45001 (OH&S). Practical experience in planning, conducting, and participating in comprehensive IMS audits in both Kuwait and India.",
+    auditExposure: "Assessment of management-system implementation, legal and statutory compliance, operational controls, risk and opportunity management, HSE documentation, competency and awareness, emergency preparedness, incident management, corrective actions (CAPA), compliance monitoring, audit findings closure, and continual improvement.",
+    specialties: ["QHSE & ISO Lead Auditing", "Certified Safety Professional (CSP/ASP)", "PHA–HAZOP & IMS Audits"]
   },
   {
-    name: "Mehul Patel",
-    role: "Lead Quality & Laboratory Consultant",
-    qualification: "Testing & Calibration Specialist",
-    experience: "Quality Systems Consultant",
+    name: "Dr Mehul Patel",
+    role: "Lab expert/ lab accreditation and lab consultant ISO 17025",
+    subRole: "Laboratory Testing & Calibration Specialist",
+    qualification: "Testing & Calibration Specialist • ISO 17025 Expert",
+    experience: "Senior Laboratory Consultant",
     image: "/team/mehul.jpeg",
-    bio: "Dedicated specialist in ISO/IEC 17025 compliance, laboratory method validation, measurement uncertainty estimation, and inter-laboratory comparison programs.",
-    specialties: ["ISO/IEC 17025 Documentation", "Testing Equipment Validation", "GLP & Method SOP Development"]
+    bio: "Lab expert and consultant specializing in ISO/IEC 17025 laboratory accreditation, NABL readiness, testing & calibration protocols, and GLP method SOP development.",
+    fullBio: "Dr. Mehul Patel is a distinguished Lab Expert, Accreditation Specialist, and Laboratory Consultant with extensive experience in ISO/IEC 17025 accreditation, NABL audit readiness, testing & calibration infrastructure setup, measurement uncertainty estimation, and GLP compliance.",
+    credentials: [
+      "ISO/IEC 17025 Laboratory Accreditation Consultant",
+      "NABL Audit Readiness & Quality Manual Preparation",
+      "Measurement Uncertainty & Calibration Protocols Specialist",
+      "Standard Operating Procedure (SOP) & GLP Developer"
+    ],
+    specialties: ["ISO 17025 Lab Accreditation", "Lab Consultant & NABL Setup", "GLP & Method SOP Development"]
   },
   {
     name: "Harsh Patel",
-    role: "AI Creator & Security Expert",
-    qualification: "AI Architect • Information Security Specialist",
-    experience: "AI Solutions & Enterprise Cybersecurity",
+    role: "AI Creation expert",
+    subRole: "AI Architect & Digital Automation Specialist",
+    qualification: "AI Architect • Digital Systems Specialist",
+    experience: "AI Solutions & Enterprise Technologies",
     image: "/team/harsh2.jpeg",
-    bio: "Pioneering intelligent AI systems, enterprise cybersecurity architectures, ISO 27001 (ISMS) compliance frameworks, and digital business transformation for industrial organizations.",
-    specialties: ["AI Solutions & Automation", "ISO 27001 Cybersecurity", "Digital Systems Architecture"]
+    bio: "AI Creation expert pioneering intelligent automated workflows, smart digital business systems, enterprise process automation, and next-generation technology integration.",
+    fullBio: "Harsh Patel is an AI Creation Expert dedicated to developing smart enterprise architectures, automated intelligence pipelines, system integrations, and modern digital capabilities for industrial and commercial organizations.",
+    credentials: [
+      "AI Systems Architecture & Autonomous Agent Workflows",
+      "Enterprise Process Automation & Integration",
+      "Digital Transformation & Smart Systems Engineering",
+      "Data Security & High-Efficiency Cloud Implementations"
+    ],
+    specialties: ["AI Creation expert", "Automated Workflows", "Digital Systems Architecture"]
   }
 ];
 
@@ -75,6 +134,8 @@ const APPROACH_STEPS = [
 ];
 
 export default function AboutPage() {
+  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+
   return (
     <div className="relative overflow-hidden bg-white text-[#0f172a]">
       {/* Hero Header */}
@@ -106,13 +167,13 @@ export default function AboutPage() {
 
               <div>
                 <h3 className="text-xl font-heading font-bold text-[#0f172a]">
-                  Ghanshyambhai K Patel
+                  Ghanshyam Patel
                 </h3>
                 <p className="text-xs font-bold text-[#b3282d] uppercase tracking-wider mt-1">
                   Proprietor & Principal Consultant
                 </p>
                 <p className="text-xs text-[#64748b] mt-0.5">
-                  Axar Creative Management Solutions
+                  ISO 20001 IT information & ISO 27001 IT security Expert
                 </p>
               </div>
 
@@ -121,7 +182,7 @@ export default function AboutPage() {
                   <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-[#b3282d] shrink-0" /> Industrial Consultancy & Systems
                 </div>
                 <p className="leading-relaxed text-[#64748b]">
-                  Specializing in QMS/EMS/OH&S standards, NABL testing laboratory setup, Six Sigma, and international business development across Bharuch industrial belts and nationwide.
+                  Specializing in ISO 27001 IT Security, ISO 20001 IT Information, QMS/EMS/OH&S standards, NABL laboratory setup, and corporate governance across Gujarat and nationwide.
                 </p>
               </div>
 
@@ -152,7 +213,7 @@ export default function AboutPage() {
                   <strong className="text-[#0f172a]">Axar Creative Management Solutions</strong> is an industrial consultancy and business-support organization focused on helping companies improve their systems, people and performance.
                 </p>
                 <p>
-                  Led by <strong className="text-[#0f172a]">Ghanshyambhai K Patel, Proprietor</strong>, Axar provides practical solutions combining consultancy, training, compliance support and business-development services.
+                  Led by <strong className="text-[#0f172a]">Ghanshyam Patel, Proprietor</strong>, Axar provides practical solutions combining consultancy, training, compliance support and business-development services.
                 </p>
                 <p>
                   We work with organizations to develop effective management systems, strengthen operational performance, build competent teams and create new business opportunities across domestic and global markets.
@@ -169,7 +230,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Core Team Members Section (4 Core Team Grid with B&W to Color Hover) */}
+      {/* Core Team Members Section (4 Core Team Grid with B&W to Color Hover + Modal) */}
       <section className="py-16 md:py-20 bg-[#f8fafc] border-b border-[#e2e8f0]">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-12">
@@ -181,7 +242,7 @@ export default function AboutPage() {
             </h2>
             <div className="w-12 h-0.5 bg-[#b3282d] mx-auto mb-3" />
             <p className="text-xs md:text-sm text-[#64748b] max-w-2xl mx-auto">
-              Experienced lead auditors, laboratory specialists, and industrial safety consultants dedicated to your operational excellence.
+              Experienced lead auditors, laboratory specialists, safety professionals, and technology consultants dedicated to your operational excellence.
             </p>
           </div>
 
@@ -205,34 +266,162 @@ export default function AboutPage() {
                   <h3 className="font-heading font-bold text-base text-[#0f172a] group-hover:text-[#b3282d] transition-colors">
                     {member.name}
                   </h3>
-                  <p className="text-[11px] font-bold text-[#b3282d] mt-0.5">
+                  <p className="text-[11px] font-bold text-[#b3282d] mt-0.5 leading-snug line-clamp-2">
                     {member.role}
                   </p>
-                  <p className="text-[10px] text-[#64748b] font-medium mb-3">
+                  <p className="text-[10px] text-[#64748b] font-medium my-2">
                     {member.qualification}
                   </p>
 
-                  <p className="text-xs text-[#475569] leading-relaxed mb-4">
+                  <p className="text-xs text-[#475569] leading-relaxed mb-3">
                     {member.bio}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-[#f1f5f9] space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748b] block mb-1">
-                    Key Areas:
-                  </span>
-                  {member.specialties.map((spec, sIdx) => (
-                    <div key={sIdx} className="flex items-center text-[11px] text-[#475569]">
-                      <CheckCircle2 className="w-3 h-3 mr-1.5 text-[#b3282d] shrink-0" />
-                      <span className="truncate">{spec}</span>
-                    </div>
-                  ))}
+                <div className="space-y-3">
+                  <div className="pt-3 border-t border-[#f1f5f9] space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748b] block mb-1">
+                      Key Areas:
+                    </span>
+                    {member.specialties.map((spec, sIdx) => (
+                      <div key={sIdx} className="flex items-center text-[11px] text-[#475569]">
+                        <CheckCircle2 className="w-3 h-3 mr-1.5 text-[#b3282d] shrink-0" />
+                        <span className="truncate">{spec}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => setSelectedMember(member)}
+                    className="w-full py-2 px-3 bg-[#f8fafc] hover:bg-[#b3282d] hover:text-white text-[#0f172a] border border-[#e2e8f0] hover:border-[#b3282d] text-xs font-heading font-bold rounded-lg transition-colors flex items-center justify-center group/btn"
+                  >
+                    <span>View Full Profile</span>
+                    <ArrowRight className="w-3 h-3 ml-1.5 group-hover/btn:translate-x-0.5 transition-transform" />
+                  </button>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </section>
+
+      {/* Member Details Modal */}
+      {selectedMember && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
+          onClick={() => setSelectedMember(null)}
+        >
+          <div 
+            className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[#e2e8f0] shadow-2xl p-6 md:p-8 space-y-6 animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-start justify-between border-b border-[#e2e8f0] pb-4">
+              <div className="flex items-center space-x-4">
+                <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-[#f1f5f9] border border-[#e2e8f0] shrink-0">
+                  <Image
+                    src={selectedMember.image}
+                    alt={selectedMember.name}
+                    fill
+                    className="object-cover object-top"
+                  />
+                </div>
+                <div>
+                  <h3 className="text-xl font-heading font-bold text-[#0f172a]">
+                    {selectedMember.name}
+                  </h3>
+                  <p className="text-xs font-bold text-[#b3282d] mt-0.5">
+                    {selectedMember.role}
+                  </p>
+                  <p className="text-[11px] text-[#64748b] font-medium">
+                    {selectedMember.experience}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setSelectedMember(null)}
+                className="p-1.5 rounded-lg text-[#64748b] hover:text-[#0f172a] hover:bg-[#f1f5f9] transition-colors"
+                aria-label="Close modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="space-y-5 text-xs text-[#475569]">
+              {/* Executive Overview */}
+              <div>
+                <h4 className="font-heading font-bold text-sm text-[#0f172a] flex items-center mb-2">
+                  <Briefcase className="w-4 h-4 mr-2 text-[#b3282d]" /> Professional Overview
+                </h4>
+                <p className="leading-relaxed bg-[#f8fafc] p-3.5 rounded-xl border border-[#e2e8f0] whitespace-pre-line text-[#334155]">
+                  {selectedMember.fullBio}
+                </p>
+              </div>
+
+              {/* Credentials & Qualifications */}
+              {selectedMember.credentials && selectedMember.credentials.length > 0 && (
+                <div>
+                  <h4 className="font-heading font-bold text-sm text-[#0f172a] flex items-center mb-2">
+                    <GraduationCap className="w-4 h-4 mr-2 text-[#b3282d]" /> Credentials & Certifications
+                  </h4>
+                  <div className="grid sm:grid-cols-2 gap-2 bg-[#f8fafc] p-3.5 rounded-xl border border-[#e2e8f0]">
+                    {selectedMember.credentials.map((cred, cIdx) => (
+                      <div key={cIdx} className="flex items-start space-x-2 text-[11px] text-[#334155]">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#b3282d] shrink-0 mt-0.5" />
+                        <span>{cred}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* IMS Competency (Specifically for Narendra J Patel or others) */}
+              {selectedMember.imsCompetency && (
+                <div>
+                  <h4 className="font-heading font-bold text-sm text-[#0f172a] flex items-center mb-2">
+                    <BadgeCheck className="w-4 h-4 mr-2 text-[#b3282d]" /> ISO & Integrated Management System Competency
+                  </h4>
+                  <p className="leading-relaxed bg-[#f8fafc] p-3.5 rounded-xl border border-[#e2e8f0] text-[#334155]">
+                    {selectedMember.imsCompetency}
+                  </p>
+                </div>
+              )}
+
+              {/* Audit Exposure */}
+              {selectedMember.auditExposure && (
+                <div>
+                  <h4 className="font-heading font-bold text-sm text-[#0f172a] flex items-center mb-2">
+                    <ShieldCheck className="w-4 h-4 mr-2 text-[#b3282d]" /> Audit & Implementation Exposure
+                  </h4>
+                  <p className="leading-relaxed bg-[#f8fafc] p-3.5 rounded-xl border border-[#e2e8f0] text-[#334155]">
+                    {selectedMember.auditExposure}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex items-center justify-between pt-3 border-t border-[#e2e8f0]">
+              <Link
+                href="/contact"
+                onClick={() => setSelectedMember(null)}
+                className="px-4 py-2 bg-[#b3282d] text-white text-xs font-heading font-bold rounded-lg hover:bg-[#8c1e22] transition-colors inline-flex items-center shadow-xs"
+              >
+                <span>Consult with {selectedMember.name.split(" ")[0]}</span>
+                <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+              </Link>
+              <button
+                onClick={() => setSelectedMember(null)}
+                className="px-4 py-2 bg-[#f1f5f9] text-[#475569] hover:text-[#0f172a] text-xs font-bold rounded-lg transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Core Values Section */}
       <section className="py-16 bg-white border-b border-[#e2e8f0]">
