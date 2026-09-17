@@ -95,10 +95,10 @@ export default function Header() {
                 <Link
                   key={link.name}
                   href={link.path}
-                  className={`px-3.5 py-1.5 rounded-md text-xs font-heading font-semibold transition-all duration-150 ${
+                  className={`px-3 py-1.5 rounded-md text-[13.5px] lg:text-[14px] font-heading font-medium tracking-normal transition-all duration-150 ${
                     isActive
-                      ? "text-[#0f172a] bg-[#f1f5f9] border border-[#cbd5e1]"
-                      : "text-[#475569] hover:text-[#0f172a] hover:bg-[#f8fafc] border border-transparent"
+                      ? "text-[#b3282d] font-bold bg-[#fef2f2] border border-[#fecaca]"
+                      : "text-[#334155] hover:text-[#b3282d] hover:bg-[#f8fafc] border border-transparent"
                   }`}
                 >
                   <span>{link.name}</span>
@@ -152,14 +152,14 @@ export default function Header() {
                       key={link.name}
                       href={link.path}
                       onClick={closeMenu}
-                      className={`flex items-center justify-between px-3.5 py-2.5 rounded-md text-sm font-heading font-medium transition-colors ${
+                      className={`flex items-center justify-between px-4 py-3 rounded-lg text-base font-heading font-medium transition-colors ${
                         isActive
-                          ? "bg-[#f1f5f9] text-[#b3282d] border border-[#cbd5e1]"
-                          : "text-[#475569] hover:text-[#0f172a] hover:bg-[#f8fafc]"
+                          ? "bg-[#fef2f2] text-[#b3282d] font-bold border border-[#fecaca]"
+                          : "text-[#334155] hover:text-[#0f172a] hover:bg-[#f8fafc]"
                       }`}
                     >
                       <span>{link.name}</span>
-                      {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#b3282d]" />}
+                      {isActive && <span className="w-2 h-2 rounded-full bg-[#b3282d]" />}
                     </Link>
                   );
                 })}
