@@ -18,16 +18,16 @@ export default function Footer() {
                 <Image
                   src="/logo.png"
                   alt="Axar Logo"
-                  width={80}
-                  height={80}
-                  className="object-contain h-8 w-auto"
+                  width={120}
+                  height={120}
+                  className="object-contain h-10 w-auto"
                 />
                 <Image
                   src="/logotext.png"
                   alt="Axar Creative Management Solutions"
-                  width={240}
-                  height={80}
-                  className="object-contain h-6 w-auto ml-1"
+                  width={300}
+                  height={100}
+                  className="object-contain h-8 w-auto ml-2"
                 />
               </div>
             </Link>

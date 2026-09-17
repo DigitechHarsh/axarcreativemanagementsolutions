@@ -61,27 +61,27 @@ export default function Header() {
       {/* Main Developer Header (White Theme) */}
       <header className={`sticky top-0 left-0 right-0 z-50 transition-all duration-200 ${
         isScrolled 
-          ? "bg-white/95 backdrop-blur-md border-b border-[#e2e8f0] shadow-sm py-2.5" 
-          : "bg-white border-b border-[#e2e8f0] py-3.5"
+          ? "bg-white/95 backdrop-blur-md border-b border-[#e2e8f0] shadow-sm py-1.5 md:py-2" 
+          : "bg-white border-b border-[#e2e8f0] py-2 md:py-2.5"
       }`}>
         <div className="container mx-auto px-4 lg:px-6 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="relative z-50 flex items-center group">
-            <div className="flex items-center">
+            <div className="flex items-center space-x-1.5 md:space-x-2">
               <Image
                 src="/logo.png"
                 alt="Axar Logo"
-                width={70}
-                height={70}
-                className="object-contain h-8 md:h-9 w-auto"
+                width={120}
+                height={120}
+                className="object-contain h-10 md:h-11 lg:h-12 w-auto transition-transform duration-200 group-hover:scale-105"
                 priority
               />
               <Image
                 src="/logotext.png"
                 alt="Axar Creative Management Solutions"
-                width={220}
-                height={70}
-                className="object-contain h-6 md:h-7 w-auto ml-1"
+                width={300}
+                height={100}
+                className="object-contain h-8 md:h-9 lg:h-10 w-auto"
                 priority
               />
             </div>
